@@ -5,44 +5,11 @@
 %>
 
 <div class="row">
-  <div class="col-sm-8">
-    <p class="lead">
-      You have successfully generated this project
-      with <%= link_to 'orats', 'https://github.com/nickjj/orats' %> vVERSION.
-    </p>
+  <div class="col-sm-12">
+    <h3>FFmpeg version</h3>
+    <pre><code><%= `ffmpeg -version` %></code></pre>
 
-    <p>
-      <%= image_tag 'https://badge.fury.io/rb/orats.png', alt: 'Gem badge' %>
-      is the latest version.
-    </p>
-
-    <hr/>
-
-    <h3>Learn more about Docker and this project</h3>
-
-    <ul>
-      <li>
-        <%= link_to 'Learn how this application was Dockerized', 'http://nickjanetakis.com/blog/dockerize-a-rails-5-postgres-redis-sidekiq-action-cable-app-with-docker-compose' %>
-      </li>
-    </ul>
-
-    <hr/>
-
-    <h3>Want to get rid of this page?</h3>
-
-    <p>No problem, just follow these steps:</p>
-
-    <ul>
-      <li>
-        Run <code>docker-compose exec website rails d controller Pages</code>
-      </li>
-      <li>
-        Remove the root route from <code>config/routes.rb</code>
-      </li>
-    </ul>
+    <h3>youtube-dl version</h3>
+    <pre><code><%= YoutubeDL.version %></code></pre>
   </div>
-
-  <div class="col-sm-4"></div>
 </div>
-
-<%= javascript_pack_tag 'hello_react' %>

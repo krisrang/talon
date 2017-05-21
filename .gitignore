@@ -21,4 +21,5 @@
 /node_modules
 
 /.env
+bin/youtube-dl
 config/wwe_*
