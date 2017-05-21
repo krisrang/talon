@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.4.1'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -11,12 +12,17 @@ gem 'puma'
 gem 'sass-rails'
 gem 'uglifier'
 gem 'webpacker'
-gem 'redis'
+gem 'redis-rails', '~> 5.0.0.pre'
+gem 'sidekiq'
 gem 'httparty'
 gem 'm3u8'
+gem 'bootstrap-sass'
+gem 'font-awesome-rails'
+gem 'jquery-rails'
+gem 'rack-mini-profiler'
 
 group :development, :test do
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platform: :mri
   gem 'capybara'
   gem 'selenium-webdriver'
 end
