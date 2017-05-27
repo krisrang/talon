@@ -47,9 +47,11 @@ workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 # or connections that may have been created at application boot, as Ruby
 # cannot share connections between processes.
 #
-# on_worker_boot do
-#   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
-# end
+require 'message_bus'
+on_worker_boot do
+  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+  MessageBus.after_fork
+end
 #
 
 # Allow puma to be restarted by `rails restart` command.

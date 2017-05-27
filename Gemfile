@@ -20,6 +20,8 @@ gem 'bootstrap-sass'
 gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'rack-mini-profiler'
+gem 'streamio-ffmpeg'
+gem 'message_bus'
 
 group :development, :test do
   gem 'byebug', platform: :mri

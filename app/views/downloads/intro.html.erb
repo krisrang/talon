@@ -1,15 +1,10 @@
-<%
- title "Yay! You're on Rails!"
- meta_description 'Meta descriptions are useful for SEO purposes.'
- heading "Yay! You're on Rails!"
-%>
+<%= content_tag :div,
+  id: "talon",
+  class: "row",
+  data: {
+    extractors: @extractors
+}.to_json do %>
+<% end %>
 
-<div class="row">
-  <div class="col-sm-12">
-    <h3>FFmpeg version</h3>
-    <pre><code><%= `ffmpeg -version` %></code></pre>
-
-    <h3>youtube-dl version</h3>
-    <pre><code><%= YoutubeDL.version %></code></pre>
-  </div>
-</div>
+<%= stylesheet_pack_tag 'talon' %>
+<%= javascript_pack_tag "talon" %>

@@ -1,0 +1,30 @@
+<% title "Admin" %>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>Versions</h2>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="panel panel-info">
+      <div class="panel-heading">FFmpeg</div>
+      <div class="panel-body">
+        <pre><code><%= FFMPEG.version %></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+   <div class="panel panel-info">
+      <div class="panel-heading">youtube-dl</div>
+      <div class="panel-body">
+        <div class="col-sm-9">
+          <pre><code><%= YoutubeDL.version %></code></pre>
+        </div>
+        <div class="col-sm-3 text-right">
+          <%= link_to "Update", admin_youtubedl_update_path, class: "btn btn-default", method: :post %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
