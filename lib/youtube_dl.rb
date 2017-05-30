@@ -1,14 +1,11 @@
 require "fileutils"
 require "open-uri"
 require "net/http"
+require "open3"
 
-module YoutubeDL
+class YoutubeDL
   PATH = Rails.root.join("bin", "youtube-dl").freeze
   URL = "https://yt-dl.org/downloads/latest/youtube-dl".freeze
-
-  def self.version
-    `#{PATH} --version`.strip
-  end
 
   def self.ensure_exists!
     if !File.exist?(PATH)
@@ -25,7 +22,32 @@ module YoutubeDL
     @@extractors = nil
   end
 
-  def self.extractors
-    @@extractors ||= `#{PATH} --list-extractors`.strip.split.map { |e| e.split(":")[0] }.uniq
+  def self.version
+    run("--version")
   end
+
+  def self.extractors
+    @@extractors ||= run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
+  end
+
+  def self.info(url)
+    JSON.parse(run("-j", url))
+  end
+
+  def self.run(*args)
+    output = ""
+    error = nil
+
+    command = [PATH.to_s, *args]
+    Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
+      output = stdout.read unless stdout.nil?
+
+      error = stderr.read unless wait_thr.value.success?
+    end
+
+    raise RunError, error.strip if error
+    output.strip
+  end
+
+  class RunError < StandardError; end
 end

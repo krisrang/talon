@@ -9,17 +9,14 @@
 
     <%= action_cable_meta_tag %>
 
+    <%= javascript_include_tag 'application' %>
     <%= stylesheet_link_tag 'application' %>
   </head>
 
   <body>
     <%= render 'layouts/google_analytics' %>
 
-    <nav>
-      <%= link_to image_tag("logo.png"), root_path %>
-    </nav>
-
-    <main role="main" class="container">
+    <main role="main">
       <%= render 'layouts/flash' %>
       <%= yield %>
     </main>

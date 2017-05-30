@@ -1,11 +1,20 @@
+@import "https://fonts.googleapis.com/icon?family=Material+Icons";
+
+@import "materialize/components/color";
+$primary-color: color("blue", "base") !default;
+$secondary-color: color("grey", "lighten-4") !default;
+$input-border-color: color("grey", "lighten-2") !default;
+// $button-disabled-background: color("grey", "lighten-2") !default;
+@import "materialize";
+
 body {
-  background: #eee;
-  color: #222;
+  background: #FCFCFC;
 }
 
-nav {
-  text-align: center;
-  margin: 10px 0;
-
-  a { display: inline-block; }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px color("blue", "base") inset !important;
+  -webkit-text-fill-color: #fff;
 }

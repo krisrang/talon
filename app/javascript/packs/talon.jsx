@@ -2,72 +2,33 @@ import 'whatwg-fetch'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import '../app-style'
-
-class Downloader extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {extractorsOpen: false};
-
-    this.handleContinue = this.handleContinue.bind(this);
-    this.toggleExtractors = this.toggleExtractors.bind(this);
-  }
-
-  handleContinue(e) {
-    e.preventDefault();
-  }
-
-  toggleExtractors(e) {
-    e.preventDefault();
-    this.setState({extractorsOpen: !this.state.extractorsOpen});
-  }
-
-  render() {
-    let extractorsTitle = this.state.extractorsOpen ? "Hide supported sites" : "List supported sites";
-    let extractorsClass = this.state.extractorsOpen ? "extractors col-sm-12" : "extractors col-sm-12 hidden";
-    let extractors = this.props.extractors.map((extractor, index) =>
-      <div className="col-sm-4" key={index}>{extractor}</div>
-    );
-
-    return (
-      <div className="col-sm-8 col-sm-offset-2">
-        <div className="panel panel-primary">
-          <div className="panel-body">
-            <form>
-              <div className="col-sm-9 form-group">
-                <input type="text" className="form-control" placeholder="Video address" />
-              </div>
-              <div className="col-sm-3 text-center">
-                <button type="submit" className="btn btn-primary" onClick={this.handleContinue}>{'Continue'}</button>
-              </div>
-            </form>
-            <div className="col-sm-12">
-              <a onClick={this.toggleExtractors}>{extractorsTitle}</a>
-            </div>
-            <div className={extractorsClass}>
-              {extractors}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
+import Downloader from '../talon/downloader'
+import '../styles'
 
 class List extends React.Component {
   constructor() {
-    super();
+    super()
+  }
+
+  componentDidMount() {
+    $('.downloadlist .tabs').tabs();
   }
 
   render() {
     return (
-      <div className="col-sm-12">
-       <div className="panel panel-default">
-          <div className="panel-heading">Queue</div>
-          <div className="panel-body">
-            <div className="video">Video</div>
-            <div className="video">Video</div>
+      <div className="row">
+        <div className="downloadlist container">
+          <div className="col s12">
+            <div className="white z-depth-1">
+              <div>
+                <ul className="tabs tabs-fixed-width">
+                  <li className="tab col s3"><a className="active" href="#activedownloads">Active</a></li>
+                  <li className="tab col s3"><a href="#donedownloads">Finished</a></li>
+                </ul>
+              </div>
+              <div id="activedownloads">Test 1</div>
+              <div id="donedownloads">Test 2</div>
+            </div>
           </div>
         </div>
       </div>
@@ -77,13 +38,13 @@ class List extends React.Component {
 
 class Talon extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   render() {
     return (
       <div>
-        <Downloader extractors={this.props.extractors} />
+        <Downloader {...this.props} />
         <List />
       </div>
     );
