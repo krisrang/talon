@@ -7,5 +7,3 @@ MessageBus.subscribe "/youtubedl-update" do |msg|
   YoutubeDL.update!
   Rails.logger.info "New version: #{YoutubeDL.version}"
 end
-
-YoutubeDL.ensure_exists!
