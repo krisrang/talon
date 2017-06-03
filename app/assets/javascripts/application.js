@@ -13,3 +13,4 @@
 //= require rails-ujs
 //= require jquery
 //= require materialize
+//= require action_cable

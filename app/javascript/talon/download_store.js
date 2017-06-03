@@ -1,29 +1,33 @@
-// let EventEmitter = require('events').EventEmitter;
-// let emitter = new EventEmitter();
+let EventEmitter = require('events').EventEmitter
 
-// class DownloadStore {
-//   constructor() {
-//     this.downloads = [];
-//   }
-// }
+class DownloadStore {
+  constructor() {
+    this.downloads = [];
+    this.emitter = new EventEmitter()
 
-// module.exports = {
-//   getMessages: function() {
-//     return messages.concat();
-//   },
+    ActionCable.createConsumer().subscriptions.create("DownloadChannel", {
+      received: function(data) {
+        console.log(data);
+      }
+    })
+  }
 
-//   subscribe: function(callback) {
-//     emitter.addListener('update', callback);
-//   },
+  subscribe(callback) {
+    this.emitter.addListener('update', callback)
+  }
 
-//   unsubscribe: function(callback) {
-//     emitter.removeListener('update', callback);
-//   },
+  unsubscribe(callback) {
+    this.emitter.removeListener('update', callback)
+  }
 
-//   newMessage: function(message) {
-//     messages.push(message);
-//     emitter.emit('update');
-//   }
-// };
+  add(download) {
+    this.downloads.push(download)
+    this.emitter.emit('update')
+  }
 
-// export default DownloadStore
+  downloads() {
+    return this.downloads.concat()
+  }
+}
+
+export default DownloadStore

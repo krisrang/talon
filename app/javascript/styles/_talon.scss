@@ -1,2 +1,129 @@
-.downloader { padding-top: 15px; }
+$height: 420px;
+
+.downloader {
+  padding-top: 15px;
+  height: $height;
+  overflow: hidden;
+
+  form {
+    margin-top: ($height / 2 - 50);
+    transition: margin-top 1s;
+  }
+  &.loaded form { margin-top: 0; }
+
+  .downloadinfo {
+    overflow: hidden;
+    visibility: collapse;
+    position: relative;
+    height: 0;
+    transition: height 1s;
+
+    .thumbnail {
+      max-height: 263px; // 4:3
+      width: 350px;
+    }
+
+    h2, .duration, .source, p {
+      position: absolute;
+      left: 380px;
+    }
+
+    h2 {
+      top: 0;
+      right: 0;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      text-shadow: #000 1px 1px 10px;
+      font-size: 30px;
+      margin: 0;
+
+      a { color: #fff; }
+    }
+
+    .duration {
+      top: 40px;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .source {
+      top: 60px;
+      color: #aaa;
+      font-size: 12px;
+      margin: 0;
+    }
+
+    p {
+      top: 80px;
+      color: #aaa;
+    }
+
+    .downloadbtn {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    img.downloadbtn { height: 30px; }
+  }
+  &.loaded .downloadinfo { visibility: visible; height: ($height - 110); }
+
+  .downloadinfo-wrapper {
+    opacity: 1;
+    transform: translate(0px, 0px);
+    transition: opacity 0.5s, transform 1s;
+
+    &.started {
+      opacity: 0;
+      transform: translate(0px, 400px);
+
+      .downloadbtn { display: none; }
+    }
+  }
+}
+
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $height;
+  z-index: -1;
+  background-color: #3f4245;
+
+  .noise {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+
+  .background {
+    background-size: cover;
+    background-position: center center;
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    opacity: 0.15;
+    z-index: 2;
+  }
+}
+
 .extractors .list { max-height: 400px; overflow-y: scroll; }
+
+.downloadlist { padding: 20px; border-radius: 2px; }
+
+@-webkit-keyframes autofill {
+  to {
+    color: #FFF;
+    background: transparent;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+}
