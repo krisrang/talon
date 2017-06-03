@@ -7,11 +7,15 @@ import Downloader from '../talon/downloader'
 import '../styles'
 
 class List extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
   }
 
   render() {
+    // if (!this.props.list) {
+    //   return null
+    // }
+
     return (
       <div className="row">
         <div className="container">

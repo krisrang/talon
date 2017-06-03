@@ -23,7 +23,7 @@ $height: 420px;
       width: 350px;
     }
 
-    h2, .duration, .source, p {
+    h2, .duration, .source, .description, p {
       position: absolute;
       left: 380px;
     }
@@ -54,8 +54,19 @@ $height: 420px;
       margin: 0;
     }
 
+    .description {
+      top: 85px;
+      right: 0;
+      height: 90px;
+      font-size: 13px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 0;
+    }
+
     p {
-      top: 80px;
+      top: 160px;
       color: #aaa;
     }
 
@@ -112,7 +123,13 @@ $height: 420px;
   }
 }
 
-.extractors .list { max-height: 400px; overflow-y: scroll; }
+.extractors {
+  margin: -10px 0 0 45px;
+  font-size: 13px;
+  cursor: pointer;
+
+  .list { max-height: 400px; overflow-y: scroll; }
+}
 
 .downloadlist { padding: 20px; border-radius: 2px; }
 

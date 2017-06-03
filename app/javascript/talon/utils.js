@@ -11,7 +11,7 @@ export default {
       credentials: "same-origin"
     })
     .then((response) => {
-      if (response.ok) {
+      if (response.ok || response.status === 422) {
         return response.json()
       } else {
         var error = new Error(response.statusText)

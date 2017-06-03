@@ -6,22 +6,25 @@ class Extractors extends React.Component {
     super(props)
 
     this.state = {
-      open: false,
       loading: false,
       extractors: []
     }
 
-    this.toggleExtractors = this.toggleExtractors.bind(this)
+    this.openExtractors = this.openExtractors.bind(this)
   }
 
-  toggleExtractors(e) {
+  componentDidMount() {
+    $('#extractorModal').modal()
+  }
+
+  openExtractors(e) {
     e.preventDefault()
 
-    if (!this.state.open && this.state.extractors.length == 0) {
+    if (this.state.extractors.length == 0) {
       return this.loadExtractors()
     }
 
-    this.setState({open: !this.state.open})
+    $('#extractorModal').modal('open')
   }
 
   loadExtractors() {
@@ -32,30 +35,38 @@ class Extractors extends React.Component {
       return response.json()
     })
     .then((json) => {
-      this.setState({extractors: json, loading: false, open: true})
+      this.setState({extractors: json, loading: false})
+      $('#extractorModal').modal('open')
     })
   }
 
   render() {
-    if (this.state.loading) {
-      return (
-        <div className="col-sm-12">
-          Loading...
-        </div>
-      )
+    if (this.props.hide) {
+      return null
     }
 
     let extractors = this.state.extractors.map((extractor, index) =>
-      <div className="col-sm-4" key={index}>{extractor}</div>
+      <div className="col s3" key={index}>{extractor}</div>
     )
 
     return (
       <div className="extractors">
-        <div className="col-sm-12">
-          <a onClick={this.toggleExtractors}>{this.state.open ? 'Hide' : 'List'} supported sites</a>
+        <div className="col s12">
+          {this.state.loading ?
+            "Loading..." :
+            (<a onClick={this.openExtractors}>Show supported sites</a>)
+          }
         </div>
-        <div className={this.state.open ? 'list col-sm-12' : 'list col-sm-12 hidden'}>
-          {extractors}
+        <div id="extractorModal" className="modal modal-fixed-footer black-text">
+          <div className="modal-content">
+            <h4>Supported Sites</h4>
+            <div className="col s12">
+              {extractors}
+            </div>
+          </div>
+          <div className="modal-footer">
+            <a href="#!" className="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
         </div>
       </div>
     );

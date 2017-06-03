@@ -23,6 +23,9 @@ gem 'm3u8'
 gem 'rack-mini-profiler'
 gem 'streamio-ffmpeg'
 gem 'message_bus'
+gem 'paperclip'
+gem 'fog-google'
+gem 'fog-local'
 
 group :development, :test do
   gem 'byebug', platform: :mri

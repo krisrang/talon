@@ -21,4 +21,5 @@
 /node_modules
 
 /.env
-config/wwe_*
+/config/wwe_*
+/public/talon-*

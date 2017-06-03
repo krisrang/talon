@@ -20,6 +20,7 @@ class YoutubeDL
     IO.copy_stream(file, PATH)
     File.chmod(0777, PATH)
     @@extractors = nil
+    version
   end
 
   def self.version
@@ -27,7 +28,7 @@ class YoutubeDL
   end
 
   def self.extractors
-    @@extractors ||= run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
+    run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
   end
 
   def self.info(url)
