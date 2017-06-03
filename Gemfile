@@ -14,7 +14,7 @@ gem 'uglifier'
 gem 'webpacker'
 gem 'font-awesome-rails'
 gem 'jquery-rails'
-gem 'materialize-sass'
+gem 'bootstrap-sass'
 
 gem 'redis-rails', '~> 5.0.0.pre'
 gem 'sidekiq'

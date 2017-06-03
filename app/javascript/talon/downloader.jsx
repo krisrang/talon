@@ -1,5 +1,6 @@
 import 'whatwg-fetch'
 import React from 'react'
+import { Modal, Button } from 'react-bootstrap';
 import Extractors from './extractors'
 import Utils from './utils'
 import imageNoise from '../images/noise.png'
@@ -8,9 +9,9 @@ import imageLogo from '../../assets/images/logo@2x.png'
 
 function DownloadBtn(props) {
   if (props.loadingStart) {
-    return <img src={imageLoading} className="col s12 downloadbtn" />
+    return <img src={imageLoading} className="col-sm-12 downloadbtn" />
   } else {
-    return <a className="btn col s12 red downloadbtn" onClick={props.handleStart}>Start Download</a>
+    return <a className="btn col-sm-12 btn-danger downloadbtn" onClick={props.handleStart}>Start Download</a>
   }
 }
 
@@ -24,16 +25,15 @@ class Downloader extends React.Component {
       started: false,
       url: "",
       info: {},
-      infoLoaded: false
+      infoLoaded: false,
+      error: null,
+      errorOpen: false
     }
 
     this.handleUrlChange = this.handleUrlChange.bind(this)
     this.handleContinue = this.handleContinue.bind(this)
     this.handleStart = this.handleStart.bind(this)
-  }
-
-  componentDidMount() {
-    $('#downloaderErrorModal').modal()
+    this.closeError = this.closeError.bind(this)
   }
 
   handleUrlChange(e) {
@@ -81,8 +81,12 @@ class Downloader extends React.Component {
   }
 
   error(err) {
-    this.setState({error: err, loadingInfo: false, loadingStart: false, started: false})
-    $('#downloaderErrorModal').modal('open')
+    this.reset()
+    this.setState({ errorOpen: true, error: err })
+  }
+
+  closeError() {
+    this.setState({ errorOpen: false })
   }
 
   reset() {
@@ -106,7 +110,7 @@ class Downloader extends React.Component {
   render() {
     let downloaderClass = "downloader container"
     let downloaderInfoWrapperClass = "downloadinfo-wrapper"
-    let buttonClass = "waves-effect waves-light green darken-3 btn"
+    let buttonClass = "btn btn-success"
     let noiseStyle = {background: "url('" + imageNoise + "')"}
     let backgroundStyle = {backgroundImage: "url('" + imageLogo + "')", backgroundSize: "initial"}
 
@@ -120,7 +124,7 @@ class Downloader extends React.Component {
     if (this.state.started) downloaderInfoWrapperClass += " started"
 
     return (
-      <div className="row white-text">
+      <div>
         <div className="background-container">
           <div>
             <div className="background" style={backgroundStyle}></div>
@@ -128,22 +132,23 @@ class Downloader extends React.Component {
           <div className="noise" style={noiseStyle}></div>
         </div>
         <div className={downloaderClass}>
-          <form className="col s12">
-            <div className="input-field col s10">
-              <i className="material-icons prefix">input</i>
-              <input id="url" type="text" onChange={this.handleUrlChange} value={this.state.url} />
-              <label htmlFor="url">Video Address</label>
-              <Extractors hide={this.state.infoLoaded} extractorsEndpoint={this.props.extractorsEndpoint} />
-            </div>
-            <div className="input-field col s2 center-align">
-              { this.state.loadingInfo ?
-                (<img src={imageLoading} />) :
-                (<input type="submit" className={buttonClass} onClick={this.handleContinue} value="Load" />)
-              }
-            </div>
-          </form>
           <div className="row">
-            <form className="downloadinfo col s10 offset-s1">
+            <form className="col-sm-12">
+              <div className="form-group col-sm-10">
+                <i className="fa fa-external-link"></i>
+                <input id="url" type="text" className="form-control" onChange={this.handleUrlChange} value={this.state.url} placeholder="Video Address" />
+                <Extractors hide={this.state.infoLoaded} extractorsEndpoint={this.props.extractorsEndpoint} />
+              </div>
+              <div className="form-group col-sm-2 text-center">
+                { this.state.loadingInfo ?
+                  (<img src={imageLoading} />) :
+                  (<input type="submit" className={buttonClass} onClick={this.handleContinue} value="Load" />)
+                }
+              </div>
+            </form>
+          </div>
+          <div className="row">
+            <form className="downloadinfo col-sm-10 col-sm-offset-1">
               <div className={downloaderInfoWrapperClass}>
                 <img className="thumbnail" src={this.state.info.thumbnail} />
                 <h2><a href={this.state.info.webpage_url}>{this.state.info.title}</a></h2>
@@ -156,15 +161,17 @@ class Downloader extends React.Component {
             </form>
           </div>
         </div>
-        <div id="downloaderErrorModal" className="modal modal-fixed-footer black-text">
-          <div className="modal-content">
-            <h4>Error</h4>
-            <p className="flow-text">{this.state.error}</p>
-          </div>
-          <div className="modal-footer">
-            <a href="#!" className="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-          </div>
-        </div>
+        <Modal show={this.state.errorOpen} onHide={this.closeError}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {this.state.error}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.closeError}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     )
   }

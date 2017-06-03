@@ -1,5 +1,6 @@
 import 'whatwg-fetch'
 import React from 'react'
+import { Modal, Button } from 'react-bootstrap';
 
 class Extractors extends React.Component {
   constructor(props) {
@@ -7,14 +8,13 @@ class Extractors extends React.Component {
 
     this.state = {
       loading: false,
+      open: false,
       extractors: []
     }
 
     this.openExtractors = this.openExtractors.bind(this)
-  }
-
-  componentDidMount() {
-    $('#extractorModal').modal()
+    this.open = this.open.bind(this)
+    this.close = this.close.bind(this)
   }
 
   openExtractors(e) {
@@ -24,7 +24,15 @@ class Extractors extends React.Component {
       return this.loadExtractors()
     }
 
-    $('#extractorModal').modal('open')
+    this.open()
+  }
+
+  close() {
+    this.setState({ open: false })
+  }
+
+  open() {
+    this.setState({ open: true })
   }
 
   loadExtractors() {
@@ -36,7 +44,7 @@ class Extractors extends React.Component {
     })
     .then((json) => {
       this.setState({extractors: json, loading: false})
-      $('#extractorModal').modal('open')
+      this.open()
     })
   }
 
@@ -46,28 +54,28 @@ class Extractors extends React.Component {
     }
 
     let extractors = this.state.extractors.map((extractor, index) =>
-      <div className="col s3" key={index}>{extractor}</div>
+      <div className="col-sm-3" key={index}>{extractor}</div>
     )
 
     return (
       <div className="extractors">
-        <div className="col s12">
+        <div className="col-sm-12">
           {this.state.loading ?
             "Loading..." :
             (<a onClick={this.openExtractors}>Show supported sites</a>)
           }
         </div>
-        <div id="extractorModal" className="modal modal-fixed-footer black-text">
-          <div className="modal-content">
-            <h4>Supported Sites</h4>
-            <div className="col s12">
-              {extractors}
-            </div>
-          </div>
-          <div className="modal-footer">
-            <a href="#!" className="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-          </div>
-        </div>
+        <Modal show={this.state.open} bsSize="large" onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Supported Sites</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row">{extractors}</div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }

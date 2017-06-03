@@ -17,10 +17,10 @@ class List extends React.Component {
     // }
 
     return (
-      <div className="row">
-        <div className="container">
-          <div className="col s12">
-            <div className="downloadlist white z-depth-1">
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-12">
+            <div className="downloadlist">
               Downloads
             </div>
           </div>

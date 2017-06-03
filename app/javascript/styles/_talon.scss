@@ -2,12 +2,22 @@ $height: 420px;
 
 .downloader {
   padding-top: 15px;
+  margin-bottom: 20px;
   height: $height;
   overflow: hidden;
 
   form {
     margin-top: ($height / 2 - 50);
     transition: margin-top 1s;
+
+    .fa {
+      position: absolute;
+      top: 5px;
+      left: 0;
+      font-size: 25px;
+    }
+
+    #url { margin-left: 15px; }
   }
   &.loaded form { margin-top: 0; }
 
@@ -57,7 +67,7 @@ $height: 420px;
     .description {
       top: 85px;
       right: 0;
-      height: 90px;
+      height: 145px;
       font-size: 13px;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -66,8 +76,9 @@ $height: 420px;
     }
 
     p {
-      top: 160px;
+      top: 240px;
       color: #aaa;
+      margin: 0;
     }
 
     .downloadbtn {
@@ -124,14 +135,20 @@ $height: 420px;
 }
 
 .extractors {
-  margin: -10px 0 0 45px;
+  margin: 10px 0 0 10px;
   font-size: 13px;
   cursor: pointer;
 
   .list { max-height: 400px; overflow-y: scroll; }
 }
 
-.downloadlist { padding: 20px; border-radius: 2px; }
+.downloadlist {
+  padding: 20px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+  color: rgba(0,0,0,0.8);
+}
 
 @-webkit-keyframes autofill {
   to {
