@@ -1,10 +1,22 @@
 $height: 420px;
 
+.thumbnail {
+  width: 350px; // 4:3
+  height: 263px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
 .downloader {
   padding-top: 15px;
   margin-bottom: 20px;
   height: $height;
   overflow: hidden;
+
+  .loadbtn {
+    width: 120px;
+  }
 
   form {
     margin-top: ($height / 2 - 50);
@@ -19,7 +31,7 @@ $height: 420px;
 
     #url { margin-left: 15px; }
   }
-  &.loaded form { margin-top: 0; }
+  &.loaded form { margin-top: 15px; }
 
   .downloadinfo {
     overflow: hidden;
@@ -27,11 +39,6 @@ $height: 420px;
     position: relative;
     height: 0;
     transition: height 1s;
-
-    .thumbnail {
-      max-height: 263px; // 4:3
-      width: 350px;
-    }
 
     h2, .duration, .source, .description, p {
       position: absolute;
@@ -106,7 +113,7 @@ $height: 420px;
 }
 
 .background-container {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -148,6 +155,16 @@ $height: 420px;
   background: #fff;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
   color: rgba(0,0,0,0.8);
+
+  .download {
+    .thumbnail {
+      height: 150px;
+      width: 200px;
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0.9);
+      background-size: cover;
+    }
+  }
 }
 
 @-webkit-keyframes autofill {

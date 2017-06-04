@@ -1,6 +1,5 @@
-import 'whatwg-fetch'
 import React from 'react'
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap'
 import Extractors from './extractors'
 import Utils from './utils'
 import imageNoise from '../images/noise.png'
@@ -56,7 +55,7 @@ class Downloader extends React.Component {
       this.setState({info: json, infoLoaded: true, loadingInfo: false, loadingStart: false})
     })
     .catch((error) => {
-      this.error(json.error)
+      this.error(error)
     })
   }
 
@@ -72,17 +71,18 @@ class Downloader extends React.Component {
         return
       }
 
+      this.props.store.add(json)
       this.setState({loadingStart: false, started: true})
       setTimeout(() => {this.reset()}, 1000)
     })
     .catch((error) => {
-      this.error(json.error)
+      this.error(error)
     })
   }
 
   error(err) {
     this.reset()
-    this.setState({ errorOpen: true, error: err })
+    this.setState({ errorOpen: true, error: err.message || err })
   }
 
   closeError() {
@@ -110,14 +110,16 @@ class Downloader extends React.Component {
   render() {
     let downloaderClass = "downloader container"
     let downloaderInfoWrapperClass = "downloadinfo-wrapper"
-    let buttonClass = "btn btn-success"
+    let buttonClass = "btn btn-success loadbtn"
     let noiseStyle = {background: "url('" + imageNoise + "')"}
     let backgroundStyle = {backgroundImage: "url('" + imageLogo + "')", backgroundSize: "initial"}
+    let thumbnailStyle = {}
 
     if (this.state.infoLoaded) {
       downloaderClass += " loaded"
-      backgroundStyle.backgroundImage = "url('" + this.state.info.thumbnail + "')"
+      backgroundStyle.backgroundImage = "url('" + this.state.info.thumbnail_url + "')"
       backgroundStyle.backgroundSize = "cover"
+      thumbnailStyle.backgroundImage = "url('" + this.state.info.thumbnail_url + "')"
     }
 
     if (this.state.loadingInfo || this.state.url.length == 0) buttonClass += " disabled"
@@ -136,7 +138,7 @@ class Downloader extends React.Component {
             <form className="col-sm-12">
               <div className="form-group col-sm-10">
                 <i className="fa fa-external-link"></i>
-                <input id="url" type="text" className="form-control" onChange={this.handleUrlChange} value={this.state.url} placeholder="Video Address" />
+                <input id="url" autoFocus="true" type="text" className="form-control" onChange={this.handleUrlChange} value={this.state.url} placeholder="Video Address" />
                 <Extractors hide={this.state.infoLoaded} extractorsEndpoint={this.props.extractorsEndpoint} />
               </div>
               <div className="form-group col-sm-2 text-center">
@@ -150,7 +152,7 @@ class Downloader extends React.Component {
           <div className="row">
             <form className="downloadinfo col-sm-10 col-sm-offset-1">
               <div className={downloaderInfoWrapperClass}>
-                <img className="thumbnail" src={this.state.info.thumbnail} />
+                <div className="thumbnail" style={thumbnailStyle}></div>
                 <h2><a href={this.state.info.webpage_url}>{this.state.info.title}</a></h2>
                 <div className="duration">{this.state.info.durationHuman}</div>
                 <div className="source">{this.state.info.extractor}</div>

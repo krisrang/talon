@@ -6,6 +6,11 @@ class Download < ApplicationRecord
 
   before_save :set_key
 
+  def self.find_by_id_or_key(param)
+    return Download.where(key: param).first if param.length == 32
+    Download.where(id: param).first
+  end
+
   private
 
   def set_key

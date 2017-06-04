@@ -1,9 +1,9 @@
 import 'whatwg-fetch'
 
 export default {
-  fetchPost: function(url, data) {
+  fetchRequest: function(url, method, data) {
     return fetch(url, {
-      method: "POST",
+      method: method,
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json"
@@ -19,6 +19,14 @@ export default {
         throw error
       }
     })
+  },
+
+  fetchPost: function(url, data) {
+    return this.fetchRequest(url, "POST", data)
+  },
+
+  fetchDelete: function(url) {
+    return this.fetchRequest(url, "DELETE")
   },
 
   pad: function(num, size) {

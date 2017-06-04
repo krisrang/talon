@@ -20,12 +20,13 @@ gem 'redis-rails', '~> 5.0.0.pre'
 gem 'sidekiq'
 gem 'httparty'
 gem 'm3u8'
-gem 'rack-mini-profiler'
+gem 'rack-mini-profiler', require: false
 gem 'streamio-ffmpeg'
 gem 'message_bus'
 gem 'paperclip'
 gem 'fog-google'
 gem 'fog-local'
+gem 'active_model_serializers'
 
 group :development, :test do
   gem 'byebug', platform: :mri

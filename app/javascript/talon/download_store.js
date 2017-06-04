@@ -1,8 +1,8 @@
 let EventEmitter = require('events').EventEmitter
 
 class DownloadStore {
-  constructor() {
-    this.downloads = [];
+  constructor(initial) {
+    this.downloads = initial || [];
     this.emitter = new EventEmitter()
 
     ActionCable.createConsumer().subscriptions.create("DownloadChannel", {
@@ -25,8 +25,21 @@ class DownloadStore {
     this.emitter.emit('update')
   }
 
-  downloads() {
+  delete(download) {
+    let index = this.downloads.indexOf(download);
+
+    if (index > -1) {
+      this.downloads.splice(index, 1);
+      this.emitter.emit('update')
+    }
+  }
+
+  all() {
     return this.downloads.concat()
+  }
+
+  count() {
+    return this.downloads.length
   }
 }
 
