@@ -5,22 +5,6 @@ import Select from 'react-select'
 import Utils from './utils'
 import 'react-select/dist/react-select.css'
 
-function DownloadBtn(props) {
-  if (props.loadingStart) {
-    return <i className="loading-spinner fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
-  } else {
-    return (
-      <div className="downloadbtn col-sm-12">
-        <a className="btn btn-danger" onClick={props.handleStart}>Start Download</a>
-      </div>
-    )
-  }
-}
-DownloadBtn.propTypes = {
-  loadingStart: PropTypes.bool.isRequired,
-  handleStart: PropTypes.func.isRequired
-}
-
 class Info extends React.Component {
   constructor(props) {
     super(props)
@@ -47,7 +31,7 @@ class Info extends React.Component {
 
       // this.props.store.add(json)
       this.setState({starting: false, started: true})
-      // setTimeout(() => {this.reset()}, 1000)
+      setTimeout(() => {this.props.reset()}, 1000)
     })
     .fail((err) => {
       this.error(err.responseJSON ? err.responseJSON.error : err.responseText)
@@ -106,7 +90,12 @@ class Info extends React.Component {
             {/*<div className="options col-sm-8">
               <Select placeholder="Video" options={videoFormats} />
             </div>*/}
-            {!this.state.started && (<DownloadBtn loadingStart={this.state.starting} handleStart={this.handleStart} />)}
+            <div className="downloadbtn col-sm-12 text-center">
+              {this.state.starting ?
+                (<i className="loading-spinner fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>) :
+                (<a className="btn btn-danger" onClick={this.handleStart}>Start Download</a>)
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -116,6 +105,7 @@ class Info extends React.Component {
 Info.propTypes = {
   url: PropTypes.string.isRequired,
   info: PropTypes.object.isRequired,
+  reset: PropTypes.func.isRequired,
   showError: PropTypes.func.isRequired,
   downloadsEndpoint: PropTypes.string.isRequired,
 }

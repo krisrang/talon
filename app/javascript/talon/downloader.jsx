@@ -19,12 +19,14 @@ class Downloader extends React.Component {
 
     this.handleUrlChange = this.handleUrlChange.bind(this)
     this.handleLoad = this.handleLoad.bind(this)
+    this.reset = this.reset.bind(this)
   }
 
   componentDidMount() {
     // this.setState({url: "https://www.giantbomb.com/videos/e3-2017-ace-combat-skies-unknown-trailer/2300-12109/"}, this.handleLoad)
     // this.setState({url: "https://www.youtube.com/watch?v=bXb1LQavaS8"}, this.handleLoad)
     // this.setState({url: "https://www.youtube.com/watch?v=E4s-hxY80pA"}, this.handleLoad)
+    // this.setState({url: "https://www.youtube.com/watch?v=LCDgJiPBxfI"}, this.handleLoad)
   }
 
   handleUrlChange(e) {
@@ -76,7 +78,7 @@ class Downloader extends React.Component {
 
     if (this.state.loaded) {
       backgroundStyle.backgroundImage = "url('" + this.state.info.thumbnail_url + "')"
-      info = <Info key={this.state.info.url} info={this.state.info} url={this.state.url} {...this.props} />
+      info = <Info key={this.state.info.url} info={this.state.info} url={this.state.url} reset={this.reset} {...this.props} />
     }
 
     return (
