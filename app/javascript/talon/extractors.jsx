@@ -45,10 +45,6 @@ class Extractors extends React.Component {
   }
 
   render() {
-    if (this.props.hide) {
-      return null
-    }
-
     let extractors = this.state.extractors.map((extractor, index) =>
       <div className="col-sm-3" key={index}>{extractor}</div>
     )
@@ -77,7 +73,6 @@ class Extractors extends React.Component {
   }
 }
 Extractors.propTypes = {
-  hide: PropTypes.bool.isRequired,
   extractorsEndpoint: PropTypes.string.isRequired,
 }
 

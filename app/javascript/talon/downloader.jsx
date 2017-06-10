@@ -24,7 +24,7 @@ class Downloader extends React.Component {
   componentDidMount() {
     // this.setState({url: "https://www.giantbomb.com/videos/e3-2017-ace-combat-skies-unknown-trailer/2300-12109/"}, this.handleLoad)
     // this.setState({url: "https://www.youtube.com/watch?v=bXb1LQavaS8"}, this.handleLoad)
-    this.setState({url: "https://www.youtube.com/watch?v=E4s-hxY80pA"}, this.handleLoad)
+    // this.setState({url: "https://www.youtube.com/watch?v=E4s-hxY80pA"}, this.handleLoad)
   }
 
   handleUrlChange(e) {
@@ -100,7 +100,7 @@ class Downloader extends React.Component {
                   placeholder="Video Address" disabled={urlDisabled}
                 />
               </div>
-              <Extractors hide={this.state.loaded} extractorsEndpoint={this.props.extractorsEndpoint} />
+              <Extractors extractorsEndpoint={this.props.extractorsEndpoint} />
             </div>
             <div className="col-sm-2 text-center">
               { this.state.loading ?
