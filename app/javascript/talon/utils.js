@@ -1,32 +1,25 @@
-import 'whatwg-fetch'
-
 export default {
-  fetchRequest: function(url, method, data) {
-    return fetch(url, {
+  request: function(url, method, data) {
+    return $.ajax(url, {
       method: method,
-      body: JSON.stringify(data),
+      data: JSON.stringify(data),
+      dataType: 'json',
       headers: {
         "Content-Type": "application/json"
-      },
-      credentials: "same-origin"
-    })
-    .then((response) => {
-      if (response.ok || response.status === 422) {
-        return response.json()
-      } else {
-        var error = new Error(response.statusText)
-        error.response = response
-        throw error
       }
     })
   },
 
-  fetchPost: function(url, data) {
-    return this.fetchRequest(url, "POST", data)
+  requestGet: function(url) {
+    return this.request(url, "GET")
   },
 
-  fetchDelete: function(url) {
-    return this.fetchRequest(url, "DELETE")
+  requestPost: function(url, data) {
+    return this.request(url, "POST", data)
+  },
+
+  requestDelete: function(url) {
+    return this.request(url, "DELETE")
   },
 
   pad: function(num, size) {

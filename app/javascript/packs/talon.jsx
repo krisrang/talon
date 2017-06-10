@@ -1,22 +1,48 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Modal, Button } from 'react-bootstrap'
 import DownloadStore from '../talon/download_store'
 import Downloader from '../talon/downloader'
-import List from '../talon/list'
 import '../styles'
 
 class Talon extends React.Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      errorOpen: false,
+      error: ""
+    }
+
+    this.error = this.error.bind(this)
+    this.closeError = this.closeError.bind(this)
+  }
+
+  error(message) {
+    this.setState({ errorOpen: true, error: message })
+  }
+
+  closeError() {
+    this.setState({ errorOpen: false, error: "" })
   }
 
   render() {
     return (
       <div>
-        <Downloader {...this.props} />
-        <List {...this.props} />
+        <Downloader showError={this.error} {...this.props} />
+        <Modal show={this.state.errorOpen} onHide={this.closeError}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {this.state.error}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.closeError}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
-    );
+    )
   }
 }
 

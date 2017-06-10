@@ -1,6 +1,4 @@
 class AdminController < ApplicationController
-  before_action :load_youtube
-
   def index; end
 
   def youtubedl_update

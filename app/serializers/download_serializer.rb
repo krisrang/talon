@@ -1,7 +1,9 @@
 class DownloadSerializer < ActiveModel::Serializer
-  attributes :id, :duration, :extractor, :key, :title, :webpage_url, :thumbnail_url
+  has_many :formats
+
+  attributes :id, :url, :key, :title, :duration, :extractor, :description, :thumbnail_url, :formats
 
   def thumbnail_url
-    object.thumbnail.url
+    object.cached_thumbnail.present? ? object.cached_thumbnail.url : object.thumbnail
   end
 end

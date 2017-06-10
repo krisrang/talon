@@ -5,11 +5,11 @@ class DownloadStore {
     this.downloads = initial || [];
     this.emitter = new EventEmitter()
 
-    ActionCable.createConsumer().subscriptions.create("DownloadChannel", {
-      received: function(data) {
-        console.log(data);
-      }
-    })
+    // ActionCable.createConsumer().subscriptions.create("DownloadChannel", {
+    //   received: function(data) {
+    //     console.log(data);
+    //   }
+    // })
   }
 
   subscribe(callback) {

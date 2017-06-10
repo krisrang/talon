@@ -16,19 +16,21 @@ ActiveRecord::Schema.define(version: 20170603183934) do
   enable_extension "plpgsql"
 
   create_table "downloads", force: :cascade do |t|
+    t.string "url", null: false
     t.string "key", null: false
     t.string "title", null: false
     t.string "extractor", null: false
-    t.string "webpage_url", null: false
+    t.string "description", null: false
+    t.string "thumbnail", null: false
     t.integer "duration"
-    t.string "thumbnail_file_name"
-    t.string "thumbnail_content_type"
-    t.integer "thumbnail_file_size"
-    t.datetime "thumbnail_updated_at"
+    t.string "cached_thumbnail_file_name"
+    t.string "cached_thumbnail_content_type"
+    t.integer "cached_thumbnail_file_size"
+    t.datetime "cached_thumbnail_updated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_downloads_on_key"
-    t.index ["webpage_url"], name: "index_downloads_on_webpage_url"
+    t.index ["url"], name: "index_downloads_on_url"
   end
 
 end

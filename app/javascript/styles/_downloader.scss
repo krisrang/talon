@@ -1,0 +1,35 @@
+.downloader {
+  .url-form {
+    margin-top: 200px;
+    transition: margin-top 0.2s;
+
+    .input-group-addon {
+      background: transparent;
+      color: #CCC;
+      border: none;
+
+      i.fa {
+        font-size: 30px;
+        margin-top: -5px;
+      }
+    }
+
+    .loadbtn {
+      width: 100px;
+    }
+
+    .extractors {
+      margin-left: 40px;
+
+      a:hover { cursor: pointer; }
+    }
+  }
+
+  &.loading .loading-spinner {
+    margin-top: 5px;
+  }
+
+  &.loaded .url-form {
+    margin-top: 20px;
+  }
+}

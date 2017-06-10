@@ -1,7 +1,6 @@
-require "fileutils"
-require "open-uri"
-require "net/http"
-require "open3"
+require 'open3'
+require 'fileutils'
+require 'digest/sha1'
 
 class YoutubeDL
   PATH = Rails.root.join("bin", "youtube-dl").freeze
@@ -14,12 +13,8 @@ class YoutubeDL
   end
 
   def self.update!
-    url = URI(URL)
-    options = {"User-Agent" => "talonrb"}
-    file = url.open(options)
-    IO.copy_stream(file, PATH)
-    File.chmod(0777, PATH)
-    @@extractors = nil
+    Rails.cache.delete("extractors")
+    run("-U")
     version
   end
 
@@ -28,11 +23,63 @@ class YoutubeDL
   end
 
   def self.extractors
-    run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
+    Rails.cache.fetch("extractors") do
+      run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
+    end
   end
 
   def self.info(url)
-    JSON.parse(run("-j", url))
+    key = Digest::SHA2.hexdigest(url)
+    Rails.cache.fetch(key, expires_in: 10.minute) do
+      JSON.parse(run("-j", url))
+    end
+  end
+
+  def self.download(url, target, timeout=60*60)
+    target = File.expand_path(target)
+    error = nil
+    cancel = false
+    progress = {}
+    partname = ""
+
+    pp info(url)
+    return
+
+    command = [PATH.to_s, "--no-continue", "--no-part", "--no-mtime", "-o", target, url]
+    Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
+      begin
+        Timeout.timeout(timeout) do
+          stdout.each("\r") do |line|
+            if line.include?("[download]")
+              # [download] Destination: Starfunkel - A Mixtape From Japan-E4s-hxY80pA.f133.mp4
+              # [download]  10.1% of 9.89MiB at 43.57MiB/s ETA 00:00
+              # [download]   0.1% of 9.89MiB at Unknown speed ETA Unknown ETA
+              if line =~ /\[download\] (.*)% of (.*)MiB at (.*)MiB\/s ETA (.*):(.*)/
+                progress[:percent] = $1.to_f
+                progress[:size] = $2.to_f
+                progress[:eta] = $5.to_i + $4.to_i * 60
+              elsif line =~ /\[download\] (.*)% of (.*)MiB at Unknown/
+                progress[:percent] = $1.to_f
+                progress[:size] = $2.to_f
+              elsif line =~ /\[download\] Destination: (.*)/
+                partname = $1
+              end
+
+              yield(progress, partname) if block_given?
+            end
+          end
+
+          error = stderr.read unless wait_thr.value.success?
+        end
+      rescue Timeout::Error
+        Process.kill("INT", wait_thr.pid)
+        Dir["#{target}*"].each { |f| FileUtils.rm_f(f) }
+        raise DownloadTimeout
+      end
+    end
+
+    raise RunError, error.strip if error
+    true
   end
 
   def self.run(*args)
@@ -50,5 +97,6 @@ class YoutubeDL
     output.strip
   end
 
+  class DownloadTimeout < StandardError; end
   class RunError < StandardError; end
 end

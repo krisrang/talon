@@ -1,0 +1,87 @@
+.downloadinfo {
+  background: rgba(0,0,0,0.55);
+  border-radius: 3px;
+  margin-top: 20px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);;
+
+  .thumbnail {
+    margin: 15px 0;
+    border-radius: 3px;
+
+    .image {
+      max-width: 350px; // 4:3
+      height: 263px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+    }
+  }
+
+  h2 {
+    margin: 15px 0 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    a, a:hover, a:focus, a:active {
+      color: #ddd;
+      text-shadow: #000 1px 1px 10px;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+
+  .duration { color: #ccc; }
+
+  .description {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 5px;
+    height: 150px;
+    overflow: hidden;
+    z-index: 50;
+
+    pre {
+      border-radius: 3px;
+      padding: 5px;
+      max-height: 400px;
+      overflow-y: hidden;
+    }
+
+    &:hover {
+      overflow: visible;
+
+      pre { overflow-y: auto; background: rgba(0,0,0,0.9); }
+    }
+  }
+
+  .options {
+    .Select { width: 50%; }
+  }
+
+  .downloadbtn {
+    padding-bottom: 15px;
+
+    .btn { width: 100%; }
+  }
+}
+
+.downloadinfo-enter {
+  opacity: 0.01;
+}
+
+.downloadinfo-enter.downloadinfo-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.downloadinfo-leave {
+  opacity: 1;
+}
+
+.downloadinfo-leave.downloadinfo-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}

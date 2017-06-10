@@ -1,182 +1,130 @@
 import React from 'react'
-import { Modal, Button } from 'react-bootstrap'
+import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import { CSSTransitionGroup } from 'react-transition-group'
 import Extractors from './extractors'
+import Info from './info'
 import Utils from './utils'
-import imageNoise from '../images/noise.png'
-import imageLoading from '../images/loading.svg'
-import imageLogo from '../../assets/images/logo@2x.png'
-
-function DownloadBtn(props) {
-  if (props.loadingStart) {
-    return <img src={imageLoading} className="col-sm-12 downloadbtn" />
-  } else {
-    return <a className="btn col-sm-12 btn-danger downloadbtn" onClick={props.handleStart}>Start Download</a>
-  }
-}
 
 class Downloader extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      loadingInfo: false,
-      loadingStart: false,
-      started: false,
+      loading: false,
+      loaded: false,
       url: "",
-      info: {},
-      infoLoaded: false,
-      error: null,
-      errorOpen: false
+      info: {}
     }
 
     this.handleUrlChange = this.handleUrlChange.bind(this)
-    this.handleContinue = this.handleContinue.bind(this)
-    this.handleStart = this.handleStart.bind(this)
-    this.closeError = this.closeError.bind(this)
+    this.handleLoad = this.handleLoad.bind(this)
+  }
+
+  componentDidMount() {
+    // this.setState({url: "https://www.giantbomb.com/videos/e3-2017-ace-combat-skies-unknown-trailer/2300-12109/"}, this.handleLoad)
+    // this.setState({url: "https://www.youtube.com/watch?v=bXb1LQavaS8"}, this.handleLoad)
+    this.setState({url: "https://www.youtube.com/watch?v=E4s-hxY80pA"}, this.handleLoad)
   }
 
   handleUrlChange(e) {
     this.setState({url: e.target.value})
   }
 
-  handleContinue(e) {
-    this.setState({loadingInfo: true})
+  handleLoad() {
+    this.setState({loading: true})
 
-    let data = {url: this.state.url}
-
-    Utils.fetchPost(this.props.downloadsEndpoint, data)
-    .then((json) => {
+    Utils.requestPost(this.props.downloadsEndpoint, {url: this.state.url})
+    .done((json) => {
       if (json.error) {
         this.error(json.error)
         return
       }
 
-      json.durationHuman = this.durationHuman(json)
-      this.setState({info: json, infoLoaded: true, loadingInfo: false, loadingStart: false})
+      this.setState({info: json, loaded: true, loading: false})
     })
-    .catch((error) => {
-      this.error(error)
-    })
-  }
-
-  handleStart(e) {
-    this.setState({loadingStart: true})
-
-    let data = {url: this.state.url, start: true}
-
-    Utils.fetchPost(this.props.downloadsEndpoint, data)
-    .then((json) => {
-      if (json.error) {
-        this.error(json.error)
-        return
-      }
-
-      this.props.store.add(json)
-      this.setState({loadingStart: false, started: true})
-      setTimeout(() => {this.reset()}, 1000)
-    })
-    .catch((error) => {
-      this.error(error)
+    .fail((err) => {
+      this.error(err.responseJSON ? err.responseJSON.error : err.responseText)
     })
   }
 
-  error(err) {
+  error(message) {
     this.reset()
-    this.setState({ errorOpen: true, error: err.message || err })
-  }
-
-  closeError() {
-    this.setState({ errorOpen: false })
+    this.props.showError(message)
   }
 
   reset() {
-    this.setState({url: "", infoLoaded: false, loadingInfo: false, loadingStart: false, started: false})
-  }
-
-  durationHuman(info) {
-    let duration = info.duration
-    let sections = []
-    let hours = Math.floor((duration %= 86400) / 3600)
-    let minutes = Math.floor((duration %= 3600) / 60)
-    let seconds = duration % 60
-
-    if (hours) sections.push(Utils.pad(hours, 2))
-    if (minutes) sections.push(Utils.pad(minutes, 2))
-    sections.push(Utils.pad(seconds, 2))
-
-    return sections.join(":")
+    this.setState({url: "", loaded: false, loading: false})
   }
 
   render() {
-    let downloaderClass = "downloader container"
-    let downloaderInfoWrapperClass = "downloadinfo-wrapper"
-    let buttonClass = "btn btn-success loadbtn"
-    let noiseStyle = {background: "url('" + imageNoise + "')"}
-    let backgroundStyle = {backgroundImage: "url('" + imageLogo + "')", backgroundSize: "initial"}
-    let thumbnailStyle = {}
+    let info = null
+    let backgroundStyle = {}
 
-    if (this.state.infoLoaded) {
-      downloaderClass += " loaded"
+    let backgroundClass = classNames(
+      'background-container',
+      {loaded: this.state.loaded}
+    )
+
+    let downloaderClass = classNames(
+      'downloader', 'container',
+      {loading: this.state.loading, loaded: this.state.loaded}
+    )
+
+    let urlDisabled = this.state.loading
+    let loadBtnDisabled = this.state.loading || this.state.url.length == 0
+
+    if (this.state.loaded) {
       backgroundStyle.backgroundImage = "url('" + this.state.info.thumbnail_url + "')"
-      backgroundStyle.backgroundSize = "cover"
-      thumbnailStyle.backgroundImage = "url('" + this.state.info.thumbnail_url + "')"
+      info = <Info key={this.state.info.url} info={this.state.info} url={this.state.url} {...this.props} />
     }
-
-    if (this.state.loadingInfo || this.state.url.length == 0) buttonClass += " disabled"
-    if (this.state.started) downloaderInfoWrapperClass += " started"
 
     return (
       <div>
-        <div className="background-container">
+        <div className={backgroundClass}>
           <div>
+            <div className="background-initial"></div>
             <div className="background" style={backgroundStyle}></div>
           </div>
-          <div className="noise" style={noiseStyle}></div>
+          <div className="noise"></div>
         </div>
         <div className={downloaderClass}>
-          <div className="row">
-            <form className="col-sm-12">
-              <div className="form-group col-sm-10">
-                <i className="fa fa-external-link"></i>
-                <input id="url" autoFocus="true" type="text" className="form-control" onChange={this.handleUrlChange} value={this.state.url} placeholder="Video Address" />
-                <Extractors hide={this.state.infoLoaded} extractorsEndpoint={this.props.extractorsEndpoint} />
+          <form className="form url-form row">
+            <div className="col-sm-10">
+              <div className="input-group">
+                <span className="input-group-addon">
+                  <i className="fa fa-youtube-play"></i>
+                </span>
+                <input id="url" autoFocus="true" autoComplete="off" type="text" className="form-control"
+                  onChange={this.handleUrlChange} value={this.state.url}
+                  placeholder="Video Address" disabled={urlDisabled}
+                />
               </div>
-              <div className="form-group col-sm-2 text-center">
-                { this.state.loadingInfo ?
-                  (<img src={imageLoading} />) :
-                  (<input type="submit" className={buttonClass} onClick={this.handleContinue} value="Load" />)
-                }
-              </div>
-            </form>
-          </div>
-          <div className="row">
-            <form className="downloadinfo col-sm-10 col-sm-offset-1">
-              <div className={downloaderInfoWrapperClass}>
-                <div className="thumbnail" style={thumbnailStyle}></div>
-                <h2><a href={this.state.info.webpage_url}>{this.state.info.title}</a></h2>
-                <div className="duration">{this.state.info.durationHuman}</div>
-                <div className="source">{this.state.info.extractor}</div>
-                <div className="description"><pre>{this.state.info.description}</pre></div>
-                <p>Options here</p>
-              </div>
-              {!this.state.started && (<DownloadBtn loadingStart={this.state.loadingStart} handleStart={this.handleStart} />)}
-            </form>
-          </div>
+              <Extractors hide={this.state.loaded} extractorsEndpoint={this.props.extractorsEndpoint} />
+            </div>
+            <div className="col-sm-2 text-center">
+              { this.state.loading ?
+                (<i className="loading-spinner fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>) :
+                (<input type="submit" className="btn btn-success loadbtn" disabled={loadBtnDisabled} onClick={this.handleLoad} value="Load" />)
+              }
+            </div>
+          </form>
         </div>
-        <Modal show={this.state.errorOpen} onHide={this.closeError}>
-          <Modal.Header closeButton>
-            <Modal.Title>Error</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {this.state.error}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.closeError}>Close</Button>
-          </Modal.Footer>
-        </Modal>
+        <CSSTransitionGroup
+          transitionName="downloadinfo"
+          transitionEnterTimeout={500}
+          transitionLeaveTimeout={300}>
+          {info}
+        </CSSTransitionGroup>
       </div>
     )
   }
+}
+Downloader.propTypes = {
+  // store: PropTypes.object.isRequired,
+  showError: PropTypes.func.isRequired,
+  downloadsEndpoint: PropTypes.string.isRequired,
+  extractorsEndpoint: PropTypes.string.isRequired,
 }
 
 export default Downloader

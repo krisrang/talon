@@ -1,6 +1,7 @@
-import 'whatwg-fetch'
 import React from 'react'
-import { Modal, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types'
+import { Modal, Button } from 'react-bootstrap'
+import Utils from './utils'
 
 class Extractors extends React.Component {
   constructor(props) {
@@ -17,9 +18,7 @@ class Extractors extends React.Component {
     this.close = this.close.bind(this)
   }
 
-  openExtractors(e) {
-    e.preventDefault()
-
+  openExtractors() {
     if (this.state.extractors.length == 0) {
       return this.loadExtractors()
     }
@@ -38,11 +37,8 @@ class Extractors extends React.Component {
   loadExtractors() {
     this.setState({loading: true})
 
-    fetch(this.props.extractorsEndpoint)
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
+    Utils.requestGet(this.props.extractorsEndpoint)
+    .done((json) => {
       this.setState({extractors: json, loading: false})
       this.open()
     })
@@ -77,8 +73,12 @@ class Extractors extends React.Component {
           </Modal.Footer>
         </Modal>
       </div>
-    );
+    )
   }
+}
+Extractors.propTypes = {
+  hide: PropTypes.bool.isRequired,
+  extractorsEndpoint: PropTypes.string.isRequired,
 }
 
 export default Extractors

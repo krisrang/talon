@@ -15,21 +15,20 @@ class DownloadsController < ApplicationController
   end
 
   def extractors
-    @extractors = YoutubeDL.extractors.push("WWE Network").sort_by { |e| e[0].downcase }
+    # @extractors = YoutubeDL.extractors.push("WWE Network").sort_by { |e| e[0].downcase }
+    @extractors = YoutubeDL.extractors.sort_by { |e| e[0].downcase }
 
     render json: @extractors
   end
 
   def create
     url = params[:url]
-    fields = %w(thumbnail duration title extractor webpage_url description)
-    info = YoutubeDL.info(url).slice(*fields)
+    download = Download.from_info(url)
 
     if !params[:start]
-      return render json: info.merge(thumbnail_url: info["thumbnail"])
+      return render json: download
     end
 
-    download = Download.new(info)
     if download.save
       remember_download(download)
       render json: download
