@@ -1,6 +1,5 @@
 require 'open3'
 require 'fileutils'
-require 'digest/sha1'
 
 class YoutubeDL
   PATH = Rails.root.join("bin", "youtube-dl").freeze
@@ -13,7 +12,6 @@ class YoutubeDL
   end
 
   def self.update!
-    Rails.cache.delete("extractors")
     run("-U")
     version
   end
@@ -23,16 +21,11 @@ class YoutubeDL
   end
 
   def self.extractors
-    Rails.cache.fetch("extractors") do
-      run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
-    end
+    run("--list-extractors").split("\n").map { |e| e.split(":")[0] }.uniq
   end
 
   def self.info(url)
-    key = Digest::SHA2.hexdigest(url)
-    Rails.cache.fetch(key, expires_in: 10.minute) do
-      JSON.parse(run("-j", url))
-    end
+    JSON.parse(run("-j", url))
   end
 
   def self.download(url, target, timeout=60*60)

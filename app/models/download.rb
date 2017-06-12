@@ -1,3 +1,4 @@
+require 'digest/sha1'
 require_dependency 'youtube_dl'
 
 class Download < ApplicationRecord
@@ -15,7 +16,12 @@ class Download < ApplicationRecord
   end
 
   def self.from_info(url)
-    info = YoutubeDL.info(url)
+    info = {}
+    key = Digest::SHA2.hexdigest(url)
+    Rails.cache.fetch(key, expires_in: 10.minute) do
+      info = YoutubeDL.info(url)
+    end
+    
     download = self.new
 
     download.url = info["webpage_url"]

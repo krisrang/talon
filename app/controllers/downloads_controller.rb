@@ -15,8 +15,10 @@ class DownloadsController < ApplicationController
   end
 
   def extractors
-    # @extractors = YoutubeDL.extractors.push("WWE Network").sort_by { |e| e[0].downcase }
-    @extractors = YoutubeDL.extractors.sort_by { |e| e[0].downcase }
+    @extractors = Rails.cache.fetch("youtubedl-extractors") do
+      # YoutubeDL.extractors.push("WWE Network").sort_by { |e| e[0].downcase }
+      YoutubeDL.extractors.sort_by { |e| e[0].downcase }
+    end
 
     render json: @extractors
   end
