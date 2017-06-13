@@ -50,13 +50,11 @@ class Extractors extends React.Component {
     )
 
     return (
-      <div className="extractors">
-        <div className="col-sm-12">
-          {this.state.loading ?
-            "Loading..." :
-            (<a onClick={this.openExtractors}>Show supported sites</a>)
-          }
-        </div>
+      <div>
+        {this.state.loading ?
+          (<i className="loading-spinner fa fa-circle-o-notch fa-spin fa-fw"></i>) :
+          (<a onClick={this.openExtractors} alt="Supported sites"><i className="fa fa-question-circle"></i></a>)
+        }
         <Modal show={this.state.open} bsSize="large" onHide={this.close}>
           <Modal.Header closeButton>
             <Modal.Title>Supported Sites</Modal.Title>

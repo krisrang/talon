@@ -5,7 +5,7 @@
   right: 0;
   bottom: 0;
   z-index: -1;
-  background-color: #3f4245;
+  background-color: #3D4B5D;
 
   .noise {
     position: absolute;
@@ -15,29 +15,21 @@
     background: url('../images/noise.png')
   }
 
-  .background-initial, .background {
+  .background, .background-initial {
     background-position: center center;
     background-repeat: no-repeat;
+    background-size: cover;
+    background-image: none;
+    position: absolute;
     width: 100%;
     height: 100%;
-    position: absolute;
-    transition: opacity 0.5s;
+    opacity: 0.1;
   }
 
   .background-initial {
-    background-size: initial;
     background-image: url('../../assets/images/logo@2x.png');
-    opacity: 0.15;
-    z-index: 2;
+    background-size: initial;
+    background-position-x: 50%;
+    background-position-y: 80%;
   }
-  &.loaded .background-initial { opacity: 0; }
-
-  .background {
-    background-size: cover;
-    background-image: none;
-    opacity: 0;
-    z-index: 3;
-    transition: background-image 0.5s;
-  }
-  &.loaded .background { opacity: 0.1; }
 }

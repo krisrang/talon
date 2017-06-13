@@ -16,30 +16,29 @@ class Download < ApplicationRecord
   end
 
   def self.from_info(url)
-    info = {}
     key = Digest::SHA2.hexdigest(url)
-    Rails.cache.fetch(key, expires_in: 10.minute) do
-      info = YoutubeDL.info(url)
+    info = Rails.cache.fetch(key, expires_in: 10.minute) do
+      YoutubeDL.info(url)
     end
     
-    download = self.new
+    self.new.tap do |download|
+      download.url = info["webpage_url"]
+      download.thumbnail = info["thumbnail"]
+      download.duration = info["duration"]
+      download.title = info["title"]
+      download.extractor = info["extractor"]
+      download.description = info["description"]
 
-    download.url = info["webpage_url"]
-    download.thumbnail = info["thumbnail"]
-    download.duration = info["duration"]
-    download.title = info["title"]
-    download.extractor = info["extractor"]
-    download.description = info["description"]
-
-    download.formats = info["formats"].sort_by do |f|
-      if f["width"] && f["width"] > 0
-        f["width"] * f["height"]
-      else
-        f["abr"]
-      end
-    end.reverse.map { |f| Format.new(f) }
-
-    download
+      download.formats = info["formats"].sort_by do |f|
+        if f["width"] && f["height"] && f["width"] > 0
+          f["width"] * f["height"]
+        elsif f["preference"] || f["abr"]
+          f["preference"] || f["abr"]
+        else
+          0
+        end
+      end.reverse.map { |f| Format.new(f) }
+    end
   end
 
   private

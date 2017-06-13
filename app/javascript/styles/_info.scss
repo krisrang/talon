@@ -1,93 +1,166 @@
+$height: 500px;
+$bgHeight: 190px;
+
 .downloadinfo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0,0,0,0.55);
-  border-radius: 3px;
-  margin-top: 20px;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
-  transition: transform 1s, opacity 1s;
+  overflow: hidden;
 
-  .thumbnail {
-    margin: 15px 0;
-    border-radius: 3px;
+  .info {
+    position: relative;
+    margin: 200px auto 0;
+    width: 1000px;
+    height: $height;
+    border-radius: 5px;
+    
+    @extend .z-depth-3;
 
-    .image {
-      max-width: 350px; // 4:3
-      height: 263px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: 50% 50%;
-    }
-  }
+    .background-container {
+      z-index: 0;
+      border-radius: 5px;
+      overflow: hidden;
 
-  h2 {
-    margin: 15px 0 5px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+      .noise {
+        height: $bgHeight;
+        z-index: 2;
+        background: url('../images/noise.png')
+      }
 
-    a, a:hover, a:focus, a:active {
-      color: #ddd;
-      text-shadow: #000 1px 1px 10px;
+      .background {
+        height: $bgHeight;
+      }
 
-      &:hover {
-        color: #fff;
+      .background-split {
+        background: #2A323D;
+        position: absolute;
+        width: 100%;
+        bottom: 0px;
+        top: $bgHeight;
       }
     }
-  }
 
-  .duration { color: #ccc; }
-
-  .description {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    margin-bottom: 5px;
-    height: 150px;
-    overflow: hidden;
-    z-index: 50;
-
-    pre {
-      border-radius: 3px;
-      padding: 5px;
-      max-height: 400px;
-      overflow-y: hidden;
+    .thumbnail, .title, .duration, .source, .options, .buttons {
+      position: absolute;
     }
 
-    &:hover {
-      overflow: visible;
+    .thumbnail {
+      top: 90px;
+      left: 20px;
+      border-radius: 30px;
+      padding: 0;
+      width: 350px;
+      height: 225px;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.75);
+      border: 3px solid #1086B4;
+      text-align: center;
 
-      pre { overflow-y: auto; background: rgba(0,0,0,0.9); }
+      .image {
+        max-width: 350px; // 4:3
+        height: 225px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+      }
+    }
+
+    .title {
+      top: 30px;
+      left: 20px;
+      right: 20px;
+
+      h2 {
+        margin: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        a, a:hover, a:focus, a:active {
+          color: #ddd;
+          text-shadow: #000 1px 1px 10px;
+          cursor: pointer;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .duration, .source {
+      color: #ccc;
+      left: 390px;
+    }
+
+    .source {
+      top: 100px;
+      font-size: 1.5em;
+    }
+
+    .duration {
+      top: 145px;
+    }
+    
+    .options {
+      top: 230px;
+      left: 390px;
+      right: 20px;
+
+      .Select {
+        width: 45%;
+        display: inline-block;
+
+        &:first-child {
+          margin-right: 55px;
+        }
+      }
+    }
+
+    .buttons {
+      top: 450px;
+      left: 20px;
+      right: 20px;
+      text-align: right;
+    }
+
+    .downloadbtn {
+      padding-bottom: 15px;
+
+      .btn { width: 100%; }
     }
   }
 
-  .options {
-    .Select { width: 50%; }
-  }
-
-  .downloadbtn {
-    padding-bottom: 15px;
-
-    .btn { width: 100%; }
-  }
-
-  &.started {
+  &.started .info {
     opacity: 0;
     transform: scale(0.5, 0.5) translateY(300px);
   }
 }
 
 .downloadinfo-enter {
-  opacity: 0.01;
+  background: rgba(0,0,0,0.0);
+  .info { transform: translateY(2000px); }
 }
 
 .downloadinfo-enter.downloadinfo-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
+  background: rgba(0,0,0,0.55);
+  .info { transform: translateY(0px); }
+}
+
+.downloadinfo-enter.downloadinfo-enter-active, .downloadinfo-leave.downloadinfo-leave-active {
+  transition: background-color 0.2s 0.4s;
+  .info { transition: transform 0.5s 0.4s; }
 }
 
 .downloadinfo-leave {
-  opacity: 1;
+  background: rgba(0,0,0,0.55);
+  .info { transform: translateY(0px); }
 }
 
 .downloadinfo-leave.downloadinfo-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in;
+  background: rgba(0,0,0,0.0);
+  .info { transform: translateY(2000px); }
 }

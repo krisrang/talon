@@ -1,39 +1,46 @@
 .downloader {
+  background: #1F232C;
+  margin-top: 300px;
+  transition: margin-top 0.2s;
+
+  @extend .z-depth-1;
+
   .url-form {
-    margin-top: 200px;
-    transition: margin-top 0.2s;
     padding: 20px 0;
-    background: rgba(0,0,0,0.55);
-    border-radius: 3px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+    position: relative;
 
-    .input-group-addon {
-      background: transparent;
+    .input-floater-left, .input-floater-right {
       color: #CCC;
-      border: none;
+      font-size: 30px;
+      position: absolute;
+      top: 0;
 
-      i.fa {
-        font-size: 30px;
-        margin-top: -5px;
-      }
+      .fa { vertical-align: top; }
+      .loading-spinner { font-size: 0.9em; }
     }
 
-    .loadbtn {
-      width: 100px;
+    .input-floater-left {
+      left: 20px;
     }
 
-    .extractors {
-      margin-left: 50px;
+    .input-floater-right {
+      right: 20px;
+      text-align: center;
+      width: 40px;
 
-      a:hover { cursor: pointer; }
+      a { display: block; margin-top: -2px; }
+      .fa { cursor: pointer; }
+    }
+
+    input {
+      padding-left: 50px;
+      padding-right: 50px;
     }
   }
 
-  &.loading .loading-spinner {
-    margin-top: 5px;
-  }
+  &.loading .input-floater-right { display: none; }
 
-  &.loaded .url-form {
-    margin-top: 20px;
-  }
+  // &.loaded {
+  //   margin-top: 0;
+  // }
 }

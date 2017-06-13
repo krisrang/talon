@@ -17,7 +17,10 @@ class Info extends React.Component {
     this.handleStart = this.handleStart.bind(this)
   }
 
-  handleStart() {
+  handleStart(e) {
+    e && e.preventDefault()
+    return
+
     this.setState({starting: true})
 
     let data = {url: this.props.url, start: true}
@@ -29,7 +32,7 @@ class Info extends React.Component {
         return
       }
 
-      // this.props.store.add(json)
+      this.props.store.add(json)
       this.setState({starting: false, started: true})
       setTimeout(() => {this.props.reset()}, 1000)
     })
@@ -50,7 +53,7 @@ class Info extends React.Component {
     let seconds = duration % 60
 
     if (hours) sections.push(Utils.pad(hours, 2))
-    if (minutes) sections.push(Utils.pad(minutes, 2))
+    sections.push(Utils.pad(minutes, 2))
     sections.push(Utils.pad(seconds, 2))
 
     return sections.join(":")
@@ -60,7 +63,7 @@ class Info extends React.Component {
     let duration = this.durationHuman(this.props.info)
     let thumbnailStyle = {backgroundImage: "url(" + this.props.info.thumbnail_url + ")"}
     let infoClass = classNames(
-      'downloadinfo', 'container',
+      'downloadinfo',
       {starting: this.state.starting, started: this.state.started}
     )
 
@@ -74,28 +77,27 @@ class Info extends React.Component {
 
     return (
       <div className={infoClass}>
-        <div className="row">
-          <div className="info">
-            <div className="col-sm-4">
-              <div className="thumbnail">
-                <div className="image" style={thumbnailStyle}></div>
-              </div>
-            </div>
-            <div className="col-sm-8">
-              <h2><a href={this.props.info.url}>{this.props.info.title}</a></h2>
-            </div>
-            <div className="duration col-sm-8">{duration}</div>
-            <div className="source col-sm-8">{this.props.info.extractor}</div>
-            <div className="description col-sm-8"><pre>{this.props.info.description}</pre></div>
-            {/*<div className="options col-sm-8">
-              <Select placeholder="Video" options={videoFormats} />
-            </div>*/}
-            <div className="downloadbtn col-sm-12 text-center">
-              {this.state.starting ?
-                (<i className="loading-spinner fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>) :
-                (<a className="btn btn-danger" onClick={this.handleStart}>Start Download</a>)
-              }
-            </div>
+        <div className="info">
+          <div className="background-container">
+            <div className="background" style={thumbnailStyle}></div>
+            <div className="background-split"></div>
+            <div className="noise"></div>
+          </div>
+          <div className="thumbnail">
+            <div className="image" style={thumbnailStyle}></div>
+          </div>
+          <div className="title">
+            <h2><a href={this.props.info.url}>{this.props.info.title}</a></h2>
+          </div>
+          <div className="source">{this.props.info.extractor}</div>
+          <div className="duration">{duration}</div>
+          <div className="options">
+            <Select placeholder="Video" options={videoFormats} />
+            <Select placeholder="Audio" options={videoFormats} />
+          </div>
+          <div className="buttons">
+            <a className="text-btn" onClick={this.props.reset}>Cancel</a>
+            <a href="" className="text-btn" onClick={this.handleStart}>Download</a>
           </div>
         </div>
       </div>
@@ -103,6 +105,7 @@ class Info extends React.Component {
   }
 }
 Info.propTypes = {
+  store: PropTypes.object.isRequired,
   url: PropTypes.string.isRequired,
   info: PropTypes.object.isRequired,
   reset: PropTypes.func.isRequired,

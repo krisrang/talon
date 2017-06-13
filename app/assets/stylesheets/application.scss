@@ -1,4 +1,4 @@
-@import "https://fonts.googleapis.com/css?family=Roboto";
+@import "https://fonts.googleapis.com/css?family=Roboto:400,500,700";
 @import "font-awesome";
 @import "bootstrap-include";
 
@@ -6,7 +6,7 @@ $green: #58C06D;
 
 body {
   font-family: 'Roboto', sans-serif;
-  background: #58636b;
+  background: #3D4B5D;
   color: #eee;
 }
 
@@ -34,15 +34,18 @@ pre { font-family: 'Roboto', sans-serif; padding: 0; }
   }
 
   &[disabled] {
-    opacity: 0.5;
+    opacity: 0.3;
     background: transparent;
   }
 }
 
 a {
-  color: $green;
+  // color: $green;
 
-  &:hover, &:active, &:focus { color: darken($green, 10%); text-decoration: none; }
+  &:hover, &:active, &:focus {
+    // color: darken($green, 10%);
+    text-decoration: none;
+  }
 }
 
 @keyframes autofill {

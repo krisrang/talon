@@ -1,0 +1,26 @@
+.downloadlist {
+  background: rgba(0,0,0,0.55);
+  border-radius: $radius;
+  margin-top: 20px;
+  
+  @extend .z-depth-1;
+
+  .media {
+    .thumbnail {
+      margin: 15px 0;
+      border-radius: $radius;
+
+      .image {
+        width: 300px; // 4:3
+        height: 225px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+      }
+    }
+
+    .media-body {
+      padding: 15px 0;
+    }
+  }
+}
