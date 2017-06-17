@@ -24,5 +24,8 @@
     },
     "plugins": [
         "react"
-    ]
+    ],
+    "globals": {
+      "ActionCable": true
+    }
 }

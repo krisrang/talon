@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import Select from 'react-select'
+import { ProgressBar } from 'react-bootstrap'
 import Utils from './utils'
 import 'react-select/dist/react-select.css'
 
@@ -12,6 +12,12 @@ class Info extends React.Component {
     this.state = {
       starting: false,
       started: false,
+      progress: {
+        percent: 0
+      },
+      progressLabel: "",
+      uploading: false,
+      finished_url: ""
     }
 
     this.handleStart = this.handleStart.bind(this)
@@ -19,11 +25,27 @@ class Info extends React.Component {
 
   handleStart(e) {
     e && e.preventDefault()
-    return
 
     this.setState({starting: true})
 
     let data = {url: this.props.url, start: true}
+
+    ActionCable.createConsumer().subscriptions.create({channel: "DownloadChannel", key: this.props.info.key}, {
+      received: (data) => {
+        if (data.progress) {
+          let update = {progress: data.progress}
+          if (data.progress_label) update.progressLabel = data.progress_label
+          this.setState(update)
+        } else if (data.url) {
+          this.setState({finished_url: data.url, started: false})
+        } else if (data.error) {
+          this.setState({progress: {}, started: false, finished_url: ""})
+          this.error(data.error)
+        } else {
+          console.log(data)
+        }
+      }
+    })
 
     Utils.requestPost(this.props.downloadsEndpoint, data)
     .done((json) => {
@@ -32,9 +54,7 @@ class Info extends React.Component {
         return
       }
 
-      this.props.store.add(json)
       this.setState({starting: false, started: true})
-      setTimeout(() => {this.props.reset()}, 1000)
     })
     .fail((err) => {
       this.error(err.responseJSON ? err.responseJSON.error : err.responseText)
@@ -92,13 +112,32 @@ class Info extends React.Component {
           <div className="source">{this.props.info.extractor}</div>
           <div className="duration">{duration}</div>
           <div className="options">
-            <Select placeholder="Video" options={videoFormats} />
-            <Select placeholder="Audio" options={videoFormats} />
+            Options
           </div>
-          <div className="buttons">
-            <a className="text-btn" onClick={this.props.reset}>Cancel</a>
-            <a href="" className="text-btn" onClick={this.handleStart}>Download</a>
+          {this.state.started && (
+            <div className="status">
+              <ProgressBar now={this.state.progress.percent} />
+              <div className="progresslabel">{this.state.progressLabel} {this.state.progress.percent}%</div>
+            </div>
+          )}
+          <div className="url">
+            {this.state.finished_url.length > 0 && (
+              <div className="well">
+                <a href={this.state.finished_url}>{this.state.finished_url}</a>
+              </div>
+            )}
           </div>
+          {!this.state.started && this.state.finished_url.length === 0 && (
+            <div className="buttons">
+              <a className="text-btn" onClick={this.props.reset}>Cancel</a>
+              <a className="text-btn" disabled={this.state.starting} onClick={this.handleStart}>{this.state.starting ? "Starting..." : "Download"}</a>
+            </div>
+          )}
+          {this.state.finished_url.length > 0 && (
+            <div className="buttons">
+              <a className="text-btn" onClick={this.props.reset}>Close</a>
+            </div>
+          )}
         </div>
       </div>
     )

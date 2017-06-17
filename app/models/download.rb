@@ -1,11 +1,12 @@
 require 'digest/sha1'
+require 'fileutils'
 require_dependency 'youtube_dl'
 
 class Download < ApplicationRecord
   has_attached_file :cached_thumbnail
   validates_attachment_content_type :cached_thumbnail, content_type: /\Aimage\/.*\z/
 
-  attr_accessor :formats
+  attr_accessor :formats, :last_progress
 
   before_save :set_key
   before_save :cache_thumbnail
@@ -22,6 +23,7 @@ class Download < ApplicationRecord
     end
     
     self.new.tap do |download|
+      download.key = key
       download.url = info["webpage_url"]
       download.thumbnail = info["thumbnail"]
       download.duration = info["duration"]
@@ -41,6 +43,53 @@ class Download < ApplicationRecord
     end
   end
 
+  def queue
+    DownloadJob.perform_async(self.id)
+  end
+
+  def progress(progress, partname)
+    if !last_progress
+      broadcast(progress_label: "Downloading video", progress: progress)
+    elsif last_progress[:percent] > progress[:percent]
+      broadcast(progress_label: "Downloading audio", progress: progress)
+    else
+      broadcast(progress: progress)
+    end
+
+    self.last_progress = progress
+  end
+
+  def error(err)
+    broadcast(error: err)
+  end
+
+  def upload(path)
+    broadcast(progress_label: "Uploading to storage...", progress: last_progress)
+
+    ext = File.extname(path)
+    disposition = "attachment; filename=\"#{self.title}#{ext}\""
+    file = fog_directory.files.new({
+      key: self.key,
+      body: File.open(path),
+      metadata: {
+        "Content-Disposition" => disposition
+      },
+      public: true
+    })
+    file.save
+    FileUtils.rm(path)
+
+    broadcast(url: public_url)
+  end
+
+  def public_url
+    @public_url ||= fog_directory.files.get(self.key).public_url
+  end
+
+  def broadcast(data={})
+    ActionCable.server.broadcast("downloads_#{self.key}", data)
+  end
+
   private
 
   def set_key
@@ -51,5 +100,22 @@ class Download < ApplicationRecord
     if !cached_thumbnail.present? && thumbnail
       self.cached_thumbnail = thumbnail
     end
+  end
+
+  def fog_connection
+    @fog_connection ||= Fog::Storage.new(fog_credentials)
+  end
+
+  def fog_directory
+    dir = "talon-ny"
+    @fog_directory ||= fog_connection.directories.get(dir) || fog_connection.directories.create(dir)
+  end
+
+  def fog_credentials
+    if true#Rails.env.production?
+      return {provider: "Google", google_storage_access_key_id: ENV['GOOGLE_KEY'], google_storage_secret_access_key: ENV['GOOGLE_SECRET']}
+    end
+    
+    {provider: "Local", local_root: "#{Rails.root}/public", endpoint: "http://localhost:3000"}
   end
 end

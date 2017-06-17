@@ -1,5 +1,6 @@
 require 'open3'
 require 'fileutils'
+require 'tmpdir'
 
 class YoutubeDL
   PATH = Rails.root.join("bin", "youtube-dl").freeze
@@ -28,15 +29,12 @@ class YoutubeDL
     JSON.parse(run("-j", url))
   end
 
-  def self.download(url, target, timeout=60*60)
-    target = File.expand_path(target)
+  def self.download(url, filename, timeout=60*60)
+    target = File.join(Dir.tmpdir(), filename)
     error = nil
     cancel = false
     progress = {}
     partname = ""
-
-    pp info(url)
-    return
 
     command = [PATH.to_s, "--no-continue", "--no-part", "--no-mtime", "-o", target, url]
     Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
@@ -72,7 +70,7 @@ class YoutubeDL
     end
 
     raise RunError, error.strip if error
-    true
+    target
   end
 
   def self.run(*args)

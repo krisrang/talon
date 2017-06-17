@@ -33,6 +33,7 @@ class DownloadsController < ApplicationController
 
     if download.save
       remember_download(download)
+      download.queue
       render json: download
     else
       render json: {error: download.errors}

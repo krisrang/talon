@@ -39,6 +39,15 @@ pre { font-family: 'Roboto', sans-serif; padding: 0; }
   }
 }
 
+.progress {
+  background-color: #222222;
+  height: 25px;
+}
+
+.progress-bar {
+  transition: width 0.2s ease;
+}
+
 a {
   // color: $green;
 

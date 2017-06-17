@@ -40,6 +40,8 @@
     opacity: .5;
     transition: 0s;
   }
+
+  &:disabled { opacity: 0.5; cursor: initial; }
 }
 
 .Select-control {

@@ -43,7 +43,7 @@ $bgHeight: 190px;
       }
     }
 
-    .thumbnail, .title, .duration, .source, .options, .buttons {
+    .thumbnail, .title, .duration, .source, .options, .buttons, .status, .url {
       position: absolute;
     }
 
@@ -120,6 +120,27 @@ $bgHeight: 190px;
       }
     }
 
+    .status {
+      top: 340px;
+      left: 20px;
+      right: 20px;
+
+      .progresslabel {
+        position: absolute;
+        top: 2px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+      }
+    }
+
+    .url {
+      top: 340px;
+      left: 20px;
+      right: 20px;
+    }
+
     .buttons {
       top: 450px;
       left: 20px;
@@ -132,11 +153,6 @@ $bgHeight: 190px;
 
       .btn { width: 100%; }
     }
-  }
-
-  &.started .info {
-    opacity: 0;
-    transform: scale(0.5, 0.5) translateY(300px);
   }
 }
 

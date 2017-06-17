@@ -1,6 +1,6 @@
 class DownloadChannel < ApplicationCable::Channel
   def subscribed
-    stream_from "downloads_#{params[:uuid]}"
+    stream_from "downloads_#{params[:key]}"
   end
 
   # def unsubscribed
