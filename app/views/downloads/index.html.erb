@@ -1,6 +1,7 @@
 <%= content_tag :div,
   id: "talon",
   data: {
+    env: Rails.env,
     extractorsEndpoint: extractors_downloads_path,
     downloadsEndpoint: downloads_path,
     downloads: @download_json

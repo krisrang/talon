@@ -27,6 +27,7 @@
     "precss": "^1.4.0",
     "prop-types": "^15.5.10",
     "rails-erb-loader": "^5.0.1",
+    "raven-js": "^3.16.0",
     "react": "^15.5.4",
     "react-bootstrap": "^0.31.0",
     "react-dom": "^15.5.4",

@@ -73,6 +73,8 @@ GEM
     erubi (1.6.0)
     excon (0.56.0)
     execjs (2.7.0)
+    faraday (0.12.1)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
     fog-core (1.44.3)
       builder
@@ -123,6 +125,7 @@ GEM
     minitest (5.10.2)
     multi_json (1.12.1)
     multi_xml (0.6.0)
+    multipart-post (2.0.0)
     nio4r (2.1.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
@@ -198,6 +201,8 @@ GEM
     selenium-webdriver (3.4.1)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
+    sentry-raven (2.5.2)
+      faraday (>= 0.7.6, < 1.0)
     sidekiq (5.0.2)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
@@ -263,6 +268,7 @@ DEPENDENCIES
   redis-rails (~> 5.0.0.pre)
   sass-rails
   selenium-webdriver
+  sentry-raven
   sidekiq
   spring
   spring-watcher-listen

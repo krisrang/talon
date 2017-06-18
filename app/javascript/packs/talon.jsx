@@ -1,3 +1,4 @@
+import Raven from 'raven-js'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Modal, Button } from 'react-bootstrap'
@@ -50,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const node = document.getElementById('talon')
   const data = JSON.parse(node.getAttribute('data'))
   data.store = new DownloadStore(data.downloads)
+
+  if (data.env === "production") {
+    Raven.config('https://ea53cac4219a4e56bc615fc0871777e4@sentry.io/180841').install()
+  }
 
   ReactDOM.render(<Talon {...data} />, node)
 })

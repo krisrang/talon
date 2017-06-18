@@ -2,6 +2,7 @@ class DownloadsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   rescue_from YoutubeDL::RunError do |e|
+    Raven.capture_exception(e)
     render json: {error: e.message}, status: 422
   end
 

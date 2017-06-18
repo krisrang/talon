@@ -27,6 +27,7 @@ gem 'paperclip'
 gem 'fog-google'
 gem 'fog-local'
 gem 'active_model_serializers'
+gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug', platform: :mri

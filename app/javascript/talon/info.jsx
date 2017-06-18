@@ -1,3 +1,4 @@
+import Raven from 'raven-js'
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
@@ -42,7 +43,7 @@ class Info extends React.Component {
           this.setState({progress: {}, started: false, finished_url: ""})
           this.error(data.error)
         } else {
-          console.log(data)
+          Raven.isSetup() && Raven.captureMessage('Invalid cable message', {extra: data})
         }
       }
     })
