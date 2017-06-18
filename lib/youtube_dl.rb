@@ -33,10 +33,22 @@ class YoutubeDL
     target = File.join(Dir.tmpdir(), filename)
     error = nil
     cancel = false
-    progress = {}
+    progress = {
+      percent: 0.0,
+      size: 0.0,
+      eta: 0
+    }
     partname = ""
 
-    command = [PATH.to_s, "--no-continue", "--no-part", "--no-mtime", "-o", target, url]
+    command = [PATH.to_s,
+      "--no-continue",
+      "--no-part",
+      "--no-mtime",
+      "--all-subs",
+      "--write-sub",
+      "--embed-subs",
+      "-o", target,
+      url]
     Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
       begin
         Timeout.timeout(timeout) do
@@ -55,9 +67,10 @@ class YoutubeDL
               elsif line =~ /\[download\] Destination: (.*)/
                 partname = $1
               end
-
-              yield(progress, partname) if block_given?
             end
+
+            yield(progress, partname, line.split("\n"), cancel) if block_given?
+            Process.kill("INT", wait_thr.pid) if cancel
           end
 
           error = stderr.read unless wait_thr.value.success?
@@ -69,7 +82,11 @@ class YoutubeDL
       end
     end
 
-    raise RunError, error.strip if error
+    if error
+      Dir["#{target}*"].each { |f| FileUtils.rm_f(f) }
+      raise RunError, error.strip 
+    end
+    
     target
   end
 

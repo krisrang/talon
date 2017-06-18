@@ -13,10 +13,10 @@ class Info extends React.Component {
     this.state = {
       starting: false,
       started: false,
-      progress: {
-        percent: 0
-      },
+      percent: 0,
       progressLabel: "",
+      showDebug: true,
+      log: "",
       uploading: false,
       finished_url: ""
     }
@@ -30,14 +30,29 @@ class Info extends React.Component {
     this.setState({starting: true})
 
     let data = {url: this.props.url, start: true}
+    let cr = false
+    let lines = []
 
     ActionCable.createConsumer().subscriptions.create({channel: "DownloadChannel", key: this.props.info.key}, {
       received: (data) => {
-        if (data.progress) {
-          let update = {progress: data.progress}
-          if (data.progress_label) update.progressLabel = data.progress_label
-          this.setState(update)
-        } else if (data.url) {
+        if (data.progress) this.setState({percent: data.progress.percent})
+        if (data.progress_label) this.setState({progressLabel: data.progress_label})
+        if (data.lines) {
+          data.lines.forEach((line) => {
+            if (cr === true) {
+              lines.pop()
+              cr = false
+            }
+
+            let crindex = line.indexOf("\r")
+            lines.push(line.replace('\r',''))
+            cr = crindex >= 0
+          })
+
+          this.setState({log: lines.join("\n")})
+        }
+
+        if (data.url) {
           this.setState({finished_url: data.url, started: false})
         } else if (data.error) {
           this.setState({progress: {}, started: false, finished_url: ""})
@@ -80,12 +95,20 @@ class Info extends React.Component {
     return sections.join(":")
   }
 
+  componentDidUpdate() {
+    this.scrollToBottom()
+  }
+
+  scrollToBottom() {
+    this.bottomNode && this.bottomNode.scrollIntoView()
+  }
+
   render() {
     let duration = this.durationHuman(this.props.info)
     let thumbnailStyle = {backgroundImage: "url(" + this.props.info.thumbnail_url + ")"}
     let infoClass = classNames(
       'downloadinfo',
-      {starting: this.state.starting, started: this.state.started}
+      {starting: this.state.starting, started: this.state.started, debug: this.state.showDebug}
     )
 
     let videoFormats = []
@@ -117,13 +140,22 @@ class Info extends React.Component {
           </div>
           {this.state.started && (
             <div className="status">
-              <ProgressBar now={this.state.progress.percent} />
-              <div className="progresslabel">{this.state.progressLabel} {this.state.progress.percent}%</div>
+              <ProgressBar now={this.state.percent} />
+              <div className="progresslabel">{this.state.progressLabel}</div>
+            </div>
+          )}
+          {this.state.showDebug && (
+            <div className="debug">
+              <pre>
+                {this.state.log}
+                <div ref={node => this.bottomNode = node} />
+              </pre>
             </div>
           )}
           <div className="url">
             {this.state.finished_url.length > 0 && (
               <div className="well">
+                <p>Finished! Direct link:</p>
                 <a href={this.state.finished_url}>{this.state.finished_url}</a>
               </div>
             )}

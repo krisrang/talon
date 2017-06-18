@@ -6,7 +6,7 @@ class Download < ApplicationRecord
   has_attached_file :cached_thumbnail
   validates_attachment_content_type :cached_thumbnail, content_type: /\Aimage\/.*\z/
 
-  attr_accessor :formats, :last_progress
+  attr_accessor :formats, :last_progress, :audio_part
 
   before_save :set_key
   before_save :cache_thumbnail
@@ -47,15 +47,15 @@ class Download < ApplicationRecord
     DownloadJob.perform_async(self.id)
   end
 
-  def progress(progress, partname)
+  def progress(progress, lines)
     if !last_progress
-      broadcast(progress_label: "Downloading video", progress: progress)
+      self.audio_part = false
     elsif last_progress[:percent] > progress[:percent]
-      broadcast(progress_label: "Downloading audio", progress: progress)
-    else
-      broadcast(progress: progress)
+      self.audio_part = true
     end
 
+    label = audio_part ? "Downloading audio" : "Downloading video"
+    broadcast(progress_label: "#{label} #{progress[:percent]}%", progress: progress, lines: lines)
     self.last_progress = progress
   end
 
@@ -64,12 +64,13 @@ class Download < ApplicationRecord
   end
 
   def upload(path)
-    broadcast(progress_label: "Uploading to storage...", progress: last_progress)
+    broadcast(progress_label: "Moving to storage...")
 
     ext = File.extname(path)
     disposition = "attachment; filename=\"#{self.title}#{ext}\""
+    filename = "#{self.key}#{ext}"
     file = fog_directory.files.new({
-      key: self.key,
+      key: filename,
       body: File.open(path),
       metadata: {
         "Content-Disposition" => disposition
@@ -79,11 +80,13 @@ class Download < ApplicationRecord
     file.save
     FileUtils.rm(path)
 
+    self.update_column(:filename, filename)
+
     broadcast(url: public_url)
   end
 
   def public_url
-    @public_url ||= fog_directory.files.get(self.key).public_url
+    @public_url ||= fog_directory.files.get(self.filename).public_url
   end
 
   def broadcast(data={})
@@ -112,7 +115,7 @@ class Download < ApplicationRecord
   end
 
   def fog_credentials
-    if true#Rails.env.production?
+    if Rails.env.production?
       return {provider: "Google", google_storage_access_key_id: ENV['GOOGLE_KEY'], google_storage_secret_access_key: ENV['GOOGLE_SECRET']}
     end
     

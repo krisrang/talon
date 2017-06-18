@@ -5,8 +5,8 @@ class DownloadJob
 
   def perform(id)
     download = Download.find(id)
-    target = YoutubeDL.download(download.url, download.key) do |progress, partname|
-      download.progress(progress, partname)
+    target = YoutubeDL.download(download.url, download.key) do |progress, partname, lines, cancel|
+      download.progress(progress, lines)
     end
 
     target = Dir["#{target}.*"].first

@@ -7,12 +7,12 @@ class DownloadsController < ApplicationController
   end
 
   def index
-    keys = download_keys
+    # keys = download_keys
 
-    @downloads = Download.where(key: keys)
-    cookies.permanent.signed[:downloads] = JSON.dump(@downloads.map(&:key))
+    # @downloads = Download.where(key: keys)
+    # cookies.permanent.signed[:downloads] = JSON.dump(@downloads.map(&:key))
 
-    @download_json = ActiveModelSerializers::SerializableResource.new(@downloads)
+    # @download_json = ActiveModelSerializers::SerializableResource.new(@downloads)
   end
 
   def extractors
@@ -26,6 +26,10 @@ class DownloadsController < ApplicationController
 
   def create
     url = params[:url]
+    if !valid_url?(url)
+      return render json: {error: "Invalid URL, please check your spelling"}, status: 422
+    end
+    
     download = Download.from_info(url)
 
     if !params[:start]
@@ -33,7 +37,7 @@ class DownloadsController < ApplicationController
     end
 
     if download.save
-      remember_download(download)
+      # remember_download(download)
       download.queue
       render json: download
     else
@@ -59,5 +63,12 @@ class DownloadsController < ApplicationController
   def remember_download(download)
     keys = download_keys
     cookies.permanent.signed[:downloads] = JSON.dump(keys.push(download.key))
+  end
+
+  def valid_url?(url)
+    uri = URI.parse(url)
+    uri.is_a?(URI::HTTP) && !uri.host.nil?
+  rescue URI::InvalidURIError
+    false
   end
 end

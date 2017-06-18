@@ -43,7 +43,7 @@ $bgHeight: 190px;
       }
     }
 
-    .thumbnail, .title, .duration, .source, .options, .buttons, .status, .url {
+    .thumbnail, .title, .duration, .source, .options, .buttons, .status, .url, .debug {
       position: absolute;
     }
 
@@ -136,13 +136,20 @@ $bgHeight: 190px;
     }
 
     .url {
-      top: 340px;
+      top: 320px;
+      left: 20px;
+      right: 20px;
+    }
+
+    .debug {
+      top: 390px;
+      bottom: 40px;
       left: 20px;
       right: 20px;
     }
 
     .buttons {
-      top: 450px;
+      bottom: 0;
       left: 20px;
       right: 20px;
       text-align: right;
@@ -153,6 +160,10 @@ $bgHeight: 190px;
 
       .btn { width: 100%; }
     }
+  }
+
+  &.debug .info {
+    height: $height + 100;
   }
 }
 
