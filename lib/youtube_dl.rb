@@ -3,8 +3,7 @@ require 'fileutils'
 require 'tmpdir'
 
 class YoutubeDL
-  PATH = `which youtube-dl`.freeze
-  URL = "https://yt-dl.org/downloads/latest/youtube-dl".freeze
+  PATH = `which youtube-dl`.strip.freeze
 
   def self.ensure_exists!
     if !File.exist?(PATH)
