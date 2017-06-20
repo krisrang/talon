@@ -47,7 +47,7 @@ class YoutubeDL
       "--all-subs",
       "--write-sub",
       "--embed-subs",
-      "-o", target,
+      "-o", "#{target}.%(ext)s",
       url]
     Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
       begin
