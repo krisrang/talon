@@ -3,7 +3,7 @@ require 'fileutils'
 require 'tmpdir'
 
 class YoutubeDL
-  PATH = Rails.root.join("bin", "youtube-dl").freeze
+  PATH = `which youtube-dl`.freeze
   URL = "https://yt-dl.org/downloads/latest/youtube-dl".freeze
 
   def self.ensure_exists!
@@ -40,7 +40,8 @@ class YoutubeDL
     }
     partname = ""
 
-    command = [PATH.to_s,
+    command = [PATH,
+      "--prefer-ffmpeg",
       "--no-continue",
       "--no-part",
       "--no-mtime",
@@ -94,7 +95,7 @@ class YoutubeDL
     output = ""
     error = nil
 
-    command = [PATH.to_s, *args]
+    command = [PATH, *args]
     Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
       output = stdout.read unless stdout.nil?
 
