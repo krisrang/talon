@@ -9,7 +9,7 @@ class DownloadJob
       download.progress(progress, lines)
     end
 
-    target = Dir["#{target}.*"].first
+    target = Dir["#{target}*"].first
     download.upload(target)
   rescue YoutubeDL::RunError => e
     download.error(e)
