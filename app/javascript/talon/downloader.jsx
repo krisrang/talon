@@ -83,7 +83,7 @@ class Downloader extends React.Component {
     let shadow = this.state.scrollTop !== 0
     let className = classNames("downloader", {"shadow": shadow, "loading": this.state.loading})
     let elevation = shadow ? 2 : 0
-    let hasUrl = this.state.url.length > 0
+    let showCancel = !this.state.loading && this.state.url.length > 0
 
     return (
       <Paper className={className} elevation={elevation}>
@@ -96,7 +96,7 @@ class Downloader extends React.Component {
           <input id="url" type="text" placeholder="Video Address" disabled={this.state.loading}
             value={this.state.url} onChange={this.handleUrlChange}
             ref={(c) => { this.formInput = c }} />
-          {hasUrl && (
+          {showCancel && (
             <IconButton onClick={this.reset}>
               <CancelIcon />
             </IconButton>
