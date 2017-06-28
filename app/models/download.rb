@@ -20,10 +20,10 @@ class Download < ApplicationRecord
 
   def self.from_info(url)
     key = Digest::SHA2.hexdigest(url)
-    # info = Rails.cache.fetch(key, expires_in: 10.minute) do
-    #   YoutubeDL.info(url)
-    # end
-    info = YoutubeDL.info(url)
+    info = Rails.cache.fetch(key, expires_in: 10.minute) do
+      YoutubeDL.info(url)
+    end
+    # info = YoutubeDL.info(url)
     
     self.new.tap do |download|
       download.key = key
@@ -85,7 +85,7 @@ class Download < ApplicationRecord
 
     ext = File.extname(path)
     disposition = "attachment; filename=\"#{self.title}#{ext}\""
-    filename = "#{self.key}#{ext}"
+    filename = "#{self.key[0..7]}#{ext}"
     file = fog_directory.files.new({
       key: filename,
       body: File.open(path),

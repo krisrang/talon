@@ -5,10 +5,12 @@ import classNames from 'classnames'
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { LinearProgress } from 'material-ui/Progress'
+import Input from 'material-ui/Input/Input'
 import IconButton from 'material-ui/IconButton'
 import Button from 'material-ui/Button'
 import Collapse from 'material-ui/transitions/Collapse'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
+import CopyIcon from 'material-ui-icons/ContentCopy'
 import CancelIcon from 'material-ui-icons/Cancel'
 import RetryIcon from 'material-ui-icons/Loop'
 import DownloadIcon from 'material-ui-icons/FileDownload'
@@ -32,6 +34,7 @@ class Item extends React.Component {
     this.handleCancel = this.handleCancel.bind(this)
     this.handleDownload = this.handleDownload.bind(this)
     this.handleRetry = this.handleRetry.bind(this)
+    this.handleCopy = this.handleCopy.bind(this)
   }
 
   componentWillMount() {
@@ -45,11 +48,15 @@ class Item extends React.Component {
 
     // this.error("Test error")
     // this.setState({cancelled: true})
-    // this.setState({finished_url: "link", finished: true})
+    // this.setState({finished_url: "https://storage.googleapis.com/talon-eu/9483dea7.mkv", finished: true})
   }
 
   componentWillUnmount(){ 
     // this.unsubscribe()
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom()
   }
 
   subscribe() {
@@ -71,7 +78,7 @@ class Item extends React.Component {
         // Download stop states
         if (data.url) {
           this.unsubscribe()
-          this.setState({finished_url: data.url, finished: true, started: false})
+          this.setState({finished_url: data.url, expanded: false, finished: true, started: false})
         } else if (data.cancel) {
           this.unsubscribe()
           this.setState({cancelled: true, expanded: false, started: false})
@@ -140,8 +147,14 @@ class Item extends React.Component {
     this.startDownload()
   }
 
-  componentDidUpdate() {
-    this.scrollToBottom()
+  handleCopy() {
+    if (this.finishInput) {
+      this.finishInput.focus()
+      this.finishInput.select()
+      if (document.queryCommandEnabled("copy") && document.execCommand('copy')) {
+        this.finishInput.blur()
+      }
+    }
   }
 
   scrollToBottom() {
@@ -165,7 +178,7 @@ class Item extends React.Component {
             </Typography>
           </CardContent>
           <div className="controls">
-            {(this.state.started || this.state.error || this.state.finished) && (
+            {(this.state.started || this.state.error) && (
               <IconButton className={expandClass} onClick={this.handleExpandClick}>
                 <ExpandMoreIcon />
               </IconButton>
@@ -185,11 +198,15 @@ class Item extends React.Component {
                 </div>
               )}
               {this.state.finished && (
-                <div className="buttongrid">
+                <div className="buttongrid result">
                   <Button color="primary" onClick={this.handleDownload}>
                     <DownloadIcon />
                     {"Download"}
                   </Button>
+                  <Button dense onClick={this.handleCopy}>
+                    <CopyIcon />
+                  </Button>
+                  <Input defaultValue={this.state.finished_url} className="finished-url" inputRef={node => this.finishInput = node} />
                 </div>
               )}
               {this.state.cancelled && (

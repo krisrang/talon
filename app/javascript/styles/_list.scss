@@ -32,6 +32,7 @@
 
     .thumbnail {
       background-size: cover;
+      background-position-y: 50%;
       width: 100%;
       height: 100%;
     }
@@ -58,6 +59,15 @@
           flex: 1;
           margin: 0 8px;
           padding: 0;
+        }
+
+        button { padding: 0 8px; }
+
+        &.result {
+          padding: 0;
+
+          .finished-url { flex: 1; }
+          button { flex: 0 1 auto; margin: 0; }
         }
       }
     }
@@ -111,6 +121,14 @@
       }
 
       .logs, .expand { display: none; }
+
+      .widecontrols {
+        .buttongrid.result {
+          flex-wrap: wrap;
+
+          .finished-url { flex-basis: 100%; }
+        }
+      }
     }
   }
 }
