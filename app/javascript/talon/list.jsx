@@ -1,63 +1,54 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classNames from 'classnames'
+// import classNames from 'classnames'
 import { CSSTransitionGroup } from 'react-transition-group'
-
-function Item(props) {
-  let thumbnailStyle = {backgroundImage: "url(" + props.thumbnail_url + ")"}
-
-  return (
-    <div className="col-sm-12">
-      <div className="media">
-        <div className="media-left">
-          <a href={props.url}>
-            <div className="thumbnail">
-              <div className="image" style={thumbnailStyle}></div>
-            </div>
-          </a>
-        </div>
-        <div className="media-body">
-          <h4 className="media-heading">{props.title}</h4>
-          {props.description}
-        </div>
-      </div>
-    </div>
-  )
-}
-Item.propTypes = {
-  url: PropTypes.string.isRequired,
-  thumbnail_url: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-}
+import Item from './item'
 
 class List extends React.Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      downloads: this.props.store.all()
+    }
+
+    this.storeUpdate = this.storeUpdate.bind(this)
+  }
+
+  componentWillMount() { 
+    this.props.store.subscribe("update", this.storeUpdate)
+  }
+
+  componentWillUnmount(){ 
+    this.props.store.unsubscribe("update", this.storeUpdate)
+  }
+
+  storeUpdate() {
+    this.setState({downloads: this.props.store.all()})
   }
 
   render() {
-    let items = this.props.store.all().map((download) => <Item key={download.key} {...download} />)
+    let items = this.state.downloads.map((item) => <Item key={item.id} item={item} {...this.props} />)
 
     return (
-      <div>
-        <div className="downloadlist row">
-          <CSSTransitionGroup
-            transitionName="downloaditem"
-            transitionEnterTimeout={500}
-            transitionLeaveTimeout={300}>
-            {items}
-          </CSSTransitionGroup>
-        </div>
+      <div className="downloadlist" ref={(c) => { this.list = c }}>
+        <CSSTransitionGroup
+          transitionName="downloaditem"
+          transitionEnterTimeout={1000}
+          transitionLeaveTimeout={1000}>
+          {items}
+        </CSSTransitionGroup>
       </div>
     )
   }
 }
 List.propTypes = {
+  // classes: PropTypes.object.isRequired,
+  consumer: PropTypes.object.isRequired,
   store: PropTypes.object.isRequired,
-  // showError: PropTypes.func.isRequired,
-  // downloadsEndpoint: PropTypes.string.isRequired,
-  // extractorsEndpoint: PropTypes.string.isRequired,
+  showError: PropTypes.func.isRequired,
+  downloadsEndpoint: PropTypes.string.isRequired,
+  extractorsEndpoint: PropTypes.string.isRequired,
 }
 
 export default List

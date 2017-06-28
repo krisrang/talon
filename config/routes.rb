@@ -7,6 +7,9 @@ Rails.application.routes.draw do
     collection do
       get :extractors
     end
+    member do
+      post :start
+    end
   end
 
   get '/admin' => 'admin#index'

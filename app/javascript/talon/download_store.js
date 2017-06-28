@@ -1,28 +1,22 @@
-let EventEmitter = require('events').EventEmitter
+const EventEmitter = require('events')
 
 class DownloadStore {
   constructor(initial) {
     this.downloads = initial || [];
     this.emitter = new EventEmitter()
-
-    // ActionCable.createConsumer().subscriptions.create("DownloadChannel", {
-    //   received: function(data) {
-    //     console.log(data);
-    //   }
-    // })
   }
 
-  subscribe(callback) {
-    this.emitter.addListener('update', callback)
+  subscribe(event, callback) {
+    this.emitter.on(event, callback)
   }
 
-  unsubscribe(callback) {
-    this.emitter.removeListener('update', callback)
+  unsubscribe(event, callback) {
+    this.emitter.removeListener(event, callback)
   }
 
   add(download) {
     this.downloads.push(download)
-    this.emitter.emit('update')
+    this.emitter.emit('update', download)    
   }
 
   delete(download) {
@@ -30,7 +24,7 @@ class DownloadStore {
 
     if (index > -1) {
       this.downloads.splice(index, 1);
-      this.emitter.emit('update')
+      this.emitter.emit('update', download)
     }
   }
 

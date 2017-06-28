@@ -1,26 +1,86 @@
 .downloadlist {
-  background: rgba(0,0,0,0.55);
-  border-radius: $radius;
-  margin-top: 20px;
-  
-  @extend .z-depth-1;
+  margin: 100px 8px 50px;
 
-  .media {
+  > span {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap-reverse;
+  }
+
+  .card {
+    display: flex;
+    max-width: 1200px;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    
+    .content {
+      flex: 1 0 auto;
+    }
+
+    .cover {
+      width: 333px;
+      height: 250px;
+      background: #000;
+    }
+
     .thumbnail {
-      margin: 15px 0;
-      border-radius: $radius;
+      background-size: cover;
+      width: 100%;
+      height: 100%;
+    }
 
-      .image {
-        width: 300px; // 4:3
-        height: 225px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: 50% 50%;
+    .controls {
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      padding-bottom: 8px;
+    }
+
+    .progress {
+      flex: 1;
+      padding: 8px;
+
+      .progressbar { width: 100%; }
+    }
+
+    .expand {
+      transform: rotate(0deg);
+      transition: transform 0.5s;
+    }
+
+    .expandOpen {
+      transform: rotate(180deg);
+    }
+
+    .logs {
+      flex-basis: 100%;
+
+      pre {
+        white-space: pre-wrap;
+        font-size: 0.85em;
+        height: 270px;
+        overflow-y: auto;
+        background: #eee;
+        border-radius: 2px;
+        padding: 3px;
       }
     }
 
-    .media-body {
-      padding: 15px 0;
+    &.downloaditem-enter {
+      transform: translateY(-200px) scale(0.1, 0.1);
+      z-index: 2000;
+    }
+
+    &.downloaditem-enter.downloaditem-enter-active {
+      transform: translateY(0) scale(1, 1);
+      transition: transform 0.3s;
     }
   }
 }

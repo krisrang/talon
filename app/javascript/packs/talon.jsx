@@ -1,10 +1,37 @@
 import Raven from 'raven-js'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Modal, Button } from 'react-bootstrap'
+import PropTypes from 'prop-types'
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles'
+import createPalette from 'material-ui/styles/palette'
+import { deepOrange, lightBlue, grey } from 'material-ui/styles/colors'
+import Button from 'material-ui/Button';
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog'
+import Slide from 'material-ui/transitions/Slide'
 import DownloadStore from '../talon/download_store'
 import Downloader from '../talon/downloader'
+import List from '../talon/list'
 import '../styles'
+
+const theme = createMuiTheme({
+  palette: createPalette({
+    // type: 'dark',
+    primary: lightBlue,
+    accent: deepOrange
+  }),
+  overrides: {
+    MuiDialogContent: {
+      root: {
+        "-webkit-overflow-scrolling": "touch"
+      }
+    }
+  }
+})
 
 class Talon extends React.Component {
   constructor(props) {
@@ -15,8 +42,11 @@ class Talon extends React.Component {
       error: ""
     }
 
+    this.consumer = ActionCable.createConsumer()
+
     this.error = this.error.bind(this)
     this.closeError = this.closeError.bind(this)
+    this.addVideo = this.addVideo.bind(this)
   }
 
   error(message) {
@@ -27,24 +57,36 @@ class Talon extends React.Component {
     this.setState({ errorOpen: false, error: "" })
   }
 
+  addVideo(info) {
+    this.props.store.add(info)
+  }
+
   render() {
     return (
-      <div>
-        <Downloader showError={this.error} {...this.props} />
-        <Modal show={this.state.errorOpen} onHide={this.closeError}>
-          <Modal.Header closeButton>
-            <Modal.Title>Error</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {this.state.error}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.closeError}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+      <MuiThemeProvider theme={theme}>
+        <div>
+          <Downloader showError={this.error} addVideo={this.addVideo} {...this.props} />
+          <List showError={this.error} consumer={this.consumer} {...this.props} />
+          <Dialog open={this.state.errorOpen} transition={Slide} onRequestClose={this.closeError}>
+            <DialogTitle>{"Error"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {this.state.error}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.closeError} color="accent">Close</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </MuiThemeProvider>
     )
   }
+}
+Talon.propTypes = {
+  store: PropTypes.object.isRequired,
+  downloadsEndpoint: PropTypes.string.isRequired,
+  extractorsEndpoint: PropTypes.string.isRequired,
 }
 
 document.addEventListener('DOMContentLoaded', () => {

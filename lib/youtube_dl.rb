@@ -37,7 +37,9 @@ class YoutubeDL
       size: 0.0,
       eta: 0
     }
-    partname = ""
+    partname = nil
+    audio = false
+    merging = false
 
     command = [PATH,
       "--prefer-ffmpeg",
@@ -57,19 +59,27 @@ class YoutubeDL
               # [download] Destination: Starfunkel - A Mixtape From Japan-E4s-hxY80pA.f133.mp4
               # [download]  10.1% of 9.89MiB at 43.57MiB/s ETA 00:00
               # [download]   0.1% of 9.89MiB at Unknown speed ETA Unknown ETA
-              if line =~ /\[download\] (.*)% of (.*)MiB at (.*)MiB\/s ETA (.*):(.*)/
+              if line =~ /\[download\] (.*)% of (.*)(MiB|GiB) at (.*)MiB\/s ETA (.*):(.*)/
                 progress[:percent] = $1.to_f
                 progress[:size] = $2.to_f
                 progress[:eta] = $5.to_i + $4.to_i * 60
-              elsif line =~ /\[download\] (.*)% of (.*)MiB at Unknown/
+              elsif line =~ /\[download\] (.*)% of (.*)(MiB|GiB) at Unknown/
                 progress[:percent] = $1.to_f
                 progress[:size] = $2.to_f
               elsif line =~ /\[download\] Destination: (.*)/
+                if !partname.nil? && partname != $1
+                  audio = true
+                end
+                
                 partname = $1
               end
             end
 
-            yield(progress, partname, line.split("\n"), cancel) if block_given?
+            if line.include?("[ffmpeg] Merging formats")
+              merging = true
+            end
+            
+            yield(progress, audio, merging, line.split("\n"), cancel) if block_given?
             Process.kill("INT", wait_thr.pid) if cancel
           end
 

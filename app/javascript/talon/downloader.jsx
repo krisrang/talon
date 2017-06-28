@@ -1,10 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { CSSTransitionGroup } from 'react-transition-group'
-import Extractors from './extractors'
-import Info from './info'
-// import List from './list'
+// import { CSSTransitionGroup } from 'react-transition-group'
+import Paper from 'material-ui/Paper'
+import { CircularProgress } from 'material-ui/Progress'
+import IconButton from 'material-ui/IconButton'
+import MenuIcon from 'material-ui-icons/Menu'
+import Videocam from 'material-ui-icons/Videocam'
 import Utils from './utils'
 
 class Downloader extends React.Component {
@@ -13,13 +15,13 @@ class Downloader extends React.Component {
 
     this.state = {
       loading: false,
-      loaded: false,
       url: "",
-      info: {}
+      scrollTop: 0
     }
 
     this.handleUrlChange = this.handleUrlChange.bind(this)
     this.handleLoad = this.handleLoad.bind(this)
+    this.handleScroll = this.handleScroll.bind(this)
     this.reset = this.reset.bind(this)
   }
 
@@ -29,6 +31,16 @@ class Downloader extends React.Component {
     // this.setState({url: "https://www.youtube.com/watch?v=E4s-hxY80pA"}, this.handleLoad)
     // this.setState({url: "https://www.youtube.com/watch?v=LCDgJiPBxfI"}, this.handleLoad)
     // this.setState({url: "https://www.youtube.com/watch?v=e5iGwE0XJ1s"}, this.handleLoad)
+
+    window.addEventListener('scroll', this.handleScroll)
+  }
+
+  componentWillUnmount(){ 
+    window.removeEventListener('scroll', this.handleScroll)
+  }
+
+  handleScroll() {
+    this.setState({scrollTop: window.pageYOffset})
   }
 
   handleUrlChange(e) {
@@ -47,7 +59,8 @@ class Downloader extends React.Component {
         return
       }
 
-      this.setState({info: json, loading: false})
+      this.props.addVideo(json)
+      this.reset()
     })
     .fail((err) => {
       this.error(err.responseJSON ? err.responseJSON.error : err.responseText)
@@ -60,66 +73,36 @@ class Downloader extends React.Component {
   }
 
   reset() {
-    this.setState({url: "", loading: false, info: {}})
+    this.setState({url: "", loading: false})
   }
 
   render() {
-    let info = null
-
-    let downloaderClass = classNames(
-      'downloader', {loading: this.state.loading}
-    )
-
-    if (this.state.info.url) {
-      info = <Info key={this.state.info.url} info={this.state.info} url={this.state.url} reset={this.reset} {...this.props} />
-    }
+    let shadow = this.state.scrollTop !== 0
+    let className = classNames("downloader", {"shadow": shadow, "loading": this.state.loading})
+    let elevation = shadow ? 2 : 0
 
     return (
-      <div>
-        <div className="background-container">
-          <div className="background-initial"></div>
-          <div className="noise"></div>
-        </div>
-        <div className={downloaderClass}>
-          <div className="container">
-            <form className="form url-form row" onSubmit={this.handleLoad}>
-              <div className="col-sm-12">
-                <div className="input-floater-left">
-                  { this.state.loading ?
-                    (<i className="loading-spinner fa fa-circle-o-notch fa-spin fa-fw"></i>) :
-                    (<i className="fa fa-youtube-play"></i>)
-                  }
-                </div>
-                <input id="url" autoFocus="true" autoComplete="off" type="text" className="form-control"
-                  onChange={this.handleUrlChange} value={this.state.url}
-                  placeholder="Video Address" disabled={this.state.loading}
-                />
-                <div className="input-floater-right">
-                  <Extractors extractorsEndpoint={this.props.extractorsEndpoint} />
-                </div>
-              </div>              
-            </form>
-          </div>
-        </div>
-        <CSSTransitionGroup
-          transitionName="downloadinfo"
-          transitionEnterTimeout={900}
-          transitionLeaveTimeout={900}>
-          {info}
-        </CSSTransitionGroup>
-        
-        {/*<div className="list-container container">
-          <List {...this.props} />
-        </div>*/}
-      </div>
+      <Paper className={className} elevation={elevation}>
+        {/*<IconButton color="contrast" aria-label="Menu">
+          <MenuIcon />
+        </IconButton>*/}
+        <form onSubmit={this.handleLoad}>
+          <Videocam className="input-decorator" />
+          <CircularProgress className="progress" size={40} />
+          <input id="url" type="text" placeholder="Video Address" disabled={this.state.loading}
+            value={this.state.url} onChange={this.handleUrlChange} />
+        </form>
+        {/*<Extractors extractorsEndpoint={this.props.extractorsEndpoint} />*/}
+      </Paper>
     )
   }
 }
 Downloader.propTypes = {
-  // store: PropTypes.object.isRequired,
+  addVideo: PropTypes.func.isRequired,
   showError: PropTypes.func.isRequired,
   downloadsEndpoint: PropTypes.string.isRequired,
   extractorsEndpoint: PropTypes.string.isRequired,
+  // classes: PropTypes.object.isRequired,
 }
 
 export default Downloader

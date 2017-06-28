@@ -5,13 +5,15 @@ class DownloadJob
 
   def perform(id)
     download = Download.find(id)
-    target = YoutubeDL.download(download.url, download.key) do |progress, partname, lines, cancel|
-      download.progress(progress, lines)
+    download.started!
+    
+    target = YoutubeDL.download(download.url, download.key) do |progress, audio, merging, lines, cancel|
+      download.progress(progress, lines, audio, merging)
     end
 
     target = Dir["#{target}.*"].first
     download.upload(target)
-  rescue YoutubeDL::RunError => e
+  rescue StandardError => e
     download.error(e)
   end 
 end

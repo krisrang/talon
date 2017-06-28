@@ -1,46 +1,87 @@
 .downloader {
-  background: #1F232C;
-  margin-top: 300px;
-  transition: margin-top 0.2s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1100;
+  padding: 8px 0;
+  background-color: #FFFFFF;
+  // background-color: #3f4758;
+  transition: box-shadow 0.3s;
+  border-bottom: 1px solid #DDD;
 
-  @extend .z-depth-1;
+  &.shadow { border-bottom: 1px solid #FFFFFF; }
 
-  .url-form {
-    padding: 20px 0;
+  button {
+    position: absolute;
+    top: 8px;
+    left: 0;
+  }
+
+  form {
     position: relative;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    width: 800px;
 
-    .input-floater-left, .input-floater-right {
-      color: #CCC;
-      font-size: 30px;
+    .input-decorator {
       position: absolute;
-      top: 0;
-
-      .fa { vertical-align: top; }
-      .loading-spinner { font-size: 0.9em; }
+      top: 12px;
+      left: 8px;
+      color: #888;
     }
 
-    .input-floater-left {
-      left: 20px;
-    }
-
-    .input-floater-right {
-      right: 20px;
-      text-align: center;
-      width: 40px;
-
-      a { display: block; margin-top: -2px; }
-      .fa { cursor: pointer; }
-    }
+    .progress { display: none; padding: 5px 0; }
 
     input {
-      padding-left: 50px;
-      padding-right: 50px;
+      border: 1px solid transparent;
+      background: #F6F6F6;
+      flex: 1;
+      padding: 15px 0 15px 40px;
+      font-size: 1em;
+      border-radius: 2px;
+      transition: width 0.3s, border 0.3s, box-shadow 0.3s;
+
+      &:-webkit-autofill {
+        animation-name: downloader-autofill;
+        animation-fill-mode: both;
+
+        &:focus {
+          animation-name: downloader-autofill-focus;
+        }
+      }
+
+      &:focus {
+        outline: none;
+        // border: 1px solid #DDD;
+        background: #FFF;
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+        // width: 600px;
+      }
     }
   }
 
-  &.loading .input-floater-right { display: none; }
+  &.loading {
+    form {
+      .input-decorator { display: none; }
+      .progress { display: inline-block; }
+      input { display: none; }
+    }
+  }
+}
 
-  // &.loaded {
-  //   margin-top: 0;
-  // }
+@keyframes downloader-autofill {
+  to {
+    color: #000;
+    background: #F6F6F6;
+  }
+}
+
+@keyframes downloader-autofill-focus {
+  to {
+    color: #000;
+    background: #FFF;
+  }
 }

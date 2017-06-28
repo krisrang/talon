@@ -6,7 +6,9 @@ class Download < ApplicationRecord
   has_attached_file :cached_thumbnail
   validates_attachment_content_type :cached_thumbnail, content_type: /\Aimage\/.*\z/
 
-  attr_accessor :formats, :last_progress, :audio_part
+  attr_accessor :formats, :lines, :cr, :last_progress, :last_broadcast
+
+  enum status: { initial: 0, started: 1, errored: 2 }
 
   before_save :set_key
   before_save :cache_thumbnail
@@ -47,20 +49,28 @@ class Download < ApplicationRecord
     DownloadJob.perform_async(self.id)
   end
 
-  def progress(progress, lines)
-    if !last_progress
-      self.audio_part = false
-    elsif last_progress[:percent] > progress[:percent]
-      self.audio_part = true
+  def progress(progress, newlines, audio, merging)
+    self.lines ||= []
+
+    newlines.each do |line|
+      if (cr === true)
+        self.lines.pop
+        self.cr = false
+      end
+
+      crindex = line.index("\r")
+      self.lines.push(line.gsub("\r", ""))
+      self.cr = !crindex.nil?
     end
 
-    label = audio_part ? "Downloading audio" : "Downloading video"
+    label = merging ? "Merging audio and video" : audio ? "Downloading audio" : "Downloading video"
     broadcast(progress_label: "#{label} #{progress[:percent]}%", progress: progress, lines: lines)
-    self.last_progress = progress
   end
 
   def error(err)
     broadcast(error: err)
+    self.errored!
+    Raven.capture_exception(err)
   end
 
   def upload(path)
@@ -90,7 +100,13 @@ class Download < ApplicationRecord
   end
 
   def broadcast(data={})
+    now = Time.now.to_f
+    if data[:progress] && data[:progress][:percent] < 100 && now - (self.last_broadcast || 0) < 0.3
+      return
+    end
+
     ActionCable.server.broadcast("downloads_#{self.key}", data)
+    self.last_broadcast = now
   end
 
   private

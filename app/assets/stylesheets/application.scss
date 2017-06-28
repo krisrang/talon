@@ -1,62 +1,21 @@
-@import "https://fonts.googleapis.com/css?family=Roboto:400,500,700";
+@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";
 @import "font-awesome";
-@import "bootstrap-include";
 
 $green: #58C06D;
 
 body {
   font-family: 'Roboto', sans-serif;
-  background: #3D4B5D;
-  color: #eee;
+  font-size: 16px;
+  background: #EEE;
+  // color: #eee;
+  margin: 0;
 }
 
-pre { padding: 0; white-space: pre-wrap; height: 100%; width: 100%; }
-
-.well {
-  padding: 5px 10px;
-  color: #222222;
-
-  p { margin: 0; }
-}
-
-.modal { color: rgba(0,0,0,0.8); }
-
-.form-control {
-  background: none;
-  border: none;
-  color: #CCC;
-  box-shadow: none;
-  border-bottom: 2px solid #BBB;
-  border-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-  transition: border 0.2s;
-
-  &:focus {
-    color: #FFF;
-    border: none;
-    border-bottom: 2px solid #fff;
-    outline: none;
-    box-shadow: none;
-  }
-
-  &[disabled] {
-    opacity: 0.3;
-    background: transparent;
-  }
-}
-
-.progress {
-  background-color: #222222;
-  height: 25px;
-}
-
-.progress-bar {
-  transition: width 0.2s ease;
-}
+// pre { padding: 0; white-space: pre-wrap; height: 100%; width: 100%; }
 
 a {
   // color: $green;
+  cursor: pointer;
 
   &:hover, &:active, &:focus {
     // color: darken($green, 10%);
@@ -66,7 +25,7 @@ a {
 
 @keyframes autofill {
   to {
-    color: #FFF;
+    color: #000;
     background: transparent;
   }
 }
@@ -74,4 +33,40 @@ a {
 input:-webkit-autofill {
   animation-name: autofill;
   animation-fill-mode: both;
+}
+
+.center {
+  text-align: center;
+}
+
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  // background-color: #3D4B5D;
+  background-color: #FBFBFB;
+
+  .noise {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: image-url('noise.png');
+  }
+
+  .background {
+    background-image: image-url('logo@2x.png');
+    background-position: center center;
+    background-position-x: 50%;
+    background-position-y: 80%;
+    background-repeat: no-repeat;
+    background-size: initial;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+  }
 }

@@ -1,10 +1,8 @@
-import Raven from 'raven-js'
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { ProgressBar } from 'react-bootstrap'
+import { LinearProgress } from 'material-ui/Progress'
 import Utils from './utils'
-import 'react-select/dist/react-select.css'
 
 class Info extends React.Component {
   constructor(props) {
@@ -57,8 +55,6 @@ class Info extends React.Component {
         } else if (data.error) {
           this.setState({progress: {}, started: false, finished_url: ""})
           this.error(data.error)
-        } else {
-          Raven.isSetup() && Raven.captureMessage('Invalid cable message', {extra: data})
         }
       }
     })
@@ -140,7 +136,7 @@ class Info extends React.Component {
           </div>
           {this.state.started && (
             <div className="status">
-              <ProgressBar now={this.state.percent} />
+              <LinearProgress mode="determinate" value={this.state.percent} />
               <div className="progresslabel">{this.state.progressLabel}</div>
             </div>
           )}

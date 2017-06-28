@@ -16,8 +16,6 @@ $bgHeight: 190px;
     width: 1000px;
     height: $height;
     border-radius: 5px;
-    
-    @extend .z-depth-3;
 
     .background-container {
       z-index: 0;
