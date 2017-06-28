@@ -13,27 +13,36 @@
 
   &.shadow { border-bottom: 1px solid #FFFFFF; }
 
-  button {
-    position: absolute;
-    top: 8px;
-    left: 0;
-  }
-
   form {
     position: relative;
     margin: 0 auto;
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 800px;
 
     .input-decorator {
       position: absolute;
-      top: 12px;
+      top: 50%;
       left: 8px;
+      margin-top: -12px;
       color: #888;
+      z-index: 3;
     }
 
     .progress { display: none; padding: 5px 0; }
+
+    .progressbar {
+      display: none;
+      position: absolute;
+      height: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+      z-index: 1;
+    }
 
     input {
       border: 1px solid transparent;
@@ -43,6 +52,9 @@
       font-size: 1em;
       border-radius: 2px;
       transition: width 0.3s, border 0.3s, box-shadow 0.3s;
+      z-index: 2;
+
+      &:disabled { opacity: 0.5; }
 
       &:-webkit-autofill {
         animation-name: downloader-autofill;
@@ -61,13 +73,27 @@
         // width: 600px;
       }
     }
+
+    button {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      margin-top: -24px;
+      z-index: 3;
+    }
+
+    .submitbtn {
+      visibility: hidden;
+      position: absolute;
+    }
   }
 
   &.loading {
     form {
-      .input-decorator { display: none; }
+      // .input-decorator { display: none; }
       .progress { display: inline-block; }
-      input { display: none; }
+      .progressbar { display: block; }
+      // input { display: none; }
     }
   }
 }
@@ -83,5 +109,14 @@
   to {
     color: #000;
     background: #FFF;
+  }
+}
+
+@media (max-width: 810px) {
+  .downloader {
+    form {
+      margin: 0 10px;
+      width: auto;
+    }
   }
 }

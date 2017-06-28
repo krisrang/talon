@@ -3,6 +3,8 @@ class DownloadChannel < ApplicationCable::Channel
     stream_from "downloads_#{params[:key]}"
   end
 
-  # def unsubscribed
-  # end
+  def cancel
+    download = Download.where(key: params[:key]).first
+    download.cancel!
+  end
 end

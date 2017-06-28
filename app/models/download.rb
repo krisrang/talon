@@ -8,7 +8,7 @@ class Download < ApplicationRecord
 
   attr_accessor :formats, :lines, :cr, :last_progress, :last_broadcast
 
-  enum status: { initial: 0, started: 1, errored: 2 }
+  enum status: { initial: 0, started: 1, cancelled: 2, errored: 3 }
 
   before_save :set_key
   before_save :cache_thumbnail
@@ -20,9 +20,10 @@ class Download < ApplicationRecord
 
   def self.from_info(url)
     key = Digest::SHA2.hexdigest(url)
-    info = Rails.cache.fetch(key, expires_in: 10.minute) do
-      YoutubeDL.info(url)
-    end
+    # info = Rails.cache.fetch(key, expires_in: 10.minute) do
+    #   YoutubeDL.info(url)
+    # end
+    info = YoutubeDL.info(url)
     
     self.new.tap do |download|
       download.key = key
@@ -68,8 +69,14 @@ class Download < ApplicationRecord
   end
 
   def error(err)
-    broadcast(error: err)
+    if err.kind_of? YoutubeDL::UserCancel
+      self.cancelled!
+      broadcast(cancel: true)
+      return
+    end
+    
     self.errored!
+    broadcast(error: err)    
     Raven.capture_exception(err)
   end
 
@@ -107,6 +114,10 @@ class Download < ApplicationRecord
 
     ActionCable.server.broadcast("downloads_#{self.key}", data)
     self.last_broadcast = now
+  end
+
+  def cancel!
+    MessageBus.publish("/cancel", {id: self.id, cancel: true})
   end
 
   private

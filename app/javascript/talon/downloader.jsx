@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 // import { CSSTransitionGroup } from 'react-transition-group'
 import Paper from 'material-ui/Paper'
-import { CircularProgress } from 'material-ui/Progress'
+import { LinearProgress } from 'material-ui/Progress'
 import IconButton from 'material-ui/IconButton'
-import MenuIcon from 'material-ui-icons/Menu'
+import CancelIcon from 'material-ui-icons/Cancel'
 import Videocam from 'material-ui-icons/Videocam'
 import Utils from './utils'
 
@@ -32,6 +32,8 @@ class Downloader extends React.Component {
     // this.setState({url: "https://www.youtube.com/watch?v=LCDgJiPBxfI"}, this.handleLoad)
     // this.setState({url: "https://www.youtube.com/watch?v=e5iGwE0XJ1s"}, this.handleLoad)
 
+    // this.setState({loading: true})
+
     window.addEventListener('scroll', this.handleScroll)
   }
 
@@ -50,6 +52,7 @@ class Downloader extends React.Component {
   handleLoad(e) {
     e && e.preventDefault()
 
+    this.formInput && this.formInput.blur()
     this.setState({loading: true})
 
     Utils.requestPost(this.props.downloadsEndpoint, {url: this.state.url})
@@ -80,17 +83,25 @@ class Downloader extends React.Component {
     let shadow = this.state.scrollTop !== 0
     let className = classNames("downloader", {"shadow": shadow, "loading": this.state.loading})
     let elevation = shadow ? 2 : 0
+    let hasUrl = this.state.url.length > 0
 
     return (
       <Paper className={className} elevation={elevation}>
         {/*<IconButton color="contrast" aria-label="Menu">
           <MenuIcon />
         </IconButton>*/}
-        <form onSubmit={this.handleLoad}>
+        <form action="nowhere" onSubmit={this.handleLoad}>
           <Videocam className="input-decorator" />
-          <CircularProgress className="progress" size={40} />
+          <LinearProgress className="progressbar" />
           <input id="url" type="text" placeholder="Video Address" disabled={this.state.loading}
-            value={this.state.url} onChange={this.handleUrlChange} />
+            value={this.state.url} onChange={this.handleUrlChange}
+            ref={(c) => { this.formInput = c }} />
+          {hasUrl && (
+            <IconButton onClick={this.reset}>
+              <CancelIcon />
+            </IconButton>
+          )}
+          <input type="submit" className="submitbtn" />
         </form>
         {/*<Extractors extractorsEndpoint={this.props.extractorsEndpoint} />*/}
       </Paper>

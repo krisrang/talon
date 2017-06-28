@@ -31,7 +31,7 @@ class YoutubeDL
   def self.download(url, filename, timeout=60*60)
     target = File.join(Dir.tmpdir(), filename)
     error = nil
-    cancel = false
+    cancel = {shouldcancel: false}
     progress = {
       percent: 0.0,
       size: 0.0,
@@ -58,6 +58,7 @@ class YoutubeDL
             if line.include?("[download]")
               # [download] Destination: Starfunkel - A Mixtape From Japan-E4s-hxY80pA.f133.mp4
               # [download]  10.1% of 9.89MiB at 43.57MiB/s ETA 00:00
+              # [download]  10.1% of 9.89GiB at 43.57MiB/s ETA 00:00
               # [download]   0.1% of 9.89MiB at Unknown speed ETA Unknown ETA
               if line =~ /\[download\] (.*)% of (.*)(MiB|GiB) at (.*)MiB\/s ETA (.*):(.*)/
                 progress[:percent] = $1.to_f
@@ -80,24 +81,33 @@ class YoutubeDL
             end
             
             yield(progress, audio, merging, line.split("\n"), cancel) if block_given?
-            Process.kill("INT", wait_thr.pid) if cancel
+
+            if cancel[:shouldcancel] == true
+              Process.kill("INT", wait_thr.pid)
+              cleanup(target)
+              raise UserCancel
+            end
           end
 
           error = stderr.read unless wait_thr.value.success?
         end
       rescue Timeout::Error
         Process.kill("INT", wait_thr.pid)
-        Dir["#{target}*"].each { |f| FileUtils.rm_f(f) }
+        cleanup(target)
         raise DownloadTimeout
       end
     end
 
     if error
-      Dir["#{target}*"].each { |f| FileUtils.rm_f(f) }
+      cleanup(target)
       raise RunError, error.strip 
     end
     
     target
+  end
+
+  def self.cleanup(target)
+    Dir["#{target}*"].each { |f| FileUtils.rm_f(f) }
   end
 
   def self.run(*args)
@@ -117,4 +127,5 @@ class YoutubeDL
 
   class DownloadTimeout < StandardError; end
   class RunError < StandardError; end
+  class UserCancel < StandardError; end
 end

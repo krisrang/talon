@@ -6,8 +6,12 @@ import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { LinearProgress } from 'material-ui/Progress'
 import IconButton from 'material-ui/IconButton'
+import Button from 'material-ui/Button'
 import Collapse from 'material-ui/transitions/Collapse'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
+import CancelIcon from 'material-ui-icons/Cancel'
+import RetryIcon from 'material-ui-icons/Loop'
+import DownloadIcon from 'material-ui-icons/FileDownload'
 import Utils from './utils'
 
 class Item extends React.Component {
@@ -17,10 +21,17 @@ class Item extends React.Component {
     this.state = {
       ...props.item,
       expanded: false,
-      error: false
+      starting: false,
+      started: false,
+      finished: false,
+      error: false,
+      cancelled: false
     }
 
     this.handleExpandClick = this.handleExpandClick.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
+    this.handleDownload = this.handleDownload.bind(this)
+    this.handleRetry = this.handleRetry.bind(this)
   }
 
   componentWillMount() {
@@ -28,11 +39,17 @@ class Item extends React.Component {
   }
 
   componentDidMount() {
-    this.startDownload()
+    if (this.state.status === "initial") {
+      this.startDownload()
+    }
+
+    // this.error("Test error")
+    // this.setState({cancelled: true})
+    // this.setState({finished_url: "link", finished: true})
   }
 
   componentWillUnmount(){ 
-    this.unsubscribe()
+    // this.unsubscribe()
   }
 
   subscribe() {
@@ -51,9 +68,13 @@ class Item extends React.Component {
         if (data.progress_label) this.setState({progressLabel: data.progress_label})
         if (data.lines) this.setState({log: data.lines.join("\n")})
 
+        // Download stop states
         if (data.url) {
           this.unsubscribe()
-          this.setState({finished_url: data.url, started: false})
+          this.setState({finished_url: data.url, finished: true, started: false})
+        } else if (data.cancel) {
+          this.unsubscribe()
+          this.setState({cancelled: true, expanded: false, started: false})
         } else if (data.error) {
           this.unsubscribe()
           this.setState({percent: 0, started: false, finished_url: ""})
@@ -68,22 +89,20 @@ class Item extends React.Component {
   }
 
   startDownload() {
-    if (this.state.status === "initial") {
-      this.setState({starting: true, progressLabel: "Waiting for download to start..."})
+    this.setState({starting: true, started: true, cancelled: false, error: false, progressLabel: "Waiting for download to start..."})
 
-      let url = this.props.downloadsEndpoint + "/" + this.state.key + "/start"
+    let url = this.props.downloadsEndpoint + "/" + this.state.key + "/start"
 
-      Utils.requestPost(url)
-      .done((json) => {
-        if (json.error) {
-          this.error(json.error)
-          return
-        }
-      })
-      .fail((err) => {
-        this.error(err.responseJSON ? err.responseJSON.error : err.responseText)
-      })
-    }
+    Utils.requestPost(url)
+    .done((json) => {
+      if (json.error) {
+        this.error(json.error)
+        return
+      }
+    })
+    .fail((err) => {
+      this.error(err.responseJSON ? err.responseJSON.error : err.responseText)
+    })
   }
 
   error(message) {
@@ -106,6 +125,19 @@ class Item extends React.Component {
 
   handleExpandClick() {
     this.setState({ expanded: !this.state.expanded })
+  }
+
+  handleCancel() {
+    this.subscription && this.subscription.send({action: "cancel"})
+  }
+
+  handleDownload() {
+    window.open(this.state.finished_url, '_newtab')
+  }
+
+  handleRetry() {
+    this.subscribe()
+    this.startDownload()
   }
 
   componentDidUpdate() {
@@ -133,14 +165,59 @@ class Item extends React.Component {
             </Typography>
           </CardContent>
           <div className="controls">
-            <IconButton className={expandClass} onClick={this.handleExpandClick}>
-              <ExpandMoreIcon />
-            </IconButton>
-            <div className="progress">
-              <Typography type="body1" color="secondary" align="center">
-                {this.state.progressLabel}
-              </Typography>
-              <LinearProgress mode={progressMode} value={this.state.percent} className="progressbar" />
+            {(this.state.started || this.state.error || this.state.finished) && (
+              <IconButton className={expandClass} onClick={this.handleExpandClick}>
+                <ExpandMoreIcon />
+              </IconButton>
+            )}
+            {this.state.started && (
+              <IconButton onClick={this.handleCancel}>
+                <CancelIcon />
+              </IconButton>
+            )}
+            <div className="widecontrols">
+              {this.state.started && (
+                <div>
+                  <Typography type="body1" color="secondary" align="center">
+                    {this.state.progressLabel}
+                  </Typography>
+                  <LinearProgress mode={progressMode} value={this.state.percent} className="progressbar" />
+                </div>
+              )}
+              {this.state.finished && (
+                <div className="buttongrid">
+                  <Button color="primary" onClick={this.handleDownload}>
+                    <DownloadIcon />
+                    {"Download"}
+                  </Button>
+                </div>
+              )}
+              {this.state.cancelled && (
+                <div className="buttongrid">
+                  <Typography type="body2" color="secondary" align="right">
+                    {"Download cancelled!"}
+                  </Typography>
+                  <div className="buttoncontainer">
+                    <Button color="accent" onClick={this.handleRetry}>
+                      <RetryIcon />
+                      {"Retry"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+              {this.state.error && (
+                <div className="buttongrid">
+                  <Typography type="body2" color="secondary" align="right">
+                    {"Error downloading!"}
+                  </Typography>
+                  <div className="buttoncontainer">
+                    <Button color="accent" onClick={this.handleRetry}>
+                      <RetryIcon />
+                      {"Retry"}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
