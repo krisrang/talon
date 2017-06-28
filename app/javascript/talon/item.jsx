@@ -163,7 +163,7 @@ Item.propTypes = {
   consumer: PropTypes.object.isRequired,
   store: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
-  showError: PropTypes.func.isRequired,
+  // showError: PropTypes.func.isRequired,
   downloadsEndpoint: PropTypes.string.isRequired,
 }
 

@@ -126,7 +126,7 @@ class Download < ApplicationRecord
   end
 
   def fog_directory
-    dir = "talon-ny"
+    dir = ENV['DOWNLOADS_BUCKET']
     @fog_directory ||= fog_connection.directories.get(dir) || fog_connection.directories.create(dir)
   end
 
