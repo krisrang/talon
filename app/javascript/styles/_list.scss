@@ -87,7 +87,7 @@
 
     .widecontrols {
       flex: 1;
-      padding: 0 8px;
+      padding-right: 8px;
 
       .progressbar { width: 100%; }
 
@@ -107,8 +107,33 @@
         &.result {
           padding: 0;
 
-          .finished-url { flex: 1; }
           button { flex: 0 1 auto; margin: 0; }
+          .finished-url { flex: 1; }
+
+          .copybtn {
+            position: relative;
+
+            .copyfeedback {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              margin-left: -12px;
+              margin-top: -12px;
+              color: #03a9f4;
+              transform: scale(0, 0);
+              opacity: 0;
+              transition: transform 0.3s, opacity 0.3s;
+            }
+
+            &.active .copyfeedback {
+              opacity: 1;
+              transform: scale(1, 1);
+            }
+
+            &.active .copyicon {
+              display: none;
+            }
+          }
         }
       }
     }

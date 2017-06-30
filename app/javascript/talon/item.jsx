@@ -16,6 +16,7 @@ import RetryIcon from 'material-ui-icons/Loop'
 import DownloadIcon from 'material-ui-icons/FileDownload'
 import PlayIcon from 'material-ui-icons/PlayArrow'
 import OpenIcon from 'material-ui-icons/OpenInNew'
+import CheckIcon from 'material-ui-icons/CheckCircle'
 import Utils from './utils'
 
 class Item extends React.Component {
@@ -25,7 +26,8 @@ class Item extends React.Component {
     this.state = {
       ...props.item,
       expanded: false,
-      starting: false
+      starting: false,
+      copyActive: false
     }
 
     this.startDownload = this.startDownload.bind(this)
@@ -146,10 +148,34 @@ class Item extends React.Component {
 
   handleCopy() {
     if (this.finishInput) {
-      this.finishInput.focus()
-      this.finishInput.select()
-      if (document.queryCommandEnabled("copy") && document.execCommand('copy')) {
+      let ios = navigator.userAgent.match(/ipad|ipod|iphone/i)
+
+      if (ios) {
+        let el = this.finishInput
+        let editable = el.contentEditable
+        let readOnly = el.readOnly
+        el.contentEditable = true
+        el.readOnly = false
+        let range = document.createRange()
+        range.selectNodeContents(el)
+        let sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+        el.setSelectionRange(0, 999999)
+        el.contentEditable = editable
+        el.readOnly = readOnly
+      } else {
+        this.finishInput.focus()
+        this.finishInput.select()
+      }
+
+      if (!ios && document.queryCommandEnabled("copy") && document.execCommand('copy')) {
         this.finishInput.blur()
+
+        this.setState({copyActive: true})
+        setTimeout(() => {
+          this.setState({copyActive: false})
+        }, 2000)
       }
     }
   }
@@ -160,7 +186,8 @@ class Item extends React.Component {
 
   render() {
     let expandClass = classNames("expand", {"expandOpen": this.state.expanded})
-    let progressMode = this.state.starting ? "indeterminate" : "determinate"
+    let copybtnClass = classNames("copybtn", {"active": this.state.copyActive})
+    let progressMode = this.state.starting ? "indeterminate" : "determinate"    
 
     return (
       <Card className="card">
@@ -210,8 +237,9 @@ class Item extends React.Component {
                     <DownloadIcon />
                     {"Download"}
                   </Button>
-                  <Button dense onClick={this.handleCopy}>
-                    <CopyIcon />
+                  <Button dense onClick={this.handleCopy} className={copybtnClass}>
+                    <CopyIcon className="copyicon" />
+                    <CheckIcon className="copyfeedback" />
                   </Button>
                   <Input defaultValue={this.state.public_url} className="finished-url" inputRef={node => this.finishInput = node} />
                 </div>
