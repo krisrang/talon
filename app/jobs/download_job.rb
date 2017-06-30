@@ -19,6 +19,8 @@ class DownloadJob
 
     target = Dir["#{target}.*"].first
     download.upload(target)
+  rescue ActiveRecord::RecordNotFound
+    # do nothin
   rescue StandardError => e
     download.error(e)
   ensure

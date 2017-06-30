@@ -11,7 +11,7 @@
     display: flex;
     max-width: 1200px;
     flex-basis: 100%;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     margin-bottom: 20px;
 
     .details {
@@ -180,7 +180,6 @@
 
     .card {
       flex-direction: column-reverse;
-      flex-wrap: wrap;
 
       .cover {
         width: 100%;
