@@ -11,17 +11,58 @@
     display: flex;
     max-width: 1200px;
     flex-basis: 100%;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     margin-bottom: 20px;
 
     .details {
       display: flex;
       flex-direction: column;
       flex: 1;
+      min-width: 0;
     }
     
     .content {
       flex: 1 0 auto;
+
+      .title {
+        h1 {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: inline-block;
+          max-width: 90%;
+        }
+
+        a {
+          position: relative;
+          color: #888;
+          margin: 5px 3px 0;
+          vertical-align: top;
+          display: inline-block;
+        }
+      }
+
+      .description {
+        margin: 10px 0 0;
+        white-space: pre-wrap;
+        max-height: 95px;
+        overflow: hidden;
+        position: relative;
+
+        &:after {
+          content  : "";
+          position : absolute;
+          z-index  : 1;
+          bottom   : 0;
+          left     : 0;
+          pointer-events   : none;
+          background-image : linear-gradient(to bottom, 
+                            rgba(255,255,255, 0), 
+                            rgba(255,255,255, 1) 90%);
+          width    : 100%;
+          height   : 3em;
+        }
+      }
     }
 
     .cover {
@@ -46,7 +87,7 @@
 
     .widecontrols {
       flex: 1;
-      padding: 8px;
+      padding: 0 8px;
 
       .progressbar { width: 100%; }
 
@@ -114,6 +155,7 @@
 
     .card {
       flex-direction: column-reverse;
+      flex-wrap: wrap;
 
       .cover {
         width: 100%;

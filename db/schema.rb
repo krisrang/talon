@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170627194721) do
+ActiveRecord::Schema.define(version: 20170630142020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,9 @@ ActiveRecord::Schema.define(version: 20170627194721) do
     t.datetime "updated_at", null: false
     t.string "filename"
     t.integer "status", default: 0
+    t.float "percent"
+    t.string "progress_label"
+    t.text "lines"
     t.index ["key"], name: "index_downloads_on_key"
     t.index ["url"], name: "index_downloads_on_url"
   end

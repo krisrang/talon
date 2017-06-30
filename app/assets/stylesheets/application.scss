@@ -14,10 +14,10 @@ body {
 // pre { padding: 0; white-space: pre-wrap; height: 100%; width: 100%; }
 
 a {
-  // color: $green;
+  color: inherit;
   cursor: pointer;
 
-  &:hover, &:active, &:focus {
+  &, &:hover, &:active, &:focus {
     // color: darken($green, 10%);
     text-decoration: none;
   }

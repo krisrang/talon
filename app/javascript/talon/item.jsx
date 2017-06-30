@@ -14,6 +14,8 @@ import CopyIcon from 'material-ui-icons/ContentCopy'
 import CancelIcon from 'material-ui-icons/Cancel'
 import RetryIcon from 'material-ui-icons/Loop'
 import DownloadIcon from 'material-ui-icons/FileDownload'
+import PlayIcon from 'material-ui-icons/PlayArrow'
+import OpenIcon from 'material-ui-icons/OpenInNew'
 import Utils from './utils'
 
 class Item extends React.Component {
@@ -23,13 +25,10 @@ class Item extends React.Component {
     this.state = {
       ...props.item,
       expanded: false,
-      starting: false,
-      started: false,
-      finished: false,
-      error: false,
-      cancelled: false
+      starting: false
     }
 
+    this.startDownload = this.startDownload.bind(this)
     this.handleExpandClick = this.handleExpandClick.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
     this.handleDownload = this.handleDownload.bind(this)
@@ -42,10 +41,6 @@ class Item extends React.Component {
   }
 
   componentDidMount() {
-    if (this.state.status === "initial") {
-      this.startDownload()
-    }
-
     // this.error("Test error")
     // this.setState({cancelled: true})
     // this.setState({finished_url: "https://storage.googleapis.com/talon-eu/9483dea7.mkv", finished: true})
@@ -60,8 +55,7 @@ class Item extends React.Component {
   }
 
   subscribe() {
-    // let cr = false
-    // let lines = []
+    if (this.subscription) return
 
     this.subscription = this.props.consumer.subscriptions.create({channel: "DownloadChannel", key: this.state.key}, {
       received: (data) => {
@@ -72,19 +66,19 @@ class Item extends React.Component {
         this.setState({starting: false})
 
         if (data.progress) this.setState({percent: data.progress.percent})
-        if (data.progress_label) this.setState({progressLabel: data.progress_label})
+        if (data.progress_label) this.setState({progress_label: data.progress_label})
         if (data.lines) this.setState({log: data.lines.join("\n")})
 
         // Download stop states
-        if (data.url) {
+        if (data.public_url) {
           this.unsubscribe()
-          this.setState({finished_url: data.url, expanded: false, finished: true, started: false})
+          this.setState({public_url: data.public_url, expanded: false, finished: true, started: false})
         } else if (data.cancel) {
           this.unsubscribe()
           this.setState({cancelled: true, expanded: false, started: false})
         } else if (data.error) {
           this.unsubscribe()
-          this.setState({percent: 0, started: false, finished_url: ""})
+          this.setState({percent: 0, started: false, public_url: ""})
           this.error(data.error)
         }
       }
@@ -92,11 +86,14 @@ class Item extends React.Component {
   }
 
   unsubscribe() {
-    this.subscription && this.props.consumer.subscriptions.remove(this.subscription)
+    if (this.subscription) {
+      this.props.consumer.subscriptions.remove(this.subscription)
+      this.subscription = null
+    }
   }
 
   startDownload() {
-    this.setState({starting: true, started: true, cancelled: false, error: false, progressLabel: "Waiting for download to start..."})
+    this.setState({initial: false, starting: true, started: true, cancelled: false, error: false, progress_label: "Waiting for download to start..."})
 
     let url = this.props.downloadsEndpoint + "/" + this.state.key + "/start"
 
@@ -113,7 +110,7 @@ class Item extends React.Component {
   }
 
   error(message) {
-    this.setState({error: true, expanded: true, log: message})
+    this.setState({errored: true, expanded: true, log: message})
   }
 
   durationHuman(item) {
@@ -169,16 +166,18 @@ class Item extends React.Component {
       <Card className="card">
         <div className="details">
           <CardContent className="content">
-            <Typography type="headline">{this.state.title}</Typography>
+            <div className="title">
+              <Typography type="headline">
+                {this.state.title}
+              </Typography>
+              <a href={this.state.url}><OpenIcon /></a>
+            </div>
             <Typography type="subheading" color="secondary">
-              {this.state.extractor}
-            </Typography>
-            <Typography type="body2" color="secondary">
-              {this.durationHuman(this.state)}
+              {this.state.extractor} - {this.durationHuman(this.state)}
             </Typography>
           </CardContent>
           <div className="controls">
-            {(this.state.started || this.state.error) && (
+            {(this.state.started || this.state.errored) && (
               <IconButton className={expandClass} onClick={this.handleExpandClick}>
                 <ExpandMoreIcon />
               </IconButton>
@@ -189,10 +188,18 @@ class Item extends React.Component {
               </IconButton>
             )}
             <div className="widecontrols">
+              {this.state.initial && (
+                <div className="buttongrid">
+                  <Button color="primary" onClick={this.startDownload}>
+                    <PlayIcon />
+                    {"Start"}
+                  </Button>
+                </div>
+              )}
               {this.state.started && (
                 <div>
                   <Typography type="body1" color="secondary" align="center">
-                    {this.state.progressLabel}
+                    {this.state.progress_label}
                   </Typography>
                   <LinearProgress mode={progressMode} value={this.state.percent} className="progressbar" />
                 </div>
@@ -206,7 +213,7 @@ class Item extends React.Component {
                   <Button dense onClick={this.handleCopy}>
                     <CopyIcon />
                   </Button>
-                  <Input defaultValue={this.state.finished_url} className="finished-url" inputRef={node => this.finishInput = node} />
+                  <Input defaultValue={this.state.public_url} className="finished-url" inputRef={node => this.finishInput = node} />
                 </div>
               )}
               {this.state.cancelled && (
@@ -222,7 +229,7 @@ class Item extends React.Component {
                   </div>
                 </div>
               )}
-              {this.state.error && (
+              {this.state.errored && (
                 <div className="buttongrid">
                   <Typography type="body2" color="secondary" align="right">
                     {"Error downloading!"}

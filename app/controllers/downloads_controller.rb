@@ -9,7 +9,9 @@ class DownloadsController < ApplicationController
   def index
     keys = download_keys
 
-    @downloads = Download.where(key: keys)
+    # Download.all.destroy_all
+
+    @downloads = Download.order("created_at").all#where(key: keys)
     # cookies.permanent.signed[:downloads] = JSON.dump(@downloads.map(&:key))
 
     @download_json = ActiveModelSerializers::SerializableResource.new(@downloads)

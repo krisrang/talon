@@ -6,9 +6,9 @@ class Download < ApplicationRecord
   has_attached_file :cached_thumbnail
   validates_attachment_content_type :cached_thumbnail, content_type: /\Aimage\/.*\z/
 
-  attr_accessor :formats, :lines, :cr, :last_progress, :last_broadcast
-
-  enum status: { initial: 0, started: 1, cancelled: 2, errored: 3 }
+  attr_accessor :formats, :cr, :last_broadcast
+  serialize :lines, Array
+  enum status: { initial: 0, started: 1, cancelled: 2, errored: 3, finished: 4 }
 
   before_save :set_key
   before_save :cache_thumbnail
@@ -19,8 +19,9 @@ class Download < ApplicationRecord
   end
 
   def self.from_info(url)
-    key = Digest::SHA2.hexdigest(url)
-    info = Rails.cache.fetch(key, expires_in: 10.minute) do
+    urlkey = Digest::SHA2.hexdigest(url)
+    key = SecureRandom.hex
+    info = Rails.cache.fetch(urlkey, expires_in: 30.minute) do
       YoutubeDL.info(url)
     end
     # info = YoutubeDL.info(url)
@@ -64,8 +65,20 @@ class Download < ApplicationRecord
       self.cr = !crindex.nil?
     end
 
+    now = Time.now.to_f
+    if progress && progress[:percent] < 100 && now - (self.last_broadcast || 0) < 0.3
+      return
+    end
+
     label = merging ? "Merging audio and video" : audio ? "Downloading audio" : "Downloading video"
+
+    self.percent = progress[:percent]
+    self.progress_label = label
+    self.lines = lines
+    self.save
+  
     broadcast(progress_label: "#{label} #{progress[:percent]}%", progress: progress, lines: lines)
+    self.last_broadcast = now
   end
 
   def error(err)
@@ -81,7 +94,7 @@ class Download < ApplicationRecord
   end
 
   def upload(path)
-    broadcast(progress_label: "Moving to storage...")
+    broadcast(progress_label: "Saving to storage...")
 
     ext = File.extname(path)
     disposition = "attachment; filename=\"#{self.title}#{ext}\""
@@ -98,22 +111,24 @@ class Download < ApplicationRecord
     FileUtils.rm(path)
 
     self.update_column(:filename, filename)
+    self.finished!
 
-    broadcast(url: public_url)
+    broadcast(public_url: public_url)
   end
 
   def public_url
-    @public_url ||= fog_directory.files.get(self.filename).public_url
+    return if !self.filename
+    bucket = ENV['DOWNLOADS_BUCKET']
+
+    if Rails.env.production?
+      return "https://storage.cloud.google.com/#{bucket}/#{self.filename}"
+    end
+    
+    "http://localhost:3000/#{bucket}/#{self.filename}"
   end
 
   def broadcast(data={})
-    now = Time.now.to_f
-    if data[:progress] && data[:progress][:percent] < 100 && now - (self.last_broadcast || 0) < 0.3
-      return
-    end
-
     ActionCable.server.broadcast("downloads_#{self.key}", data)
-    self.last_broadcast = now
   end
 
   def cancel!
