@@ -16,11 +16,11 @@ class DownloadStore {
 
   add(download) {
     this.downloads.push(download)
-    this.emitter.emit('update', download)    
+    this.emitter.emit('update', download)
   }
 
   delete(download) {
-    let index = this.downloads.indexOf(download);
+    let index = this.downloads.indexOf(download)
 
     if (index > -1) {
       this.downloads.splice(index, 1);

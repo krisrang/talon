@@ -7,18 +7,13 @@ class DownloadsController < ApplicationController
   end
 
   def index
-    keys = download_keys
-
     # Download.all.destroy_all
 
-    @downloads = Download.order("created_at").all#where(key: keys)
-    # cookies.permanent.signed[:downloads] = JSON.dump(@downloads.map(&:key))
-
+    @downloads = Download.order("created_at").all
     @download_json = ActiveModelSerializers::SerializableResource.new(@downloads)
   end
 
   def extractors
-    return render json: ["Twitter", "Viceland", "Youtube", "More to come..."]
     @extractors = Rails.cache.fetch("youtubedl-extractors") do
       # YoutubeDL.extractors.push("WWE Network").sort_by { |e| e[0].downcase }
       YoutubeDL.extractors.sort_by { |e| e[0].downcase }
@@ -36,8 +31,6 @@ class DownloadsController < ApplicationController
     download = Download.from_info(url)
 
     if download.save
-      # remember_download(download)
-      # download.queue
       render json: download
     else
       render json: {error: download.errors}
@@ -58,17 +51,6 @@ class DownloadsController < ApplicationController
   end
 
   private
-
-  def download_keys
-    return JSON.parse(cookies.permanent.signed[:downloads]) if cookies.permanent.signed[:downloads]
-    []
-  rescue JSON::ParserError
-  end
-
-  def remember_download(download)
-    keys = download_keys
-    cookies.permanent.signed[:downloads] = JSON.dump(keys.push(download.key))
-  end
 
   def valid_url?(url)
     uri = URI.parse(url)

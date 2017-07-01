@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170630142020) do
+ActiveRecord::Schema.define(version: 20170701132614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 20170630142020) do
     t.string "key", null: false
     t.string "title", null: false
     t.string "extractor", null: false
-    t.string "description", null: false
+    t.string "description"
     t.string "thumbnail", null: false
     t.integer "duration"
     t.string "cached_thumbnail_file_name"

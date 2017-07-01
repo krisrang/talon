@@ -116,6 +116,8 @@ class Item extends React.Component {
   }
 
   durationHuman(item) {
+    if (!item.duration) return null
+
     let duration = item.duration
     let sections = []
     let hours = Math.floor((duration %= 86400) / 3600)
@@ -187,7 +189,8 @@ class Item extends React.Component {
   render() {
     let expandClass = classNames("expand", {"expandOpen": this.state.expanded})
     let copybtnClass = classNames("copybtn", {"active": this.state.copyActive})
-    let progressMode = this.state.starting ? "indeterminate" : "determinate"    
+    let progressMode = this.state.starting ? "indeterminate" : "determinate"
+    let duration = this.durationHuman(this.state)
 
     return (
       <Card className="card">
@@ -200,7 +203,8 @@ class Item extends React.Component {
               <a href={this.state.url}><OpenIcon /></a>
             </div>
             <Typography type="subheading" color="secondary">
-              {this.state.extractor} - {this.durationHuman(this.state)}
+              {this.state.extractor}
+              {duration && (" - " + duration)}
             </Typography>
           </CardContent>
           <div className="controls">
