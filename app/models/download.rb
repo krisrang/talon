@@ -149,6 +149,7 @@ class Download < ApplicationRecord
   end
 
   def delete_file
+    return if !self.filename
     Rails.logger.info("Deleting download #{self.filename}")
     fog_directory.files.get(self.filename).destroy
   end
