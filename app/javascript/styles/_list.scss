@@ -36,7 +36,7 @@
         a {
           position: relative;
           color: #888;
-          margin: 5px 3px 0;
+          margin: 5px 0 0 10px;
           vertical-align: top;
           display: inline-block;
         }
@@ -170,6 +170,18 @@
     &.downloaditem-enter.downloaditem-enter-active {
       transform: translateY(0) scale(1, 1);
       transition: transform 0.3s;
+    }
+
+    &.downloaditem-leave {
+      transform: translateX(0);
+      opacity: 1;
+      z-index: 2000;
+    }
+
+    &.downloaditem-leave.downloaditem-leave-active {
+      transform: translateX(500px);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
     }
   }
 }

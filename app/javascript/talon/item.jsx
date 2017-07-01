@@ -17,6 +17,7 @@ import DownloadIcon from 'material-ui-icons/FileDownload'
 import PlayIcon from 'material-ui-icons/PlayArrow'
 import OpenIcon from 'material-ui-icons/OpenInNew'
 import CheckIcon from 'material-ui-icons/CheckCircle'
+import DeleteIcon from 'material-ui-icons/Delete'
 import Utils from './utils'
 
 class Item extends React.Component {
@@ -27,7 +28,9 @@ class Item extends React.Component {
       ...props.item,
       expanded: false,
       starting: false,
-      copyActive: false
+      copyActive: false,
+      menuOpen: false,
+      menuAnchor: undefined
     }
 
     this.startDownload = this.startDownload.bind(this)
@@ -36,6 +39,7 @@ class Item extends React.Component {
     this.handleDownload = this.handleDownload.bind(this)
     this.handleRetry = this.handleRetry.bind(this)
     this.handleCopy = this.handleCopy.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
   }
 
   componentWillMount() {
@@ -182,6 +186,11 @@ class Item extends React.Component {
     }
   }
 
+  handleDelete() {
+    this.unsubscribe()
+    this.props.deleteItem(this)
+  }
+
   scrollToBottom() {
     if (this.preNode) this.preNode.scrollTop = 2000
   }
@@ -201,6 +210,7 @@ class Item extends React.Component {
                 {this.state.title}
               </Typography>
               <a href={this.state.url}><OpenIcon /></a>
+              <a onClick={this.handleDelete}><DeleteIcon /></a>
             </div>
             <Typography type="subheading" color="secondary">
               {this.state.extractor}
@@ -221,7 +231,7 @@ class Item extends React.Component {
             <div className="widecontrols">
               {this.state.initial && (
                 <div className="buttongrid">
-                  <Button color="primary" onClick={this.startDownload}>
+                  <Button raised color="primary" onClick={this.startDownload}>
                     <PlayIcon />
                     {"Start"}
                   </Button>
@@ -296,7 +306,7 @@ Item.propTypes = {
   consumer: PropTypes.object.isRequired,
   store: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
-  // showError: PropTypes.func.isRequired,
+  deleteItem: PropTypes.func.isRequired,
   downloadsEndpoint: PropTypes.string.isRequired,
 }
 

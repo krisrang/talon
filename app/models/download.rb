@@ -12,6 +12,7 @@ class Download < ApplicationRecord
 
   before_save :set_key
   before_save :cache_thumbnail
+  before_destroy :delete_file
 
   def self.find_by_id_or_key(param)
     return Download.where(key: param).first if param.length == 32
@@ -145,6 +146,11 @@ class Download < ApplicationRecord
     if !cached_thumbnail.present? && thumbnail
       self.cached_thumbnail = thumbnail
     end
+  end
+
+  def delete_file
+    Rails.logger.info("Deleting download #{self.filename}")
+    fog_directory.files.get(self.filename).destroy
   end
 
   def fog_connection
