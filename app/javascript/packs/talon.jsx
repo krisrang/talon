@@ -7,7 +7,7 @@ import { MuiThemeProvider } from 'material-ui/styles'
 
 import configureStore from '../store/configureStore'
 import theme from '../components/themes'
-import App from '../containers/App'
+import App from '../containers/app'
 import '../styles'
 
 if (process.env.NODE_ENV === "production") {
