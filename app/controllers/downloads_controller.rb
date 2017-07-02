@@ -38,7 +38,7 @@ class DownloadsController < ApplicationController
   end
 
   def start
-    download = Download.where(key: params[:id]).first
+    download = Download.find_by_id_or_key(params[:id])
     download.queue
     render json: download
   end
@@ -46,7 +46,6 @@ class DownloadsController < ApplicationController
   def destroy
     @download = Download.find_by_id_or_key(params[:id])
     @download.destroy
-
     render json: {success: true}
   end
 

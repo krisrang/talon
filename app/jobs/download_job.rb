@@ -8,12 +8,12 @@ class DownloadJob
     cancelproc = Proc.new { |msg| shouldcancel = true if msg.data["id"] == id && msg.data["cancel"] == true }
 
     download = Download.find(id)
-    download.started!    
+    download.started!
 
     MessageBus.subscribe("/cancel", &cancelproc)
     
     target = YoutubeDL.download(download.url, download.key) do |progress, audio, merging, lines, cancel|
-      cancel[:shouldcancel] = true if shouldcancel      
+      cancel[:shouldcancel] = true if shouldcancel
       download.progress(progress, lines, audio, merging)
     end
 

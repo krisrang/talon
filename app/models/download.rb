@@ -15,7 +15,7 @@ class Download < ApplicationRecord
   before_destroy :delete_file
 
   def self.find_by_id_or_key(param)
-    return Download.where(key: param).first if param.length == 32
+    return Download.where(key: param).first if param.to_s.length == 32
     Download.where(id: param).first
   end
 
@@ -84,6 +84,8 @@ class Download < ApplicationRecord
 
   def error(err)
     if err.kind_of? YoutubeDL::UserCancel
+      self.update_column(:percent, 0)
+      self.update_column(:lines, [])
       self.cancelled!
       broadcast(cancel: true)
       return
@@ -129,7 +131,7 @@ class Download < ApplicationRecord
   end
 
   def broadcast(data={})
-    ActionCable.server.broadcast("downloads_#{self.key}", data)
+    ActionCable.server.broadcast("downloads_#{self.id}", data)
   end
 
   def cancel!

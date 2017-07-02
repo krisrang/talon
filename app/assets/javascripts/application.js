@@ -14,3 +14,4 @@
 //= require jquery_ujs
 //= require action_cable
 //= require bootstrap-sprockets
+//= require ./cable
