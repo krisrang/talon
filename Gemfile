@@ -28,6 +28,7 @@ gem 'fog-google'
 gem 'fog-local'
 gem 'active_model_serializers'
 gem 'sentry-raven'
+gem 'rufus-scheduler'
 
 group :development, :test do
   gem 'byebug', platform: :mri
