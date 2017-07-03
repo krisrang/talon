@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import Paper from 'material-ui/Paper'
 import { LinearProgress } from 'material-ui/Progress'
+import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import CancelIcon from 'material-ui-icons/Cancel'
 import Videocam from 'material-ui-icons/Videocam'
@@ -32,7 +34,7 @@ class Search extends React.PureComponent {
 
   render() {
     let { searchInput, loading, url, scrolled } = this.props
-    let className = classNames("downloader", {"shadow": scrolled, "loading": loading})
+    let className = classNames("search", {"shadow": scrolled, "loading": loading})
 
     return (
       <Paper className={className} elevation={scrolled ? 2 : 0}>
@@ -54,6 +56,11 @@ class Search extends React.PureComponent {
           )}
           <input type="submit" className="submitbtn" />
         </form>
+        <div className="loginbit">
+          <Link to="/login" className="loginbtn">
+            <Button>{"Sign in"}</Button>
+          </Link>
+        </div>
       </Paper>
     )
   }

@@ -8,6 +8,7 @@ import { MuiThemeProvider } from 'material-ui/styles'
 import configureStore from '../store/configureStore'
 import theme from '../components/themes'
 import App from '../containers/app'
+import Login from '../containers/login'
 import '../styles'
 
 if (process.env.NODE_ENV === "production") {
@@ -23,9 +24,11 @@ const Root = (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
-        <Route path="/" render={(props) => (
-          <App cable={cable} {...props} />
-        )} />
+        <div>
+          <App cable={cable} />
+
+          <Route path="/login" component={Login} />
+        </div>
       </BrowserRouter>
     </MuiThemeProvider>
   </Provider>

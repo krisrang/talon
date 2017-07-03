@@ -1,4 +1,4 @@
-.downloader {
+.search {
   position: fixed;
   top: 0;
   left: 0;
@@ -57,11 +57,11 @@
       &:disabled { opacity: 0.5; }
 
       &:-webkit-autofill {
-        animation-name: downloader-autofill;
+        animation-name: search-autofill;
         animation-fill-mode: both;
 
         &:focus {
-          animation-name: downloader-autofill-focus;
+          animation-name: search-autofill-focus;
         }
       }
 
@@ -96,16 +96,25 @@
       // input { display: none; }
     }
   }
+
+  .loginbit {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    bottom: 0;
+    display: flex;
+    align-items: center;    
+  }
 }
 
-@keyframes downloader-autofill {
+@keyframes search-autofill {
   to {
     color: #000;
     background: #F6F6F6;
   }
 }
 
-@keyframes downloader-autofill-focus {
+@keyframes search-autofill-focus {
   to {
     color: #000;
     background: #FFF;
@@ -113,7 +122,7 @@
 }
 
 @media (max-width: 810px) {
-  .downloader {
+  .search {
     form {
       margin: 0 10px;
       width: auto;

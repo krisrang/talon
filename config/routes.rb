@@ -12,6 +12,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # React router routes
+  get '/login' => 'downloads#index'
+
   get '/admin' => 'admin#index'
   post '/admin/youtubedl_update' => 'admin#youtubedl_update'
 
