@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170701132614) do
+ActiveRecord::Schema.define(version: 20170704093559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,50 @@ ActiveRecord::Schema.define(version: 20170701132614) do
     t.text "lines"
     t.index ["key"], name: "index_downloads_on_key"
     t.index ["url"], name: "index_downloads_on_url"
+  end
+
+  create_table "email_tokens", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "email", null: false
+    t.string "token", null: false
+    t.boolean "confirmed", default: false, null: false
+    t.boolean "expired", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_email_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_email_tokens_on_user_id"
+  end
+
+  create_table "user_auth_tokens", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "auth_token", null: false
+    t.string "prev_auth_token", null: false
+    t.string "user_agent"
+    t.boolean "auth_token_seen", default: false, null: false
+    t.inet "client_ip"
+    t.datetime "rotated_at"
+    t.datetime "seen_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auth_token"], name: "index_user_auth_tokens_on_auth_token", unique: true
+    t.index ["prev_auth_token"], name: "index_user_auth_tokens_on_prev_auth_token", unique: true
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", limit: 513, null: false
+    t.string "password_hash", limit: 64, null: false
+    t.string "salt", limit: 32, null: false
+    t.string "api_key", limit: 64
+    t.datetime "last_seen_at"
+    t.inet "ip_address"
+    t.boolean "active", default: false, null: false
+    t.boolean "suspended", default: false, null: false
+    t.boolean "admin", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin"], name: "index_users_on_admin"
+    t.index ["api_key"], name: "index_users_on_api_key"
+    t.index ["email"], name: "index_users_on_email"
   end
 
 end

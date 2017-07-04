@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'active_support/dependencies'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -27,6 +28,7 @@ module Talon
 
     # Set Redis as the back-end for the cache.
     config.cache_store = :redis_store, "#{ENV['REDIS_URL']}/0/cache"
+    $redis = Redis::Store::Factory.create(ENV['REDIS_URL'])
 
     # Set Sidekiq as the back-end for Active Job.
     config.active_job.queue_adapter = :sidekiq
@@ -37,6 +39,10 @@ module Talon
       /http(s?):\/\/talon.dev.rang.ee/,
       /http(s?):\/\/talon.rang.ee/
     ]
+
+    # per https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet
+    config.pbkdf2_iterations = 64000
+    config.pbkdf2_algorithm = "sha256"
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

@@ -16,7 +16,7 @@ gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'bootstrap-sass'
 
-gem 'redis-rails', '~> 5.0.0.pre'
+gem 'redis-rails', '~> 5.0.0'
 gem 'sidekiq'
 gem 'httparty'
 gem 'm3u8'
@@ -29,11 +29,20 @@ gem 'fog-local'
 gem 'active_model_serializers'
 gem 'sentry-raven'
 gem 'rufus-scheduler'
+gem 'fast_xor'
 
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'rspec-rails'
+  gem 'fabrication'
+  gem 'shoulda-matchers', github: 'thoughtbot/shoulda-matchers', branch: 'rails-5'
+end
+
+group :test do
+  gem 'timecop'
+  gem 'mocha'
 end
 
 group :development do
