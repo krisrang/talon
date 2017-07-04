@@ -1,0 +1,10 @@
+test:
+  adapter: postgresql
+  database: talon_<%= ENV['JOB_NAME'] || "test" %>
+  username: jenkins
+  password: 4d2051f7d60e41f974da133f4e8dbf9c
+  encoding: unicode
+  reconnect: false
+  host: 127.0.0.1
+  port: 5432
+  pool: 5

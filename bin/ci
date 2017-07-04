@@ -1,0 +1,31 @@
+#!/bin/bash
+set -ex
+
+export REDIS_URL=redis://127.0.0.1:6379/0/talon
+
+# sanitize
+rm -rf spec/reports
+
+# setup
+cp config/database.ci.yml config/database.yml
+
+command -v bundle >/dev/null 2>&1 || { gem install bundler; }
+bundle install --deployment --path ../bundle -j 8
+
+bundle exec rake db:drop db:create db:schema:load db:migrate
+
+# Audit gems
+bundle exec bundle-audit check --update
+
+# TESTS! (=^ェ^=)
+set +e
+bundle exec rspec --format documentation --format RspecJunitFormatter --out spec/reports/rspec.xml
+testexit=$?
+
+# cleanup
+bundle exec rake db:drop
+
+# fail build if cucumber had ambiguous match or some other error
+if [ $testexit -eq 2 ];then
+  exit 1;
+fi

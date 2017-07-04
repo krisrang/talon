@@ -38,6 +38,8 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'fabrication'
   gem 'shoulda-matchers', github: 'thoughtbot/shoulda-matchers', branch: 'rails-5'
+  gem 'bundle-audit'
+  gem 'rspec_junit_formatter'
 end
 
 group :test do
