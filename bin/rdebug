@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+rdebug-ide --evaluation-timeout 10 -- ./bin/rails s

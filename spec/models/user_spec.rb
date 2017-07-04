@@ -21,6 +21,14 @@ describe User do
           expect(user).to_not be_valid
         end
       end
+
+      describe 'when shadow record has no email' do
+        it 'should be valid' do
+          user.shadow = true
+          user.email = nil
+          expect(user).to be_valid
+        end
+      end
     end
   end
 
@@ -179,7 +187,7 @@ describe User do
         expect(user.api_key).to eq(api_key)
 
         # Regenerate a key. Keeps the same record, updates the key
-        new_key = user.generate_api_key
+        user.generate_api_key
         expect(user.api_key).to_not eq(api_key)
       end
     end

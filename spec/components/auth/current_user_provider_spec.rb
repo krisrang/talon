@@ -183,6 +183,12 @@ describe Auth::CurrentUserProvider do
       expect{
         provider("/?api_key=#{user.api_key}").current_user
       }.to raise_error(Talon::InvalidAccess)
+
+      user.update_columns(shadow: true, active: false, suspended: false)
+
+      expect{
+        provider("/?api_key=#{user.api_key}").current_user
+      }.to_not raise_error(Talon::InvalidAccess)
     end
 
     it "allows API access correctly via header" do

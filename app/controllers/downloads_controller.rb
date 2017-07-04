@@ -1,5 +1,6 @@
 class DownloadsController < ApplicationController
   skip_before_action :verify_authenticity_token
+  before_action :require_user, only: [:start, :destroy]
 
   rescue_from YoutubeDL::RunError do |e|
     Raven.capture_exception(e)
@@ -7,9 +8,7 @@ class DownloadsController < ApplicationController
   end
 
   def index
-    # Download.all.destroy_all
-
-    @downloads = Download.order("created_at").all
+    @downloads = logged_in? ? current_user.downloads : []
     @download_json = ActiveModelSerializers::SerializableResource.new(@downloads)
   end
 
@@ -28,7 +27,8 @@ class DownloadsController < ApplicationController
       return render json: {error: "Invalid URL, please check your spelling"}, status: 422
     end
     
-    download = Download.from_info(url)
+    user = logged_in? ? current_user : create_shadow_user
+    download = user.downloads.from_info(url)
 
     if download.save
       render json: download
@@ -38,13 +38,13 @@ class DownloadsController < ApplicationController
   end
 
   def start
-    download = Download.find_by_id_or_key(params[:id])
+    download = current_user.downloads.find_by_id_or_key(params[:id])
     download.queue
     render json: download
   end
 
   def destroy
-    @download = Download.find_by_id_or_key(params[:id])
+    @download = current_user.downloads.find_by_id_or_key(params[:id])
     @download.destroy
     render json: {success: true}
   end

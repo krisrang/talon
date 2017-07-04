@@ -37,7 +37,9 @@ class List extends React.PureComponent {
           this.unsubscribe(id)
           this.props.downloadErrored(id, data.error)
         }
-      }
+      },
+
+      rejected: () => {}
     })
   }
 

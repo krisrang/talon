@@ -3,14 +3,15 @@ require_dependency 'pbkdf2'
 class User < ActiveRecord::Base
   has_many :email_tokens, dependent: :destroy
   has_many :user_auth_tokens, dependent: :destroy
+  has_many :downloads, dependent: :destroy
 
   before_validation :strip_downcase_email
 
-  validates :email, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true, unless: :shadow
   validates :email, format: { with: Talon.email_regex }, if: :email_changed?
   validates :password, length: { minimum: Settings.min_password_length }, if: :password
 
-  after_create :create_email_token
+  after_create :create_email_token, unless: :shadow
  
   before_save :ensure_password_is_hashed
 
@@ -37,6 +38,10 @@ class User < ActiveRecord::Base
 
   def email_confirmed?
     email_tokens.where(email: email, confirmed: true).present? || email_tokens.empty?
+  end
+
+  def admin?
+    admin
   end
 
   def activate

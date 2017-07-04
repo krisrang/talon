@@ -1,10 +1,13 @@
 class DownloadChannel < ApplicationCable::Channel
   def subscribed
-    stream_from "downloads_#{params[:id]}"
+    if download = current_user.downloads.find(params[:id])
+      stream_for download
+    else
+      reject
+    end
   end
 
   def cancel
-    download = Download.find_by_id_or_key(params[:id])
-    download.cancel!
+    current_user.downloads.find(params[:id]).cancel!
   end
 end

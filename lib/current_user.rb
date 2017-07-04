@@ -32,6 +32,14 @@ module CurrentUser
     current_user_provider.refresh_session(user,session,cookies)
   end
 
+  def logged_in?
+    !!current_user_provider.current_user
+  end
+  
+  def admin?
+    !!current_user_provider.current_user && current_user_provider.current_user.admin?
+  end
+
   private
 
   def current_user_provider

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170704093559) do
+ActiveRecord::Schema.define(version: 20170704140133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,8 +34,10 @@ ActiveRecord::Schema.define(version: 20170704093559) do
     t.float "percent"
     t.string "progress_label"
     t.text "lines"
+    t.integer "user_id", null: false
     t.index ["key"], name: "index_downloads_on_key"
     t.index ["url"], name: "index_downloads_on_url"
+    t.index ["user_id"], name: "index_downloads_on_user_id"
   end
 
   create_table "email_tokens", force: :cascade do |t|
@@ -66,12 +68,13 @@ ActiveRecord::Schema.define(version: 20170704093559) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email", limit: 513, null: false
-    t.string "password_hash", limit: 64, null: false
-    t.string "salt", limit: 32, null: false
+    t.string "email", limit: 513
+    t.string "password_hash", limit: 64
+    t.string "salt", limit: 32
     t.string "api_key", limit: 64
     t.datetime "last_seen_at"
     t.inet "ip_address"
+    t.boolean "shadow", default: false, null: false
     t.boolean "active", default: false, null: false
     t.boolean "suspended", default: false, null: false
     t.boolean "admin", default: false, null: false

@@ -69,13 +69,13 @@ class Auth::CurrentUserProvider
     if api_key
       current_user = lookup_api_user(api_key, request)
       raise Talon::InvalidAccess unless current_user
-      raise Talon::InvalidAccess if current_user.suspended || !current_user.active
+      raise Talon::InvalidAccess if !current_user.shadow && (current_user.suspended || !current_user.active)
       @env[API_KEY_ENV] = true
     end
 
     # keep this rule here as a safeguard
-    # under no conditions to suspended or inactive accounts get current_user
-    if current_user && (current_user.suspended || !current_user.active)
+    # no user for suspended or inactive accounts unless shadow account
+    if current_user && !current_user.shadow && (current_user.suspended || !current_user.active)
       current_user = nil
     end
 

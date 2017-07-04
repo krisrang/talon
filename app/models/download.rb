@@ -3,6 +3,8 @@ require 'fileutils'
 require_dependency 'youtube_dl'
 
 class Download < ApplicationRecord
+  belongs_to :user
+  
   has_attached_file :cached_thumbnail
   validates_attachment_content_type :cached_thumbnail, content_type: /\Aimage\/.*\z/
 
@@ -131,7 +133,7 @@ class Download < ApplicationRecord
   end
 
   def broadcast(data={})
-    ActionCable.server.broadcast("downloads_#{self.id}", data)
+    DownloadChannel.broadcast_to(self, data)
   end
 
   def cancel!
