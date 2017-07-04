@@ -36,14 +36,14 @@ class Auth::CurrentUserProvider
     current_user = nil
 
     if auth_token && auth_token.length == 32
-      limiter = RateLimiter.new(nil, "cookie_auth_#{request.remote_ip}", COOKIE_ATTEMPTS_PER_MIN, 60)
+      limiter = RateLimiter.new(nil, "cookie_auth_#{request.ip}", COOKIE_ATTEMPTS_PER_MIN, 60)
 
       if limiter.can_perform?
         @user_token = UserAuthToken.lookup(auth_token,
                                            seen: true,
                                            user_agent: @env['HTTP_USER_AGENT'],
                                            path: @env['REQUEST_PATH'],
-                                           client_ip: @request.remote_ip)
+                                           client_ip: @request.ip)
 
         current_user = @user_token.try(:user)
       end
@@ -61,7 +61,7 @@ class Auth::CurrentUserProvider
       u = current_user
       Rufus::Scheduler.singleton.in '1s' do
         u.update_last_seen!
-        u.update_ip_address!(request.remote_ip)
+        u.update_ip_address!(request.ip)
       end
     end
 
@@ -94,7 +94,7 @@ class Auth::CurrentUserProvider
 
       if needs_rotation
         if @user_token.rotate!(user_agent: @env['HTTP_USER_AGENT'],
-                              client_ip: @request.remote_ip,
+                              client_ip: @request.ip,
                               path: @env['REQUEST_PATH'])
           cookies[TOKEN_COOKIE] = cookie_hash(@user_token.unhashed_auth_token)
         end
@@ -110,7 +110,7 @@ class Auth::CurrentUserProvider
     @user_token = UserAuthToken.generate!(user_id: user.id,
                                           user_agent: @env['HTTP_USER_AGENT'],
                                           path: @env['REQUEST_PATH'],
-                                          client_ip: @request.remote_ip)
+                                          client_ip: @request.ip)
 
     cookies[TOKEN_COOKIE] = cookie_hash(@user_token.unhashed_auth_token)
     make_developer_admin(user)
