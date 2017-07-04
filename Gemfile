@@ -16,6 +16,8 @@ gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'bootstrap-sass'
 
+gem 'hiredis'
+gem 'redis', require:  ["redis", "redis/connection/hiredis"]
 gem 'redis-rails', '~> 5.0.0'
 gem 'sidekiq'
 gem 'httparty'

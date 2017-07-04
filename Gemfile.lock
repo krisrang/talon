@@ -117,6 +117,7 @@ GEM
     formatador (0.2.5)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
+    hiredis (0.6.1)
     httparty (0.15.5)
       multi_xml (>= 0.5.2)
     i18n (0.8.4)
@@ -306,6 +307,7 @@ DEPENDENCIES
   fog-google
   fog-local
   font-awesome-rails
+  hiredis
   httparty
   jquery-rails
   listen
@@ -317,6 +319,7 @@ DEPENDENCIES
   puma
   rack-mini-profiler
   rails (~> 5.1.1)
+  redis
   redis-rails (~> 5.0.0)
   rspec-rails
   rspec_junit_formatter

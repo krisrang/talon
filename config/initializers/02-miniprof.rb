@@ -10,7 +10,7 @@ Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
 #  be stored associated with ip1 as the user and retrieved using ip2 causing 404s
 Rack::MiniProfiler.config.user_provider = lambda do |env|
   request = Rack::Request.new(env)
-  id = request.cookies["_t"] || request.ip || "unknown"
+  id = request.cookies["_t"] || request.remote_ip || "unknown"
   id = id.to_s
   # some security, lets not have these tokens floating about
   Digest::MD5.hexdigest(id)
