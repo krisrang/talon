@@ -1,24 +1,33 @@
-# README
+# Talon
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[![Build Status](https://ci.rang.ee/buildStatus/icon?job=Talon&build=18)](https://ci.rang.ee/job/Talon/18/)
 
-Things you may want to cover:
+Talon is an online video downloader and processor supportin a wide range of sites via [youtube-dl](https://rg3.github.io/youtube-dl/).
 
-* Ruby version
+## Features
 
-* System dependencies
+* [Support for most common sites.](https://rg3.github.io/youtube-dl/supportedsites.html)
+* Fully responsive smooth UI
 
-* Configuration
+## WIP features
 
-* Database creation
+* Post-processing into desired video format
+* Audio only download
+* Embedding subtitles when available
+* Option to provide logins for private/paywalled videos on some sites
+* Fire and forget: start download and be notified by email when complete
+* Downloaders in both EU and US to circumvent geo-restrictions
 
-* Database initialization
+## Development/hosting
 
-* How to run the test suite
+### Requirements
 
-* Services (job queues, cache servers, search engines, etc.)
+* Git
+* Ruby 2.3+
+* Node.js 6.4.0+
+* PostgreSQL
+* Redis 3.0+
+* Yarn 0.20.1+
+* Google Cloud account
 
-* Deployment instructions
-
-* ...
+### Todo: detail hosting/installation
