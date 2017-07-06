@@ -4,6 +4,7 @@ default: &default
   source_path: app/javascript
   source_entry_path: packs
   public_output_path: packs
+  compile: false
 
   extensions:
     - .coffee
@@ -23,6 +24,7 @@ default: &default
 
 development:
   <<: *default
+  compile: true
 
   dev_server:
     host: 192.168.1.201
@@ -31,6 +33,7 @@ development:
 
 test:
   <<: *default
+  compile: true
 
   public_output_path: packs-test
 

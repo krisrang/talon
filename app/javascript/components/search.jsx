@@ -37,7 +37,7 @@ class Search extends React.PureComponent {
     let className = classNames("search", {"shadow": scrolled, "loading": loading})
 
     return (
-      <Paper className={className} elevation={scrolled ? 2 : 0}>
+      <Paper id="search" className={className} elevation={scrolled ? 2 : 0}>
         <form action="nowhere" onSubmit={(e) => { this.handleLoad(e) }}>
           <Videocam className="input-decorator" />
           <LinearProgress className="progressbar" />
@@ -50,7 +50,7 @@ class Search extends React.PureComponent {
             ref={(c) => { this.formInput = c }}
           />
           {(!loading && url) && (
-            <IconButton onClick={() => this.handleReset()}>
+            <IconButton className="clearbtn" onClick={() => this.handleReset()}>
               <CancelIcon />
             </IconButton>
           )}

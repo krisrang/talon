@@ -13,7 +13,7 @@ import * as ActionTypes from '../actions'
 
 const Error = ({open, message, errorHide}) => {
   return (
-    <Dialog open={open} transition={Slide} onRequestClose={errorHide}>
+    <Dialog id="errormodal" open={open} transition={Slide} onRequestClose={errorHide}>
       <DialogTitle>{"Error"}</DialogTitle>
       <DialogContent>
         <DialogContentText>
