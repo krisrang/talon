@@ -14,10 +14,12 @@ module Talon
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.log_tags  = [:subdomain, :uuid]
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    if !Rails.env.test?
+      logger           = ActiveSupport::Logger.new(STDOUT)
+      logger.formatter = config.log_formatter
+      config.log_tags  = [:subdomain, :uuid]
+      config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    end
 
     # Action mailer settings.
     config.action_mailer.delivery_method = :smtp

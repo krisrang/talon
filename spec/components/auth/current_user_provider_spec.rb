@@ -188,7 +188,7 @@ describe Auth::CurrentUserProvider do
 
       expect{
         provider("/?api_key=#{user.api_key}").current_user
-      }.to_not raise_error(Talon::InvalidAccess)
+      }.not_to raise_error
     end
 
     it "allows API access correctly via header" do
