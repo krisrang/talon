@@ -9,7 +9,7 @@ module CurrentUser
 
   # can be used to pretend current user does no exist, for CSRF attacks
   def clear_current_user
-    @current_user_provider = Talon.current_user_provider.new({})
+    @current_user_provider = Talon.current_user_provider.new({"rack.input" => ""})
   end
 
   def log_on_user(user)

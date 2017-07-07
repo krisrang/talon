@@ -14,3 +14,10 @@ Fabricator(:joker, from: :user) do
   email 'joker@arkham.com'
   password 'mymoreawesomepassword'
 end
+
+Fabricator(:shadow, from: :user) do
+  email nil
+  password nil
+  active false
+  shadow true
+end

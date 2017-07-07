@@ -13,4 +13,6 @@ class Settings
   setting :maximum_session_age,           1440
   setting :max_user_api_reqs_per_day,     2880
   setting :max_user_api_reqs_per_minute,  20
+  setting :max_logins_per_ip_per_hour,    30
+  setting :max_logins_per_ip_per_minute,  6
 end

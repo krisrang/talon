@@ -17,8 +17,20 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :users
+  get "/users/activate/:token" => "users#activate", as: :activate_user
+  get "/users/password-reset/:token" => "users#password_reset", as: :password_reset_user
+  put "/users/password-reset/:token" => "users#password_reset"
+
+  resource :session, only: [:create, :destroy] do
+    collection do
+      post "forgot_password"
+    end
+  end
+
   # React router routes
-  get '/login' => 'downloads#index', as: :login
+  get '/login' => 'sessions#new', as: :login
+  get '/register' => 'users#new', as: :register
 
   get '/admin' => 'admin#index'
   post '/admin/youtubedl_update' => 'admin#youtubedl_update'

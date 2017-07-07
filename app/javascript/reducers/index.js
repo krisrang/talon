@@ -1,5 +1,6 @@
-import * as ActionTypes from '../actions'
 import { combineReducers } from 'redux'
+import { reducer as formReducer } from 'redux-form'
+import * as ActionTypes from '../actions'
 
 const error = (state = {}, action) => {
   switch(action.type) {
@@ -127,6 +128,49 @@ const scrollStatus = (state = null, action) => {
   }
 }
 
+
+const registerResult = (state = null, action) => {
+  switch(action.type) {
+    case ActionTypes.REGISTER_MESSAGE:
+      return action.message
+    case ActionTypes.REGISTER_RESET:
+      return null
+    default:
+      return state
+  }
+}
+
+const loginResult = (state = null, action) => {
+  switch(action.type) {
+    case ActionTypes.LOGIN_MESSAGE:
+      return action.message
+    case ActionTypes.LOGIN_RESET:
+    case ActionTypes.LOGIN_FINISHED:
+      return null
+    default:
+      return state
+  }
+}
+
+const passwordResetResult = (state = null, action) => {
+  switch(action.type) {
+    case ActionTypes.PASSWORD_RESET_MESSAGE:
+      return action.message
+    case ActionTypes.PASSWORD_RESET_RESET:
+      return null
+    default:
+      return state
+  }
+}
+
+const currentUser = (state = {}, action) => {
+  switch(action.type) {
+    case ActionTypes.LOGIN_FINISHED:
+      return action.user
+    default:
+      return state
+  }
+}
 const endpoints = (state = {}) => (state)
 
 const rootReducer = combineReducers({
@@ -134,7 +178,12 @@ const rootReducer = combineReducers({
   search,
   downloads,
   scrollStatus,
-  endpoints
+  endpoints,
+  registerResult,
+  loginResult,
+  passwordResetResult,
+  currentUser,
+  form: formReducer
 })
 
 export default rootReducer

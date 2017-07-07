@@ -1,18 +1,22 @@
 require 'current_user'
+require_dependency 'secure_session'
 require_dependency 'ffmpeg'
 require_dependency 'youtube_dl'
 
 class ApplicationController < ActionController::Base
   include CurrentUser
   
-  protect_from_forgery
+  protect_from_forgery with: :exception
 
-  def handle_unverified_request
+  rescue_from ActionController::InvalidAuthenticityToken do |e|
     unless is_api?
-      super
       clear_current_user
-      render json: {error: "BAD CSRF"}, status: 403
+      render_json_error("BAD CSRF", "csrf", 403)
     end
+  end
+
+  rescue_from RateLimiter::LimitExceeded do |e|
+    render_rate_limit_error(e)
   end
 
   before_action :set_current_user_for_logs
@@ -50,5 +54,28 @@ class ApplicationController < ActionController::Base
       format.html { redirect_to login_path }
       format.json { render json: {error: "unauthenticated"} }
     end
+  end
+
+  def secure_session
+    SecureSession.new(session["secure_session_id"] ||= SecureRandom.hex)
+  end
+
+  def render_json_error(error, type="default", status=422)
+    render json: {error: error, error_type: type}, status: status
+  end
+
+  def render_rate_limit_error(e)
+    render_json_error(e.description, "rate_limit", 429)
+  end
+
+  def flat_errors(obj)
+    obj.errors.to_hash.map { |k, v| [k, v[0]] }.to_h
+  end
+
+  def already_logged_in
+    render json: {
+      success: true,
+      message: I18n.t("login.already_logged_in", current_user: current_user.email)
+    }
   end
 end

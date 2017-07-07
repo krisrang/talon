@@ -1,0 +1,124 @@
+.authcard {
+  width: 450px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -225px;
+  margin-top: -190px;
+
+  .logo {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: -50px;
+    left: 50%;
+    margin-left: -50px;
+  }
+
+  .authslide-wrapper {
+    position: relative;
+    margin: 60px 20px 20px;
+    overflow: hidden;
+  }
+
+  .result {
+    text-align: center;
+
+    button { margin: 20px 0 0 0; }
+  }
+
+  h1 {
+    margin: 0 0 20px;
+    text-align: center;
+  }
+
+  h3 {
+    margin: 0 20px;
+    text-align: center;
+
+    &.formerror {
+      color: #ff1744;
+    }
+  }
+
+  fieldset {
+    margin: 0 0 30px;
+
+    .field {
+      margin-bottom: 10px;
+
+      .label {
+        font-weight: 500;
+        // font-size: 0.9em;
+
+        .label-error {
+          font-weight: 300;
+        }
+      }
+    }
+
+    .forgotpw {
+      text-transform: uppercase;
+      font-size: 0.8em;
+      font-weight: 500;
+      color: #888;
+    }
+  }
+
+  .controls {
+    button {
+      width: 100%;
+      padding: 20px 15px;
+    }
+
+    .suggestion {
+      margin: 10px 0 5px;
+      font-size: 0.85em;
+      color: #666;
+
+      a {
+        color: #000;
+        padding-bottom: 3px;
+
+        &:hover { border-bottom: 1px solid #000; }
+      }
+    }
+  }
+
+  .progressbar {
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+
+  .authcard-enter {
+    position: absolute;
+    top: 0;
+    left: 450px;
+    width: 410px;
+    transform: translateX(0);
+  }
+
+  .authcard-enter.authcard-enter-active {
+    transform: translateX(-450px);
+    transition: transform 0.5s;
+  }
+
+  .authcard-leave {
+    transform: translateX(0);
+  }
+
+  .authcard-leave.authcard-leave-active {
+    transform: translateX(-450px);
+    transition: transform 0.5s;
+  }
+}
+
+@media (max-width: 810px) {
+  .authcard {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    margin: 60px auto 0;
+  }
+}

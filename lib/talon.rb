@@ -19,4 +19,8 @@ module Talon
   def self.email_regex
     /\A[a-zA-Z0-9!#\$%&'*+\/=?\^_`{|}~\-]+(?:\.[a-zA-Z0-9!#\$%&'\*+\/=?\^_`{|}~\-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?$\z/
   end
+
+  def self.base_url
+    Rails.env.production? ? "https://talon.rip" : "http://localhost:3000"
+  end
 end

@@ -4,12 +4,20 @@ class DownloadsController < ApplicationController
 
   rescue_from YoutubeDL::RunError do |e|
     Raven.capture_exception(e)
-    render json: {error: e.message}, status: 422
+    render_json_error(e.message)
   end
 
   def index
     @downloads = logged_in? ? current_user.downloads : []
-    @download_json = ActiveModelSerializers::SerializableResource.new(@downloads)
+
+    respond_to do |format|
+      format.html do
+        @preload = { downloads: ActiveModelSerializers::SerializableResource.new(@downloads) }
+        render 'shared/client'
+      end
+      
+      format.json { render json: @downloads }
+    end
   end
 
   def extractors

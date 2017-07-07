@@ -22,6 +22,7 @@ module Talon
     end
 
     # Action mailer settings.
+    config.action_mailer.default_url_options = { host: Talon.base_url }
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       address:  "smtp-relay.gmail.com",

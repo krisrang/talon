@@ -66,12 +66,7 @@ GEM
     archive-zip (0.7.0)
       io-like (~> 0.3.0)
     arel (8.0.0)
-    autoprefixer-rails (7.1.1.3)
-      execjs
     bindex (0.5.0)
-    bootstrap-sass (3.3.7)
-      autoprefixer-rails (>= 5.2.1)
-      sass (>= 3.3.4)
     builder (3.2.3)
     bundle-audit (0.1.0)
       bundler-audit
@@ -98,6 +93,7 @@ GEM
       climate_control (>= 0.0.3, < 1.0)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
+    database_cleaner (1.6.1)
     diff-lcs (1.3)
     erubi (1.6.1)
     et-orbi (1.0.5)
@@ -127,8 +123,6 @@ GEM
     fog-xml (0.1.3)
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
-    font-awesome-rails (4.7.0.2)
-      railties (>= 3.2, < 5.2)
     formatador (0.2.5)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -137,10 +131,6 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (0.8.4)
     io-like (0.3.0)
-    jquery-rails (4.3.1)
-      rails-dom-testing (>= 1, < 3)
-      railties (>= 4.2.0)
-      thor (>= 0.14, < 2.0)
     jsonapi-renderer (0.1.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -197,6 +187,10 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 5.1.2)
       sprockets-rails (>= 2.0.0)
+    rails-controller-testing (1.0.2)
+      actionpack (~> 5.x, >= 5.0.1)
+      actionview (~> 5.x, >= 5.0.1)
+      activesupport (~> 5.x)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -310,19 +304,17 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
-  bootstrap-sass
   bundle-audit
   byebug
   capybara
   chromedriver-helper
+  database_cleaner
   fabrication
   fast_xor
   fog-google
   fog-local
-  font-awesome-rails
   hiredis
   httparty
-  jquery-rails
   listen
   m3u8
   message_bus
@@ -332,6 +324,7 @@ DEPENDENCIES
   puma
   rack-mini-profiler
   rails (~> 5.1.1)
+  rails-controller-testing
   redis
   redis-rails (~> 5.0.0)
   rspec-rails

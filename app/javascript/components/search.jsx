@@ -33,7 +33,7 @@ class Search extends React.PureComponent {
   }
 
   render() {
-    let { searchInput, loading, url, scrolled } = this.props
+    let { searchInput, loading, url, scrolled, currentUser } = this.props
     let className = classNames("search", {"shadow": scrolled, "loading": loading})
 
     return (
@@ -57,9 +57,12 @@ class Search extends React.PureComponent {
           <input type="submit" className="submitbtn" />
         </form>
         <div className="loginbit">
-          <Link to="/login" className="loginbtn">
-            <Button>{"Sign in"}</Button>
-          </Link>
+          {(currentUser && currentUser.id) ?
+            (currentUser.email) :
+            (<Link to="/login" className="loginbtn">
+              <Button>{"Login"}</Button>
+            </Link>)
+          }
         </div>
       </Paper>
     )
@@ -70,6 +73,7 @@ Search.propTypes = {
   loading: PropTypes.bool,
   scrolled: PropTypes.bool.isRequired,
   endpoints: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
   searchStart: PropTypes.func.isRequired,
   searchInput: PropTypes.func.isRequired,
   searchReset: PropTypes.func.isRequired,
@@ -78,6 +82,7 @@ Search.propTypes = {
 
 const mapStateToProps = (state) => ({
   ...state.search,
+  currentUser: state.currentUser,
   scrolled: state.scrollStatus.scrolled,
   endpoints: state.endpoints
 })

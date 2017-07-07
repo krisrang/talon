@@ -1,6 +1,6 @@
 import { createMuiTheme } from 'material-ui/styles'
 import createPalette from 'material-ui/styles/palette'
-import { deepOrange, lightBlue } from 'material-ui/styles/colors'
+import { deepOrange, lightBlue, grey } from 'material-ui/colors'
 
 export default createMuiTheme({
   palette: createPalette({
@@ -12,6 +12,11 @@ export default createMuiTheme({
     MuiDialogContent: {
       root: {
         "-webkit-overflow-scrolling": "touch"
+      }
+    },
+    MuiButton: {
+      raisedPrimary: {
+        color: grey[50],
       }
     }
   }

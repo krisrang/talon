@@ -1,5 +1,5 @@
 @import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";
-@import "font-awesome";
+// @import "font-awesome";
 
 $green: #58C06D;
 
@@ -18,10 +18,19 @@ a {
   cursor: pointer;
 
   &, &:hover, &:active, &:focus {
-    // color: darken($green, 10%);
     text-decoration: none;
   }
+
+  &[disabled] {
+    &, &:hover, &:active, &:focus {
+      opacity: 0.8;
+      cursor: initial;
+      text-decoration: none;
+    }
+  }
 }
+
+fieldset { border: none; margin: 0; padding: 0; }
 
 @keyframes autofill {
   to {
@@ -30,9 +39,18 @@ a {
   }
 }
 
+@keyframes autofill-disabled {
+  to {
+    color: currentColor;
+    background: transparent;
+  }
+}
+
 input:-webkit-autofill {
   animation-name: autofill;
   animation-fill-mode: both;
+
+  &:disabled { animation-name: autofill-disabled; }
 }
 
 .center {

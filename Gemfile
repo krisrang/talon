@@ -9,16 +9,15 @@ end
 gem 'rails', '~> 5.1.1'
 gem 'pg'
 gem 'puma'
-gem 'sass-rails'
-gem 'uglifier'
-gem 'webpacker', github: 'rails/webpacker', ref: 'b8e3873c921baf23de4c28caaaba6dae26adb0b9'
-gem 'font-awesome-rails'
-gem 'jquery-rails'
-gem 'bootstrap-sass'
-
 gem 'hiredis'
 gem 'redis', require:  ["redis", "redis/connection/hiredis"]
 gem 'redis-rails', '~> 5.0.0'
+
+gem 'sass-rails'
+gem 'uglifier'
+gem 'webpacker', github: 'rails/webpacker', ref: 'b8e3873c921baf23de4c28caaaba6dae26adb0b9'
+# gem 'font-awesome-rails'
+
 gem 'sidekiq'
 gem 'httparty'
 gem 'm3u8'
@@ -35,19 +34,21 @@ gem 'fast_xor'
 
 group :development, :test do
   gem 'byebug', platform: :mri
-  gem 'capybara'
-  gem 'selenium-webdriver'
-  gem 'chromedriver-helper'
   gem 'rspec-rails'
-  gem 'fabrication'
-  gem 'shoulda-matchers', github: 'thoughtbot/shoulda-matchers', branch: 'rails-5'
   gem 'bundle-audit'
-  gem 'rspec_junit_formatter'
 end
 
 group :test do
   gem 'timecop'
   gem 'mocha'
+  gem 'database_cleaner'
+  gem 'rails-controller-testing'
+  gem 'shoulda-matchers', github: 'thoughtbot/shoulda-matchers', branch: 'rails-5'
+  gem 'rspec_junit_formatter'
+  gem 'fabrication'
+  gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
+  gem 'capybara'
 end
 
 group :development do

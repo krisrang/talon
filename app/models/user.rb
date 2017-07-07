@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 
   validates :email, presence: true, uniqueness: true, unless: :shadow
   validates :email, format: { with: Talon.email_regex }, if: :email_changed?
-  validates :password, length: { minimum: Settings.min_password_length }, if: :password
+  validates :password, length: { minimum: Settings.min_password_length }, if: :validate_password?
 
   after_create :create_email_token, unless: :shadow
  
@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   after_save :expire_tokens_if_password_changed
 
   attr_accessor :password
+
+  scope :real, -> { where shadow: false }
   
   def self.max_password_length
     200
@@ -90,16 +92,20 @@ class User < ActiveRecord::Base
     self.save
   end
 
+  def create_email_token
+    email_tokens.create(email: email)
+  end
+
   protected
+
+  def validate_password?
+    !self.shadow && self.password
+  end
 
   def expire_old_email_tokens
     if saved_change_to_password_hash? && !saved_change_to_id?
       email_tokens.where('not expired').update_all(expired: true)
     end
-  end
-
-  def create_email_token
-    email_tokens.create(email: email)
   end
 
   def ensure_password_is_hashed

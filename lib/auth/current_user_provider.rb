@@ -1,5 +1,6 @@
 require_dependency "rate_limiter"
 
+module Auth; end
 class Auth::CurrentUserProvider
   CURRENT_USER_KEY ||= "_TALON_CURRENT_USER".freeze
   API_KEY ||= "api_key".freeze

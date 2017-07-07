@@ -141,3 +141,46 @@ export const downloadDelete = (endpoint, id) => (
     )
   }
 )
+
+export const REGISTER_MESSAGE = 'REGISTER_MESSAGE'
+export const REGISTER_RESET = 'REGISTER_RESET'
+
+export const registerMessage = (message) => ({
+  type: REGISTER_MESSAGE,
+  message
+})
+
+export const registerReset = () => ({
+  type: REGISTER_RESET
+})
+
+export const LOGIN_MESSAGE = 'LOGIN_MESSAGE'
+export const LOGIN_RESET = 'LOGIN_RESET'
+export const LOGIN_FINISHED = 'LOGIN_FINISHED'
+
+export const loginMessage = (message) => ({
+  type: LOGIN_MESSAGE,
+  message
+})
+
+export const loginReset = () => ({
+  type: LOGIN_RESET
+})
+
+export const loginFinished = (user) => ({
+  type: LOGIN_FINISHED,
+  user
+})
+
+export const PASSWORD_RESET_MESSAGE = 'PASSWORD_RESET_MESSAGE'
+export const PASSWORD_RESET_RESET = 'PASSWORD_RESET_RESET'
+
+export const passwordResetMessage = (message) => ({
+  type: PASSWORD_RESET_MESSAGE,
+  message
+})
+
+export const passwordResetReset = () => ({
+  type: PASSWORD_RESET_RESET
+})
+

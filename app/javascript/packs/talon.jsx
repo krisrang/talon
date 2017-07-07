@@ -8,7 +8,7 @@ import { MuiThemeProvider } from 'material-ui/styles'
 import configureStore from '../store/configureStore'
 import theme from '../components/themes'
 import App from '../containers/app'
-import Login from '../containers/login'
+import Authmodal from '../containers/auth_modal'
 import '../styles'
 
 if (process.env.NODE_ENV === "production") {
@@ -18,16 +18,24 @@ if (process.env.NODE_ENV === "production") {
 const node = document.getElementById('talon')
 const data = JSON.parse(node.getAttribute('data'))
 const cable = window.TalonCable && window.TalonCable.cable
-const store = configureStore({endpoints: data.endpoints, downloads: data.downloads})
+const store = configureStore({
+  endpoints: data.endpoints,
+  downloads: data.downloads,
+  registerResult: data.register_result,
+  passwordResetResult: data.password_reset_result,
+  currentUser: data.current_user,
+})
 
 const Root = (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <div>
-          <App cable={cable} />
-
-          <Route path="/login" component={Login} />
+          <Route exact path="/" render={() => <App cable={cable} />} />
+          <Route path="/login" component={Authmodal} />
+          <Route path="/register" component={Authmodal} />
+          <Route path="/users/activate/:token" component={Authmodal} />
+          <Route path="/users/password-reset/:token" component={Authmodal} />
         </div>
       </BrowserRouter>
     </MuiThemeProvider>
