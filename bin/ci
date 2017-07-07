@@ -5,6 +5,7 @@ export REDIS_URL=redis://127.0.0.1:6379/0/talon
 export GOOGLE_THUMBS_DIR=talon-ny-thumbs
 export DOWNLOADS_BUCKET=talon-ny
 export ACTION_MAILER_DEFAULT_FROM=mail@talon.rip
+export DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 
 # sanitize
 rm -rf spec/reports
