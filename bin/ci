@@ -4,6 +4,7 @@ set -ex
 export REDIS_URL=redis://127.0.0.1:6379/0/talon
 export GOOGLE_THUMBS_DIR=talon-ny-thumbs
 export DOWNLOADS_BUCKET=talon-ny
+export ACTION_MAILER_DEFAULT_FROM=mail@talon.rip
 
 # sanitize
 rm -rf spec/reports
@@ -15,7 +16,7 @@ command -v bundle >/dev/null 2>&1 || { gem install bundler; }
 bundle install --deployment --path ../bundle -j 8
 yarn
 
-bundle exec rake db:drop db:create db:schema:load db:migrate
+RAILS_ENV=test bundle exec rake db:drop db:create db:schema:load db:migrate
 
 # Audit gems
 bundle exec bundle-audit check --update
