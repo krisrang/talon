@@ -37,11 +37,12 @@ class UserBit extends React.PureComponent {
   }
 
   handleLogout() {
-    const { endpoints, history, userLogout } = this.props
+    const { endpoints, userLogout } = this.props
 
     return api.delete(endpoints.sessions).then(() => {
       userLogout()
-      history.push("/")
+      window.location = "/"
+      // history.push("/")
     })
   }
   
