@@ -9,6 +9,7 @@ import Typography from 'material-ui/Typography'
 import { LinearProgress } from 'material-ui/Progress'
 import * as ActionTypes from '../actions'
 import api from '../api'
+import AuthModal from './auth_modal'
 import AuthField from './auth_field'
 
 const validate = (values) => {
@@ -59,9 +60,6 @@ ResultSlide.propTypes = {
 
 const FormSlide = (props) => (
   <form action="nowhere" onSubmit={props.handleSubmit}>
-    <Typography type="display1" gutterBottom>
-      {"Create an account"}
-    </Typography>
     {props.error && (
       <Typography type="subheading" gutterBottom className="formerror">
         {props.error}
@@ -73,11 +71,13 @@ const FormSlide = (props) => (
     </fieldset>
     <div className="controls">
       <Button raised color="primary" type="submit" disabled={props.submitting}>Continue</Button>
-      {!props.submitting && (
-        <div className="suggestion">
-          Already have an account? <Link to="/login">Login</Link>
-        </div>
-      )}
+      <div className="suggestion">
+        {!props.submitting && (
+          <span>
+            Already have an account? <Link to="/login">Login</Link>
+          </span>
+        )}
+      </div>
     </div>
   </form>
 )
@@ -88,7 +88,7 @@ FormSlide.propTypes = {
 }
 
 let RegisterForm = (props) => (
-  <div>
+  <AuthModal id="register" title="Create an account">
     <div className="authslide-wrapper">
       <CSSTransitionGroup
         transitionName="authcard"
@@ -101,7 +101,7 @@ let RegisterForm = (props) => (
       </CSSTransitionGroup>
     </div>
     {props.submitting && <LinearProgress className="progressbar" />}
-  </div>
+  </AuthModal>
 )
 RegisterForm.propTypes = {
   history: PropTypes.object.isRequired,

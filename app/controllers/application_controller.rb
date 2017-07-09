@@ -5,6 +5,7 @@ require_dependency 'youtube_dl'
 
 class ApplicationController < ActionController::Base
   include CurrentUser
+  helper_method :serialize
   
   protect_from_forgery with: :exception
 
@@ -70,6 +71,10 @@ class ApplicationController < ActionController::Base
 
   def flat_errors(obj)
     obj.errors.to_hash.map { |k, v| [k, v[0]] }.to_h
+  end
+
+  def serialize(resource)
+    ActiveModelSerializers::SerializableResource.new(resource)
   end
 
   def already_logged_in

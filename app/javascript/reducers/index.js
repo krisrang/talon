@@ -114,6 +114,10 @@ const downloads = (state = [], action) => {
       })
     case ActionTypes.DOWNLOAD_DELETED:
       return removeDownload(state, action.id)
+    case ActionTypes.LOGIN_FINISHED:
+      return action.downloads
+    case ActionTypes.USER_LOGOUT:
+      return []
     default:
       return state
   }
@@ -163,10 +167,12 @@ const passwordResetResult = (state = null, action) => {
   }
 }
 
-const currentUser = (state = {}, action) => {
+const user = (state = {}, action) => {
   switch(action.type) {
     case ActionTypes.LOGIN_FINISHED:
       return action.user
+    case ActionTypes.USER_LOGOUT:
+      return {}
     default:
       return state
   }
@@ -182,7 +188,7 @@ const rootReducer = combineReducers({
   registerResult,
   loginResult,
   passwordResetResult,
-  currentUser,
+  user,
   form: formReducer
 })
 

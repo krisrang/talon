@@ -167,9 +167,10 @@ export const loginReset = () => ({
   type: LOGIN_RESET
 })
 
-export const loginFinished = (user) => ({
+export const loginFinished = (user, downloads) => ({
   type: LOGIN_FINISHED,
-  user
+  user,
+  downloads
 })
 
 export const PASSWORD_RESET_MESSAGE = 'PASSWORD_RESET_MESSAGE'
@@ -182,5 +183,11 @@ export const passwordResetMessage = (message) => ({
 
 export const passwordResetReset = () => ({
   type: PASSWORD_RESET_RESET
+})
+
+export const USER_LOGOUT = 'USER_LOGOUT'
+
+export const userLogout = () => ({
+  type: USER_LOGOUT
 })
 

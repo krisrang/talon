@@ -17,18 +17,16 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users
   get "/users/activate/:token" => "users#activate", as: :activate_user
   get "/users/password-reset/:token" => "users#password_reset", as: :password_reset_user
   put "/users/password-reset/:token" => "users#password_reset"
+  resources :users
 
   resource :session, only: [:create, :destroy] do
     collection do
       post "forgot_password"
     end
   end
-
-  # React router routes
   get '/login' => 'sessions#new', as: :login
   get '/register' => 'users#new', as: :register
 

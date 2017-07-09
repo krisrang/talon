@@ -9,6 +9,7 @@ import Typography from 'material-ui/Typography'
 import { LinearProgress } from 'material-ui/Progress'
 import * as ActionTypes from '../actions'
 import api from '../api'
+import AuthModal from './auth_modal'
 import AuthField from './auth_field'
 
 const validate = (values) => {
@@ -27,8 +28,8 @@ function submit(values, dispatch, props) {
 
   return api.post(props.endpoints.sessions, {email, password}).then(
     (result) => {
-      if (result.id && result.email) {
-        props.loginFinished(result)
+      if (result.user) {
+        props.loginFinished(result.user, result.downloads)
         props.history.push("/")
       }
     },
@@ -71,9 +72,6 @@ ResultSlide.propTypes = {
 
 const FormSlide = (props) => (
   <form action="nowhere" onSubmit={props.handleSubmit(submit)}>
-    <Typography type="display1" gutterBottom>
-      {"Hi there."}
-    </Typography>
     {props.error && (
       <Typography type="subheading" gutterBottom className="formerror">
         {props.error}
@@ -91,11 +89,13 @@ const FormSlide = (props) => (
     </fieldset>
     <div className="controls">
       <Button raised color="primary" type="submit" disabled={props.submitting}>Login</Button>
-      {!props.submitting && (
-        <div className="suggestion">
-          Need an account? <Link to="/register">Register</Link>
-        </div>
-      )}
+      <div className="suggestion">
+        {!props.submitting && (
+          <span>
+            Need an account? <Link to="/register">Register</Link>
+          </span>
+        )}
+      </div>
     </div>
   </form>
 )
@@ -106,7 +106,7 @@ FormSlide.propTypes = {
 }
 
 let LoginForm = (props) => (
-  <div>
+  <AuthModal id="login" title="Hi there.">
     <div className="authslide-wrapper">
       <CSSTransitionGroup
         transitionName="authcard"
@@ -119,7 +119,7 @@ let LoginForm = (props) => (
       </CSSTransitionGroup>
     </div>
     {props.submitting && <LinearProgress className="progressbar" />}
-  </div>
+  </AuthModal>
 )
 LoginForm.propTypes = {
   history: PropTypes.object.isRequired,

@@ -63,7 +63,7 @@ class SessionsController < ApplicationController
     log_off_user
 
     if request.xhr?
-      head :ok
+      render json: {ok: true}
     else
       redirect_to (params[:return_url] || root_path)
     end
@@ -92,6 +92,6 @@ class SessionsController < ApplicationController
 
   def login(user)
     log_on_user(user)
-    render json: user, serializer: UserSerializer
+    render json: { user: serialize(user), downloads: serialize(user.downloads) }
   end
 end

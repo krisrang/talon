@@ -1,5 +1,6 @@
 .authcard {
   width: 450px;
+  min-height: 400px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -17,7 +18,7 @@
 
   .authslide-wrapper {
     position: relative;
-    margin: 60px 20px 20px;
+    margin: 0 20px 20px;
     overflow: hidden;
   }
 
@@ -28,7 +29,7 @@
   }
 
   h1 {
-    margin: 0 0 20px;
+    margin: 60px 0 20px;
     text-align: center;
   }
 
@@ -41,46 +42,54 @@
     }
   }
 
-  fieldset {
-    margin: 0 0 30px;
+  form {
+    display: flex;
+    flex-direction: column;
+    min-height: 260px;    
 
-    .field {
-      margin-bottom: 10px;
+    fieldset {
+      flex: 1;
+      margin: 0 0 30px;
 
-      .label {
-        font-weight: 500;
-        // font-size: 0.9em;
+      .field {
+        margin-bottom: 10px;
 
-        .label-error {
-          font-weight: 300;
+        .label {
+          font-weight: 500;
+          // font-size: 0.9em;
+
+          .label-error {
+            font-weight: 300;
+          }
         }
+      }
+
+      .forgotpw {
+        text-transform: uppercase;
+        font-size: 0.8em;
+        font-weight: 500;
+        color: #888;
       }
     }
 
-    .forgotpw {
-      text-transform: uppercase;
-      font-size: 0.8em;
-      font-weight: 500;
-      color: #888;
-    }
-  }
+    .controls {
+      button {
+        width: 100%;
+        padding: 20px 15px;
+      }
 
-  .controls {
-    button {
-      width: 100%;
-      padding: 20px 15px;
-    }
+      .suggestion {
+        min-height: 20px;
+        margin: 10px 0 5px;
+        font-size: 0.85em;
+        color: #666;
 
-    .suggestion {
-      margin: 10px 0 5px;
-      font-size: 0.85em;
-      color: #666;
+        a {
+          color: #000;
+          padding-bottom: 3px;
 
-      a {
-        color: #000;
-        padding-bottom: 3px;
-
-        &:hover { border-bottom: 1px solid #000; }
+          &:hover { border-bottom: 1px solid #000; }
+        }
       }
     }
   }
@@ -88,6 +97,10 @@
   .progressbar {
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 
   .authcard-enter {

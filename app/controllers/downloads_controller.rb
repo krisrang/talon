@@ -12,7 +12,7 @@ class DownloadsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        @preload = { downloads: ActiveModelSerializers::SerializableResource.new(@downloads) }
+        @preload = { downloads: serialize(@downloads) }
         render 'shared/client'
       end
       

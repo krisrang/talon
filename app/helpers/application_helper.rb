@@ -8,7 +8,8 @@ module ApplicationHelper
   end
 
   def client_include(preload={})
-    user = logged_in? ? ActiveModelSerializers::SerializableResource.new(current_user, serializer: UserSerializer) : nil
+    user = logged_in? && !current_user.shadow? ? serialize(current_user) : nil
+    
     data = {
       current_user: user,
       endpoints: {

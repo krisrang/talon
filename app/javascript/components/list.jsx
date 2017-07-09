@@ -10,6 +10,7 @@ class List extends React.PureComponent {
     super(props)
 
     this.subscriptions = {}
+    this.cable = window.TalonCable && window.TalonCable.cable
   }
 
   start(id) {
@@ -20,7 +21,7 @@ class List extends React.PureComponent {
   subscribe(id) {
     if (this.subscriptions[id]) return
 
-    this.subscriptions[id] = this.props.cable.subscriptions.create({channel: "DownloadChannel", id}, {
+    this.subscriptions[id] = this.cable.subscriptions.create({channel: "DownloadChannel", id}, {
       received: (data) => {
         if (data.progress) this.props.downloadChanged(id, {percent: data.progress.percent})
         if (data.progress_label) this.props.downloadChanged(id, {progress_label: data.progress_label})
@@ -45,7 +46,7 @@ class List extends React.PureComponent {
 
   unsubscribe(id) {
     if (this.subscriptions[id]) {
-      this.props.cable.subscriptions.remove(this.subscriptions[id])
+      this.cable.subscriptions.remove(this.subscriptions[id])
       delete this.subscriptions[id]
     }
   }
@@ -111,7 +112,6 @@ List.propTypes = {
   downloadErrored: PropTypes.func.isRequired,
   downloadDelete: PropTypes.func.isRequired,
   downloadFinished: PropTypes.func.isRequired,
-  cable: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = (state) => ({

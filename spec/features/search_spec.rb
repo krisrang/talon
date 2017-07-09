@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-RSpec.feature "Searches", type: :feature, js: true do
-  scenario "Shows form" do
+RSpec.feature "Search", type: :feature, js: true do
+  scenario "shows form" do
     visit "/"
     expect(page).to have_selector("#search form input")
   end
 
-  scenario "Clear button" do
+  scenario "clear button" do
     visit "/"
     expect(page).not_to have_selector("#search form .clearbtn")
 
@@ -18,7 +18,7 @@ RSpec.feature "Searches", type: :feature, js: true do
     expect(page).to have_selector("#search form input[value='']")
   end
 
-  scenario "Shows error when inputting invalid URL" do
+  scenario "shows error when inputting invalid URL" do
     visit "/"
     fill_in "url", with: "test"
     find('#search form input').native.send_key(:enter)

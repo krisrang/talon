@@ -1,21 +1,17 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { Route } from 'react-router-dom'
 import Error from '../components/error'
 import Search from '../components/search'
 import List from '../components/list'
 
-const App = ({cable}) => {
+const App = () => {
   return (
     <div>
       <Error />
-      <Search />
-      <List cable={cable} />
+      <Route exact path="/" component={Search} />
+      <Route exact path="/" component={List} />
     </div>
   )
-}
-
-App.propTypes = {
-  cable: PropTypes.object.isRequired
 }
 
 export default App

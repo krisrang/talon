@@ -1,14 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import Paper from 'material-ui/Paper'
 import { LinearProgress } from 'material-ui/Progress'
-import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import CancelIcon from 'material-ui-icons/Cancel'
 import Videocam from 'material-ui-icons/Videocam'
+import UserBit from './user_bit'
 import * as ActionTypes from '../actions'
 
 class Search extends React.PureComponent {
@@ -33,8 +32,9 @@ class Search extends React.PureComponent {
   }
 
   render() {
-    let { searchInput, loading, url, scrolled, currentUser } = this.props
-    let className = classNames("search", {"shadow": scrolled, "loading": loading})
+    const { searchInput, loading, url, scrolled, user, history, endpoints, userLogout } = this.props
+    const className = classNames("search", {"shadow": scrolled, "loading": loading})
+    
 
     return (
       <Paper id="search" className={className} elevation={scrolled ? 2 : 0}>
@@ -56,14 +56,7 @@ class Search extends React.PureComponent {
           )}
           <input type="submit" className="submitbtn" />
         </form>
-        <div className="loginbit">
-          {(currentUser && currentUser.id) ?
-            (currentUser.email) :
-            (<Link to="/login" className="loginbtn">
-              <Button>{"Login"}</Button>
-            </Link>)
-          }
-        </div>
+        <UserBit user={user} history={history} endpoints={endpoints} userLogout={userLogout} />
       </Paper>
     )
   }
@@ -73,16 +66,18 @@ Search.propTypes = {
   loading: PropTypes.bool,
   scrolled: PropTypes.bool.isRequired,
   endpoints: PropTypes.object.isRequired,
-  currentUser: PropTypes.object,
+  history: PropTypes.object.isRequired,
+  user: PropTypes.object,
   searchStart: PropTypes.func.isRequired,
   searchInput: PropTypes.func.isRequired,
   searchReset: PropTypes.func.isRequired,
   listenScroll: PropTypes.func.isRequired,
+  userLogout: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
   ...state.search,
-  currentUser: state.currentUser,
+  user: state.user,
   scrolled: state.scrollStatus.scrolled,
   endpoints: state.endpoints
 })

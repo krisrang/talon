@@ -30,12 +30,12 @@ class User < ActiveRecord::Base
     find_by(email: email.downcase)
   end
 
-  def self.email_hash(email)
+  def email_hash
     Digest::MD5.hexdigest(email.strip.downcase)
   end
 
-  def email_hash
-    User.email_hash(email)
+  def gravatar_template
+    "//www.gravatar.com/avatar/#{email_hash}.png?s={size}&r=pg&d=retro"
   end
 
   def email_confirmed?

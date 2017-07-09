@@ -9,6 +9,7 @@ import Typography from 'material-ui/Typography'
 import { LinearProgress } from 'material-ui/Progress'
 import * as ActionTypes from '../actions'
 import api from '../api'
+import AuthModal from './auth_modal'
 import AuthField from './auth_field'
 
 const validate = (values) => {
@@ -55,9 +56,6 @@ ResultSlide.propTypes = {
 
 const FormSlide = (props) => (
   <form action="nowhere" onSubmit={props.handleSubmit}>
-    <Typography type="display1" gutterBottom>
-      {"Reset password"}
-    </Typography>
     {props.error && (
       <Typography type="subheading" gutterBottom className="formerror">
         {props.error}
@@ -83,7 +81,7 @@ FormSlide.propTypes = {
 }
 
 let PasswordResetForm = (props) => (
-  <div>
+  <AuthModal id="password_reset" title="Reset password">
     <div className="authslide-wrapper">
       <CSSTransitionGroup
         transitionName="authcard"
@@ -96,7 +94,7 @@ let PasswordResetForm = (props) => (
       </CSSTransitionGroup>
     </div>
     {props.submitting && <LinearProgress className="progressbar" />}
-  </div>
+  </AuthModal>
 )
 PasswordResetForm.propTypes = {
   history: PropTypes.object.isRequired,

@@ -103,11 +103,10 @@ class UsersController < ApplicationController
               errors: flat_errors(@user)
             }, status: 422
           else
-            user = ActiveModelSerializers::SerializableResource.new(current_user, serializer: UserSerializer)
             render json: {
               success: true,
               message: @success,
-              user: user
+              user: serialize(current_user)
             }
           end
         end
