@@ -14,8 +14,7 @@ class List extends React.PureComponent {
   }
 
   start(id) {
-    let endpoint =  this.props.endpoints.downloads + "/" + id + "/start"
-    this.props.downloadStart(endpoint, id)
+    this.props.downloadStart(id)
   }
 
   subscribe(id) {
@@ -69,8 +68,7 @@ class List extends React.PureComponent {
   }
 
   delete(id) {
-    let endpoint = this.props.endpoints.downloads + "/" + id
-    this.props.downloadDelete(endpoint, id)
+    this.props.downloadDelete(id)
   }
 
   renderItem(download) {    
@@ -103,7 +101,6 @@ class List extends React.PureComponent {
 }
 List.propTypes = {
   downloads: PropTypes.array.isRequired,
-  endpoints: PropTypes.object.isRequired,
   downloadStart: PropTypes.func.isRequired,
   downloadChanged: PropTypes.func.isRequired,
   downloadCopyToggle: PropTypes.func.isRequired,
@@ -116,7 +113,6 @@ List.propTypes = {
 
 const mapStateToProps = (state) => ({
   downloads: state.downloads,
-  endpoints: state.endpoints
 })
 
 export default connect(mapStateToProps, ActionTypes)(List)

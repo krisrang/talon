@@ -7,7 +7,6 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 import { primary } from './themes'
-import api from '../api'
 
 const styleSheet = createStyleSheet('ImageAvatars', {
   avatar: {
@@ -35,23 +34,13 @@ class UserBit extends React.PureComponent {
   handleMenuClose() {
     this.setState({ menuOpen: false })
   }
-
-  handleLogout() {
-    const { endpoints, userLogout } = this.props
-
-    return api.delete(endpoints.sessions).then(() => {
-      userLogout()
-      window.location = "/"
-      // history.push("/")
-    })
-  }
   
   avatar(size=40) {
     return this.props.user.gravatar_template.replace("{size}", size)
   }
 
   renderMenu() {
-    const { user, classes} = this.props
+    const { user, classes, userLogout } = this.props
 
     return (
       <div>
@@ -64,7 +53,7 @@ class UserBit extends React.PureComponent {
           open={this.state.menuOpen}
           onRequestClose={() => this.handleMenuClose()}>
           <MenuItem disabled>{user.email}</MenuItem>
-          <MenuItem onClick={() => this.handleLogout()}>Logout</MenuItem>
+          <MenuItem onClick={userLogout}>Logout</MenuItem>
         </Menu>
       </div>
     )
@@ -89,9 +78,7 @@ class UserBit extends React.PureComponent {
   }
 }
 UserBit.propTypes = {
-  history: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
-  endpoints: PropTypes.object.isRequired,
   userLogout: PropTypes.func.isRequired,
   user: PropTypes.object,
 }

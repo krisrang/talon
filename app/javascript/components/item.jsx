@@ -53,7 +53,7 @@ class Item extends React.PureComponent {
 
   handleCopy() {
     if (this.finishInput) {
-      let ios = navigator.userAgent.match(/ipad|ipod|iphone/i)
+      const ios = navigator.userAgent.match(/ipad|ipod|iphone/i)
 
       if (ios) {
         let el = this.finishInput
@@ -74,13 +74,15 @@ class Item extends React.PureComponent {
         this.finishInput.select()
       }
 
-      if (!ios && document.queryCommandEnabled("copy") && document.execCommand('copy')) {
-        this.finishInput.blur()
+      if (document.queryCommandEnabled("copy") && document.execCommand('copy')) {
+        if (!ios) {
+          this.finishInput.blur()
 
-        this.props.handleToggleCopy()
-        setTimeout(() => {
           this.props.handleToggleCopy()
-        }, 2000)
+          setTimeout(() => {
+            this.props.handleToggleCopy()
+          }, 2000)
+        }
       }
     }
   }
@@ -174,7 +176,7 @@ class Item extends React.PureComponent {
                     <CopyIcon className="copyicon" />
                     <CheckIcon className="copyfeedback" />
                   </Button>
-                  <Input defaultValue={public_url} className="finished-url" inputRef={node => this.finishInput = node} />
+                  <Input defaultValue={public_url} className="finished-url" inputProps={{readOnly: true}} inputRef={node => this.finishInput = node} />
                 </div>
               )}
               {cancelled && (

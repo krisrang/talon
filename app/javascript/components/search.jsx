@@ -7,6 +7,7 @@ import { LinearProgress } from 'material-ui/Progress'
 import IconButton from 'material-ui/IconButton'
 import CancelIcon from 'material-ui-icons/Cancel'
 import Videocam from 'material-ui-icons/Videocam'
+import MainMenu from './main_menu'
 import UserBit from './user_bit'
 import * as ActionTypes from '../actions'
 
@@ -23,7 +24,7 @@ class Search extends React.PureComponent {
     e.preventDefault()
 
     this.formInput.blur()
-    this.props.searchStart(this.props.endpoints.downloads, this.props.url)
+    this.props.searchStart(this.props.url)
   }
 
   handleReset() {
@@ -32,12 +33,13 @@ class Search extends React.PureComponent {
   }
 
   render() {
-    const { searchInput, loading, url, scrolled, user, history, endpoints, userLogout } = this.props
+    const { searchInput, loading, url, scrolled, user, userLogout } = this.props
     const className = classNames("search", {"shadow": scrolled, "loading": loading})
     
 
     return (
       <Paper id="search" className={className} elevation={scrolled ? 2 : 0}>
+        <MainMenu user={user} userLogout={userLogout} />
         <form action="nowhere" onSubmit={(e) => { this.handleLoad(e) }}>
           <Videocam className="input-decorator" />
           <LinearProgress className="progressbar" />
@@ -56,7 +58,7 @@ class Search extends React.PureComponent {
           )}
           <input type="submit" className="submitbtn" />
         </form>
-        <UserBit user={user} history={history} endpoints={endpoints} userLogout={userLogout} />
+        <UserBit user={user} userLogout={userLogout} />
       </Paper>
     )
   }
@@ -65,8 +67,6 @@ Search.propTypes = {
   url: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   scrolled: PropTypes.bool.isRequired,
-  endpoints: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
   user: PropTypes.object,
   searchStart: PropTypes.func.isRequired,
   searchInput: PropTypes.func.isRequired,
@@ -79,7 +79,6 @@ const mapStateToProps = (state) => ({
   ...state.search,
   user: state.user,
   scrolled: state.scrollStatus.scrolled,
-  endpoints: state.endpoints
 })
 
 export default connect(mapStateToProps, ActionTypes)(Search)

@@ -37,11 +37,12 @@ export const searchError = (message) => ({
   message
 })
 
-export const searchStart = (endpoint, url) => (
-  function (dispatch) {
+export const searchStart = (url) => (
+  function (dispatch, getState) {
+    const { endpoints } = getState()
     dispatch({type: SEARCH_FETCHING})
 
-    return api.post(endpoint, {url}).then(
+    return api.post(endpoints.downloads, {url}).then(
       download => dispatch(searchSuccess(download)),
       error => dispatch(searchError(error))
     )
@@ -122,20 +123,23 @@ export const downloadFinished = (id, url) => ({
   url
 })
 
-export const downloadStart = (endpoint, id) => (
-  function (dispatch) {
+export const downloadStart = (id) => (
+  function (dispatch, getState) {
+    const { endpoints } = getState()
     dispatch(downloadStarting(id))
 
-    return api.post(endpoint).then(
+    return api.post(endpoints.downloads + "/" + id + "/start").then(
       () => dispatch(downloadStarted(id)),
       error => dispatch(downloadErrored(id, error))
     )
   }
 )
 
-export const downloadDelete = (endpoint, id) => (
-  function (dispatch) {
-    return api.delete(endpoint).then(
+export const downloadDelete = (id) => (
+  function (dispatch, getState) {
+    const { endpoints } = getState()
+
+    return api.delete(endpoints.downloads + "/" + id).then(
       () => dispatch(downloadDeleted(id)),
       error => dispatch(errorShow(error))
     )
@@ -185,9 +189,20 @@ export const passwordResetReset = () => ({
   type: PASSWORD_RESET_RESET
 })
 
-export const USER_LOGOUT = 'USER_LOGOUT'
+export const USER_LOGGEDOUT = 'USER_LOGGEDOUT'
 
-export const userLogout = () => ({
-  type: USER_LOGOUT
+export const userLoggedout = () => ({
+  type: USER_LOGGEDOUT
 })
+
+export const userLogout = () => (
+  function (dispatch, getState) {
+    const { endpoints } = getState()
+
+    return api.delete(endpoints.sessions).then(() => {
+      dispatch(userLoggedout())
+      window.location = "/"
+    })
+  }
+)
 

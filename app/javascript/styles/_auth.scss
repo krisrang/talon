@@ -128,10 +128,16 @@
 
 @media (max-width: 810px) {
   .authcard {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    margin: 60px auto 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    margin: 0;
+    padding: 70px 0 0 0;
+
+    .logo {
+      top: 20px;
+    }
   }
 }

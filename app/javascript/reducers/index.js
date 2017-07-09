@@ -73,6 +73,7 @@ const downloads = (state = [], action) => {
         initial: false,
         starting: true,
         started: true,
+        errored: false,
         progress_label: "Waiting for download to start..."
       })
     case ActionTypes.DOWNLOAD_STARTED:
@@ -116,7 +117,7 @@ const downloads = (state = [], action) => {
       return removeDownload(state, action.id)
     case ActionTypes.LOGIN_FINISHED:
       return action.downloads
-    case ActionTypes.USER_LOGOUT:
+    case ActionTypes.USER_LOGGEDOUT:
       return []
     default:
       return state
@@ -171,7 +172,7 @@ const user = (state = {}, action) => {
   switch(action.type) {
     case ActionTypes.LOGIN_FINISHED:
       return action.user
-    case ActionTypes.USER_LOGOUT:
+    case ActionTypes.USER_LOGGEDOUT:
       return {}
     default:
       return state

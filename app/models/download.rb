@@ -164,7 +164,7 @@ class Download < ApplicationRecord
 
   def fog_directory
     dir = ENV['DOWNLOADS_BUCKET']
-    @fog_directory ||= fog_connection.directories.get(dir) || fog_connection.directories.create(dir)
+    @fog_directory ||= fog_connection.directories.get(dir) || fog_connection.directories.create(key: dir)
   end
 
   def fog_credentials

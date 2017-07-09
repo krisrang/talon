@@ -10,8 +10,15 @@
   // background-color: #3f4758;
   transition: box-shadow 0.3s;
   border-bottom: 1px solid #DDD;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &.shadow { border-bottom: 1px solid #FFFFFF; }
+
+  > * {
+    margin: 0 5px;
+  }
 
   form {
     position: relative;
@@ -96,15 +103,6 @@
       // input { display: none; }
     }
   }
-
-  .userbit {
-    position: absolute;
-    top: 0;
-    right: 20px;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-  }
 }
 
 @keyframes search-autofill {
@@ -124,8 +122,10 @@
 @media (max-width: 810px) {
   .search {
     form {
-      margin: 0 10px;
-      width: auto;
+      margin: 0 10px 0 0;
+      flex: 1;
     }
+
+    .userbit { display: none; }
   }
 }

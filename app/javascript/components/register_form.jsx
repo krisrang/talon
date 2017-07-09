@@ -66,7 +66,7 @@ const FormSlide = (props) => (
       </Typography>
     )}
     <fieldset>
-      <Field name="email" label="Email" type="text" component={AuthField} />
+      <Field name="email" label="Email" type="email" component={AuthField} />
       <Field name="password" label="Password" type="password" component={AuthField} />
     </fieldset>
     <div className="controls">

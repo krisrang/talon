@@ -1,0 +1,11 @@
+.mainmenu {
+  .useritem {
+    padding: 10px;
+    height: 150px;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
