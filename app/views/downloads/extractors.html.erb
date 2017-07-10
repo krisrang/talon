@@ -1,0 +1,9 @@
+<h2>Supported Sites</h2>
+
+<p>Talon is designed to allow users to easily download video from different sources. Below is a list of all the known sites that work with Talon. If you would like a site to be added, removed, or there is a probllem with one of them, <a href="mailto:help@talon.rip">please contact us.</a></p>
+
+<div class="extractors">
+  <% @extractors.each do |ext| %>
+    <div class="extractor"><%= auto_link(ext) %></div>
+  <% end %>
+</div>

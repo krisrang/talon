@@ -13,10 +13,6 @@
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#018c49">
     <meta name="theme-color" content="#000000">
 
-    <%= csrf_meta_tags %>
-    <%= action_cable_meta_tag %>
-
-    <%= javascript_include_tag 'application' %>
     <%= stylesheet_link_tag 'application' %>
   </head>
 
@@ -26,6 +22,17 @@
       <div class="background"></div>
       <div class="noise"></div>
     </div>
-    <%= yield %>
+    <div class="static-container">
+      <div class="header">
+        <h1>
+          <%= image_tag "logo.png" %>
+          Talon
+        </h1>
+        <%= link_to "Return to Talon", root_path %>
+      </div>
+      <div class="contents">
+        <%= yield %>
+      </div>
+    </div>
   </body>
 </html>

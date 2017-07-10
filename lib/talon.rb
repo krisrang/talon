@@ -23,4 +23,8 @@ module Talon
   def self.base_url
     Rails.env.production? ? "https://talon.rip" : "http://localhost:3000"
   end
+
+  def self.clear_caches!
+    Rails.cache.delete("youtubedl-extractors")
+  end
 end

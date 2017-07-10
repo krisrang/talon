@@ -42,6 +42,8 @@ class YoutubeDL
     merging = false
 
     command = [PATH,
+      "-f",
+      "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4/best",
       "--prefer-ffmpeg",
       "--no-continue",
       "--no-part",

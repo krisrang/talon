@@ -88,3 +88,51 @@ input:-webkit-autofill {
     opacity: 0.1;
   }
 }
+
+.static-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #444;
+
+    h1 {
+      display: inline-flex;
+      flex: 1;
+
+      img {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
+    }
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  p { margin: 20px; }
+
+  a {
+    color: #0277BD;
+
+    &:hover { border-bottom: 1px solid #0277BD; }
+  }
+}
+
+.extractors {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+
+  .extractor {
+    flex-basis: 25%;
+    font-size: 1.1em;
+    padding: 5px 0;
+  }
+}

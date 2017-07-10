@@ -92,6 +92,6 @@ class SessionsController < ApplicationController
 
   def login(user)
     log_on_user(user)
-    render json: { user: serialize(user), downloads: serialize(user.downloads) }
+    render json: { user: serialize(user), downloads: serialize(user.downloads.order("id")) }
   end
 end

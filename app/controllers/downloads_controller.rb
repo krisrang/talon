@@ -8,7 +8,7 @@ class DownloadsController < ApplicationController
   end
 
   def index
-    @downloads = logged_in? ? current_user.downloads : []
+    @downloads = logged_in? ? current_user.downloads.order("id") : []
 
     respond_to do |format|
       format.html do
@@ -26,7 +26,10 @@ class DownloadsController < ApplicationController
       YoutubeDL.extractors.sort_by { |e| e[0].downcase }
     end
 
-    render json: @extractors
+    respond_to do |format|
+      format.html { render layout: 'static' }
+      format.json { render json: @extractors }
+    end
   end
 
   def create

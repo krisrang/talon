@@ -27,4 +27,12 @@ module ApplicationHelper
       javascript_pack_tag("talon")
     ).html_safe
   end
+
+  def auto_link(text)
+    if /.+\..+/.match?(text)
+      link_to(text, "http://#{text}")
+    else
+      text
+    end
+  end
 end
