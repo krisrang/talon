@@ -1,4 +1,4 @@
-https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git
+https://github.com/krisrang/heroku-buildpack-ffmpeg-latest
 https://github.com/heroku/heroku-buildpack-apt
 https://github.com/heroku/heroku-buildpack-python
 https://github.com/heroku/heroku-buildpack-ruby.git#v164
