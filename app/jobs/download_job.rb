@@ -12,13 +12,13 @@ class DownloadJob
 
     MessageBus.subscribe("/cancel", &cancelproc)
     
-    target = YoutubeDL.download(download.url, download.key) do |progress, audio, merging, lines, cancel|
+    target, log = YoutubeDL.download(download.url, download.key, download.audio) do |progress, audio, merging, cancel|
       cancel[:shouldcancel] = true if shouldcancel
-      download.progress(progress, lines, audio, merging)
+      download.progress(progress, audio, merging)
     end
 
     target = Dir["#{target}.*"].first
-    download.upload(target)
+    download.upload(target, log)
   rescue ActiveRecord::RecordNotFound
     # do nothin
   rescue StandardError => e

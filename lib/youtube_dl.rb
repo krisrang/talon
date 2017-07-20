@@ -28,9 +28,10 @@ class YoutubeDL
     JSON.parse(run("-j", url))
   end
 
-  def self.download(url, filename, timeout=60*60)
+  def self.download(url, filename, audio=false, timeout=60*60)
     target = File.join(Dir.tmpdir(), filename)
     error = nil
+    lines = []
     cancel = {shouldcancel: false}
     progress = {
       percent: 0.0,
@@ -38,7 +39,7 @@ class YoutubeDL
       eta: 0
     }
     partname = nil
-    audio = false
+    audiopart = false
     merging = false
 
     command = [PATH,
@@ -48,15 +49,27 @@ class YoutubeDL
       "--no-continue",
       "--no-part",
       "--no-mtime",
-      "--all-subs",
-      "--write-sub",
-      "--embed-subs",
-      "-o", "#{target}.%(ext)s",
-      url]
+      "-o", "#{target}.%(ext)s"]
+
+    if audio
+      command << "-x"
+      command << "--audio-format"
+      command << "mp3"
+    else
+      command << "--all-subs"
+      command << "--write-sub"
+      command << "--embed-subs"
+    end
+
+    command << "-v" if Rails.env.development?
+    command << url
+    
     Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
       begin
         Timeout.timeout(timeout) do
           stdout.each("\r") do |line|
+            lines << line
+
             if line.include?("[download]")
               # [download] Destination: Starfunkel - A Mixtape From Japan-E4s-hxY80pA.f133.mp4
               # [download]  10.1% of 9.89MiB at 43.57MiB/s ETA 00:00
@@ -71,7 +84,7 @@ class YoutubeDL
                 progress[:size] = $2.to_f
               elsif line =~ /\[download\] Destination: (.*)/
                 if !partname.nil? && partname != $1
-                  audio = true
+                  audiopart = true
                 end
                 
                 partname = $1
@@ -82,7 +95,7 @@ class YoutubeDL
               merging = true
             end
             
-            yield(progress, audio, merging, line.split("\n"), cancel) if block_given?
+            yield(progress, audiopart, merging, cancel) if block_given?
 
             if cancel[:shouldcancel] == true
               Process.kill("INT", wait_thr.pid)
@@ -105,7 +118,7 @@ class YoutubeDL
       raise RunError, error.strip 
     end
     
-    target
+    [target, lines]
   end
 
   def self.cleanup(target)

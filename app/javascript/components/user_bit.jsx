@@ -6,7 +6,7 @@ import Button from 'material-ui/Button'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
-import { primary } from './themes'
+import { primary } from '../themes'
 
 const styleSheet = createStyleSheet('ImageAvatars', {
   avatar: {

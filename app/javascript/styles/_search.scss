@@ -4,11 +4,11 @@
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 1100;
+  z-index: 50;
   padding: 8px 0;
   background-color: #FFFFFF;
   // background-color: #3f4758;
-  transition: box-shadow 0.3s;
+  transition: box-shadow 0.2s;
   border-bottom: 1px solid #DDD;
   display: flex;
   justify-content: space-between;
@@ -19,6 +19,9 @@
   > * {
     margin: 0 5px;
   }
+
+  .mainmenu-container { width: 100px; }
+  .userbit { width: 100px; text-align: right; }
 
   form {
     position: relative;
@@ -121,6 +124,8 @@
 
 @media (max-width: 810px) {
   .search {
+    .mainmenu-container { width: auto; }
+    
     form {
       margin: 0 10px 0 0;
       flex: 1;

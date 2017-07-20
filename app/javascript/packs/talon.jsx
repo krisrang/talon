@@ -6,11 +6,12 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import { MuiThemeProvider } from 'material-ui/styles'
 
 import configureStore from '../store/configureStore'
-import theme from '../components/themes'
+import theme from '../themes'
+import Error from '../containers/error'
 import App from '../containers/app'
-import LoginForm from '../components/login_form'
-import RegisterForm from '../components/register_form'
-import PasswordResetForm from '../components/password_reset_form'
+import LoginForm from '../containers/login_form'
+import RegisterForm from '../containers/register_form'
+import PasswordResetForm from '../containers/password_reset_form'
 import '../styles'
 
 if (process.env.NODE_ENV === "production") {
@@ -32,7 +33,8 @@ const Root = (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <div>
-          <App />
+          <Error />
+          <Route exact path="/" component={App} />
           <Route path="/login" component={LoginForm} />
           <Route path="/register" component={RegisterForm} />
           <Route path="/users/activate/:token" component={RegisterForm} />

@@ -1,6 +1,7 @@
 class DownloadsController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :require_user, only: [:start, :destroy]
+  before_action :parse_url, only: [:info, :create]
 
   rescue_from YoutubeDL::RunError do |e|
     Raven.capture_exception(e)
@@ -8,7 +9,7 @@ class DownloadsController < ApplicationController
   end
 
   def index
-    @downloads = logged_in? ? current_user.downloads.order("id") : []
+    @downloads = logged_in? ? current_user.downloads.ordered : []
 
     respond_to do |format|
       format.html do
@@ -32,16 +33,20 @@ class DownloadsController < ApplicationController
     end
   end
 
-  def create
-    url = params[:url]
-    if !valid_url?(url)
-      return render json: {error: "Invalid URL, please check your spelling"}, status: 422
-    end
-    
+  def info
     user = logged_in? ? current_user : create_shadow_user
-    download = user.downloads.from_info(url)
+    download = user.downloads.from_info(@url)
+    render json: download
+  end
+
+  def create
+    user = logged_in? ? current_user : create_shadow_user
+    download = user.downloads.from_info(@url)
+    download.audio = params[:audio]
+    download.email = params[:email]
 
     if download.save
+      download.queue
       render json: download
     else
       render json: {error: download.errors}
@@ -61,6 +66,13 @@ class DownloadsController < ApplicationController
   end
 
   private
+
+  def parse_url
+    @url = params[:url]
+    if !valid_url?(@url)
+      return render json: {error: "Invalid URL, please check your spelling"}, status: 422
+    end
+  end
 
   def valid_url?(url)
     uri = URI.parse(url)

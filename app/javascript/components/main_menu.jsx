@@ -20,7 +20,7 @@ import HelpIcon from 'material-ui-icons/Help'
 import MenuIcon from 'material-ui-icons/Menu'
 import PersonIcon from 'material-ui-icons/Person'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
-import { primary } from './themes'
+import { primary } from '../themes'
 
 const styleSheet = createStyleSheet('MainMenuAvatar', {
   avatar: {
@@ -149,8 +149,8 @@ class MainMenu extends React.PureComponent {
     const { user } = this.props
 
     return (
-      <div>
-        <IconButton color="contrast" aria-label="Menu" onClick={this.handleDrawerOpen}>
+      <div className="mainmenu-container">
+        <IconButton aria-label="Menu" onClick={this.handleDrawerOpen}>
           <MenuIcon />
         </IconButton>
         <Drawer
@@ -174,8 +174,9 @@ class MainMenu extends React.PureComponent {
           </DialogTitle>
           <DialogContent>
             <FaqQuestion q="What is Talon?">
-              <p>Talon is the easiest way to download videos from almost any common site and post-processes them based on options you set.</p>
-              <p>All you need to do is enter the link in the search bar at the top. Available options include video/audio format, audio only downloads, and notifying by email when download completes.</p>
+              <p>Talon is the easiest way to backup videos from almost any common site and post-processes them based on options you set.</p>
+              <p>All you need to do is enter the link in the search bar at the top. Available options include audio only downloads, and notifying by email when download completes.</p>
+              <p>In the future it will be possible to set desired video quality/format.</p>
             </FaqQuestion>
             <FaqQuestion q="What sites can videos be downloaded from?">
               <p>All of the popular ones like YouTube, Vimeo, Twitch, Twitter, etc but also lots of other sites.</p>
@@ -195,7 +196,7 @@ class MainMenu extends React.PureComponent {
             <p>Contact us: <a href="mailto:help@talon.rip">help@talon.rip</a></p>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleFaqClose} color="primary">
+            <Button onClick={this.handleFaqClose}>
               Close
             </Button>
           </DialogActions>

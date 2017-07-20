@@ -8,29 +8,35 @@ class Download < ApplicationRecord
   has_attached_file :cached_thumbnail
   validates_attachment_content_type :cached_thumbnail, content_type: /\Aimage\/.*\z/
 
-  attr_accessor :formats, :cr, :last_broadcast
+  attr_accessor :formats, :last_broadcast, :last_percent
   serialize :lines, Array
   enum status: { initial: 0, started: 1, cancelled: 2, errored: 3, finished: 4 }
 
   before_save :set_key
   before_save :cache_thumbnail
+  # before_save :parse_lines
   before_destroy :delete_file
+
+  scope :ordered, ->{ order(created_at: :desc) }
 
   def self.find_by_id_or_key(param)
     return Download.where(key: param).first if param.to_s.length == 32
     Download.where(id: param).first
   end
 
-  def self.from_info(url)
+  def self.load_info(url)
+    return YoutubeDL.info(url) if Rails.env.test?
+
     urlkey = Digest::SHA2.hexdigest(url)
-    key = SecureRandom.hex
-    info = Rails.cache.fetch(urlkey, expires_in: 30.minute) do
+    Rails.cache.fetch(urlkey, expires_in: 12.hours) do
       YoutubeDL.info(url)
     end
-    # info = YoutubeDL.info(url)
+  end
+
+  def self.from_info(url)
+    info = load_info(url)
     
     self.new.tap do |download|
-      download.key = key
       download.url = info["webpage_url"]
       download.thumbnail = info["thumbnail"]
       download.duration = info["duration"]
@@ -38,7 +44,7 @@ class Download < ApplicationRecord
       download.extractor = info["extractor"]
       download.description = info["description"]
 
-      download.formats = info["formats"].sort_by do |f|
+      download.formats = (info["formats"] || []).sort_by do |f|
         if f["width"] && f["height"] && f["width"] > 0
           f["width"] * f["height"]
         elsif f["preference"] || f["abr"]
@@ -50,56 +56,42 @@ class Download < ApplicationRecord
     end
   end
 
+  def urlkey
+    Digest::SHA2.hexdigest(url)
+  end
+
   def queue
     DownloadJob.perform_async(self.id)
   end
 
-  def progress(progress, newlines, audio, merging)
-    self.lines ||= []
-
-    newlines.each do |line|
-      if (cr === true)
-        self.lines.pop
-        self.cr = false
-      end
-
-      crindex = line.index("\r")
-      self.lines.push(line.gsub("\r", ""))
-      self.cr = !crindex.nil?
-    end
-
+  def progress(progress, audio, merging)
     now = Time.now.to_f
-    if progress && progress[:percent] < 100 && now - (self.last_broadcast || 0) < 0.3
+    newpercent = progress[:percent].round
+
+    if newpercent == self.last_percent
       return
     end
 
-    label = merging ? "Merging audio and video" : audio ? "Downloading audio" : "Downloading video"
-
-    self.percent = progress[:percent]
-    self.progress_label = label
-    self.lines = lines
+    self.percent = audio ? 100 : newpercent
     self.save
   
-    broadcast(progress_label: "#{label} #{progress[:percent]}%", progress: progress, lines: lines)
+    broadcast(progress: percent)
     self.last_broadcast = now
+    self.last_percent = newpercent
   end
 
   def error(err)
-    if err.kind_of? YoutubeDL::UserCancel
-      self.update_column(:percent, 0)
-      self.update_column(:lines, [])
-      self.cancelled!
-      broadcast(cancel: true)
-      return
-    end
+    return if err.kind_of? YoutubeDL::UserCancel
     
     self.errored!
     broadcast(error: err)    
     Raven.capture_exception(err)
   end
 
-  def upload(path)
+  def upload(path, log=nil)
     broadcast(progress_label: "Saving to storage...")
+
+    self.update_column(:lines, log) if log
 
     ext = File.extname(path)
     disposition = "attachment; filename=\"#{self.title}#{ext}\""
@@ -118,6 +110,10 @@ class Download < ApplicationRecord
     self.update_column(:filename, filename)
     self.finished!
 
+    if self.email
+      DownloadMailer.complete(self.id, email).deliver_later
+    end
+
     broadcast(public_url: public_url)
   end
 
@@ -126,7 +122,7 @@ class Download < ApplicationRecord
     bucket = ENV['DOWNLOADS_BUCKET']
 
     if Rails.env.production?
-      return "https://storage.cloud.google.com/#{bucket}/#{self.filename}"
+      return "https://storage.googleapis.com/#{bucket}/#{self.filename}"
     end
     
     "http://localhost:3000/#{bucket}/#{self.filename}"
@@ -137,6 +133,10 @@ class Download < ApplicationRecord
   end
 
   def cancel!
+    self.update_column(:percent, 0)
+    self.update_column(:lines, [])
+    self.cancelled!
+    broadcast(cancel: true)
     MessageBus.publish("/cancel", {id: self.id, cancel: true})
   end
 
@@ -173,5 +173,22 @@ class Download < ApplicationRecord
     end
     
     {provider: "Local", local_root: "#{Rails.root}/public", endpoint: "http://localhost:3000"}
+  end
+
+  def parse_lines
+    if lines_changed?
+      cr = false
+
+      self.lines = self.lines.map do |line|
+        if cr === true
+          cr = false
+          nil
+        else
+          crindex = line.index("\r")
+          cr = !crindex.nil?
+          line.gsub("\r", "")
+        end.reject(&:nil?)
+      end
+    end
   end
 end

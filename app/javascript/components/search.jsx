@@ -16,7 +16,7 @@ class Search extends React.PureComponent {
     this.scrollUnsub = this.props.listenScroll()
   }
 
-  componentWillUnmount(){ 
+  componentWillUnmount() { 
     this.scrollUnsub && this.scrollUnsub()
   }
 
@@ -35,14 +35,13 @@ class Search extends React.PureComponent {
   render() {
     const { searchInput, loading, url, scrolled, user, userLogout } = this.props
     const className = classNames("search", {"shadow": scrolled, "loading": loading})
-    
 
     return (
-      <Paper id="search" className={className} elevation={scrolled ? 2 : 0}>
+      <Paper id="search" className={className} elevation={scrolled ? 4 : 0}>
         <MainMenu user={user} userLogout={userLogout} />
         <form action="nowhere" onSubmit={(e) => { this.handleLoad(e) }}>
           <Videocam className="input-decorator" />
-          <LinearProgress className="progressbar" />
+          <LinearProgress className="progressbar" mode="query" />
           <input
             id="url"
             type="text" placeholder="Video Address"
@@ -71,8 +70,8 @@ Search.propTypes = {
   searchStart: PropTypes.func.isRequired,
   searchInput: PropTypes.func.isRequired,
   searchReset: PropTypes.func.isRequired,
-  listenScroll: PropTypes.func.isRequired,
   userLogout: PropTypes.func.isRequired,
+  listenScroll: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({

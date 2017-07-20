@@ -42,12 +42,29 @@ export const searchStart = (url) => (
     const { endpoints } = getState()
     dispatch({type: SEARCH_FETCHING})
 
-    return api.post(endpoints.downloads, {url}).then(
+    return api.post(endpoints.download_info, {url}).then(
       download => dispatch(searchSuccess(download)),
       error => dispatch(searchError(error))
     )
   }
 )
+
+export const PREVIEW_ADDING = 'PREVIEW_ADDING'
+export const PREVIEW_ERRORED = 'PREVIEW_ERRORED'
+export const PREVIEW_RESET = 'PREVIEW_RESET'
+
+export const previewAdding = () => ({
+  type: PREVIEW_ADDING
+})
+
+export const previewErrored = (error) => ({
+  type: PREVIEW_ERRORED,
+  error
+})
+
+export const previewReset = () => ({
+  type: PREVIEW_RESET
+})
 
 export const WINDOW_SCROLL = 'WINDOW_SCROLL'
 
@@ -65,15 +82,20 @@ export const listenScroll = () => (
   }
 )
 
+export const DOWNLOAD_ADDED = 'DOWNLOAD_ADDED'
 export const DOWNLOAD_STARTING = 'DOWNLOAD_STARTING'
 export const DOWNLOAD_STARTED = 'DOWNLOAD_STARTED'
 export const DOWNLOAD_CANCELLED = 'DOWNLOAD_CANCELLED'
-export const DOWNLOAD_CHANGED = 'DOWNLOAD_CHANGED'
+export const DOWNLOAD_PROGRESS = 'DOWNLOAD_PROGRESS'
 export const DOWNLOAD_ERRORED = 'DOWNLOAD_ERRORED'
-export const DOWNLOAD_LOGS_TOGGLE = 'DOWNLOAD_LOGS_TOGGLE'
-export const DOWNLOAD_COPY_TOGGLE = 'DOWNLOAD_COPY_TOGGLE'
+export const DOWNLOAD_DELETING = 'DOWNLOAD_DELETING'
 export const DOWNLOAD_DELETED = 'DOWNLOAD_DELETED'
 export const DOWNLOAD_FINISHED = 'DOWNLOAD_FINISHED'
+
+export const downloadAdded = (download) => ({
+  type: DOWNLOAD_ADDED,
+  download
+})
 
 export const downloadStarting = (id) => ({
   type: DOWNLOAD_STARTING,
@@ -85,10 +107,11 @@ export const downloadStarted = (id) => ({
   id
 })
 
-export const downloadChanged = (id, changes) => ({
-  type: DOWNLOAD_CHANGED,
+export const downloadProgress = (id, percent, progress_label) => ({
+  type: DOWNLOAD_PROGRESS,
   id,
-  changes
+  percent,
+  progress_label,
 })
 
 export const downloadCancelled = (id) => ({
@@ -102,13 +125,8 @@ export const downloadErrored = (id, error) => ({
   error
 })
 
-export const downloadLogsToggle = (id) => ({
-  type: DOWNLOAD_LOGS_TOGGLE,
-  id
-})
-
-export const downloadCopyToggle = (id) => ({
-  type: DOWNLOAD_COPY_TOGGLE,
+export const downloadDeleting = (id) => ({
+  type: DOWNLOAD_DELETING,
   id
 })
 
@@ -123,13 +141,25 @@ export const downloadFinished = (id, url) => ({
   url
 })
 
+export const downloadAdd = (url, audio, email) => (
+  function (dispatch, getState) {
+    const { endpoints } = getState()
+    dispatch(previewAdding())
+
+    return api.post(endpoints.downloads, {url, audio, email}).then(
+      download => dispatch(downloadAdded(download)),
+      error => dispatch(previewErrored(error))
+    )
+  }
+)
+
 export const downloadStart = (id) => (
   function (dispatch, getState) {
     const { endpoints } = getState()
     dispatch(downloadStarting(id))
 
     return api.post(endpoints.downloads + "/" + id + "/start").then(
-      () => dispatch(downloadStarted(id)),
+      () => dispatch(downloadStarting(id)),
       error => dispatch(downloadErrored(id, error))
     )
   }
@@ -138,6 +168,7 @@ export const downloadStart = (id) => (
 export const downloadDelete = (id) => (
   function (dispatch, getState) {
     const { endpoints } = getState()
+    dispatch(downloadDeleting(id))
 
     return api.delete(endpoints.downloads + "/" + id).then(
       () => dispatch(downloadDeleted(id)),

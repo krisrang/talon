@@ -1,13 +1,13 @@
 import { createMuiTheme } from 'material-ui/styles'
 import createPalette from 'material-ui/styles/palette'
-import { deepOrange, lightBlue, grey } from 'material-ui/colors'
+import { deepOrange, blue, grey } from 'material-ui/colors'
 
-export let primary = lightBlue
+export let primary = blue
 
 export default createMuiTheme({
   palette: createPalette({
     // type: 'dark',
-    primary: lightBlue,
+    primary: blue,
     accent: deepOrange
   }),
   overrides: {

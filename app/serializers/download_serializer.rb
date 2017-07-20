@@ -1,8 +1,8 @@
 class DownloadSerializer < ActiveModel::Serializer
   has_many :formats
 
-  attributes :id, :url, :uuid, :title, :duration, :extractor, :thumbnail_url, :formats,
-    :public_url, :percent, :progress_label, :lines,
+  attributes :id, :url, :urlkey, :uuid, :title, :duration, :extractor, :thumbnail_url, :formats,
+    :public_url, :percent, :progress_label, :lines, :audio,
     :initial, :started, :cancelled, :errored, :finished
   
   def uuid
@@ -10,7 +10,10 @@ class DownloadSerializer < ActiveModel::Serializer
   end
 
   def thumbnail_url
-    object.cached_thumbnail.present? ? object.cached_thumbnail.url : object.thumbnail
+    object.cached_thumbnail.present? ?
+      object.cached_thumbnail.url : object.thumbnail ?
+        object.thumbnail :
+        ActionController::Base.helpers.asset_path("placeholder.png")
   end
 
   def lines

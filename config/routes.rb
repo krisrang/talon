@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :downloads do
     collection do
       get :extractors
+      post :info
     end
     member do
       post :start

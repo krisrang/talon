@@ -40,10 +40,39 @@ const search = (state = {}, action) => {
   }
 }
 
+const preview = (state = {}, action) => {
+  switch(action.type) {
+    case ActionTypes.SEARCH_SUCCESS:
+      return {
+        ...action.download,
+        adding: false,
+        error: null,
+      }
+    case ActionTypes.PREVIEW_ADDING:
+      return {
+        ...state,
+        adding: true,
+      }
+    case ActionTypes.PREVIEW_ERRORED:
+    return {
+      ...state,
+      adding: false,
+      error: action.error,
+    }
+    case ActionTypes.DOWNLOAD_ADDED:
+      return { adding: true }
+    case ActionTypes.PREVIEW_RESET:
+      return { adding: false, error: null }
+    default:
+      return state
+  }
+}
+
 function addDownload(state, download) {
-  let newState = state.slice()
-  newState.push(download)
-  return newState;
+  return [
+    download,
+    ...state
+  ]
 }
 
 function removeDownload(state, id) {
@@ -65,41 +94,37 @@ function updateDownload(state, id, changes) {
 
 const downloads = (state = [], action) => {
   switch(action.type) {
-    case ActionTypes.SEARCH_SUCCESS:
+    case ActionTypes.DOWNLOAD_ADDED:
       return addDownload(state, action.download)
     case ActionTypes.DOWNLOAD_STARTING:
       return updateDownload(state, action.id, {
         cancelled: false,
-        initial: false,
-        starting: true,
-        started: true,
+        initial: true,
+        started: false,
         errored: false,
-        progress_label: "Waiting for download to start..."
+        finishing: false,
+        deleting: false,
+        progress_label: null,
+        percent: 0,
       })
-    case ActionTypes.DOWNLOAD_STARTED:
-      return updateDownload(state, action.id, {starting: false})
-    case ActionTypes.DOWNLOAD_LOGS_TOGGLE:
-      return updateDownload(state, action.id, {
-        logsExpanded: !state.find((d) => d.id === action.id).logsExpanded
-      })
-    case ActionTypes.DOWNLOAD_COPY_TOGGLE:
-      return updateDownload(state, action.id, {
-        copyActive: !state.find((d) => d.id === action.id).copyActive
-      })
-    case ActionTypes.DOWNLOAD_CHANGED:
-       return updateDownload(state, action.id, action.changes)
+    case ActionTypes.DOWNLOAD_PROGRESS:
+       return updateDownload(state, action.id, {
+         percent: action.percent,
+         progress_label: action.progress_label,
+         initial: false,
+         started: true,
+       })
     case ActionTypes.DOWNLOAD_CANCELLED:
       return updateDownload(state, action.id, {
+        initial: false,
+        started: false,
         cancelled: true,
         percent: 0,
-        log: null,
-        logsExpanded: false,
-        started: false
       })
     case ActionTypes.DOWNLOAD_FINISHED:
       return updateDownload(state, action.id, {
         public_url: action.url,
-        logsExpanded: false,
+        finishing: true,
         finished: true,
         started: false
       })
@@ -108,10 +133,14 @@ const downloads = (state = [], action) => {
         initial: false,
         starting: false,
         started: false,
+        deleting: false,
         errored: true,
         public_url: "",
-        logsExpanded: true,
-        log: action.error
+        error: action.error
+      })
+    case ActionTypes.DOWNLOAD_DELETING:
+      return updateDownload(state, action.id, {
+        deleting: true
       })
     case ActionTypes.DOWNLOAD_DELETED:
       return removeDownload(state, action.id)
@@ -124,7 +153,7 @@ const downloads = (state = [], action) => {
   }
 }
 
-const scrollStatus = (state = null, action) => {
+const scrollStatus = (state, action) => {
   switch(action.type) {
     case ActionTypes.WINDOW_SCROLL:
       return {scrolled: action.offset > 0}
@@ -132,7 +161,6 @@ const scrollStatus = (state = null, action) => {
       return {scrolled: false}
   }
 }
-
 
 const registerResult = (state = null, action) => {
   switch(action.type) {
@@ -183,6 +211,7 @@ const endpoints = (state = {}) => (state)
 const rootReducer = combineReducers({
   error,
   search,
+  preview,
   downloads,
   scrollStatus,
   endpoints,

@@ -116,11 +116,11 @@
     transition: transform 0.5s;
   }
 
-  .authcard-leave {
+  .authcard-exit {
     transform: translateX(0);
   }
 
-  .authcard-leave.authcard-leave-active {
+  .authcard-exit.authcard-exit-active {
     transform: translateX(-450px);
     transition: transform 0.5s;
   }

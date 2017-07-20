@@ -15,6 +15,7 @@ module ApplicationHelper
       endpoints: {
         extractors: extractors_downloads_path,
         downloads: downloads_path,
+        download_info: info_downloads_path,
         users: users_path,
         sessions: session_path,
         forgot_password: forgot_password_session_path,

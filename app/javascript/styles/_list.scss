@@ -1,218 +1,234 @@
+$transition: 0.5s;
+$finishTransition: 3s;
+
 .downloadlist {
-  margin: 100px 8px 50px;
+  margin: 107px 64px 40px;
+  display: flex;
+  flex-wrap: wrap;
 
-  > span {
+  .download {
+    width: calc((100%/5) - 24px);
+    max-height: 360px;
+    margin: 0 12px 24px;
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+    position: relative;
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap-reverse;
-  }
+    flex-direction: column;
+    overflow: hidden;
 
-  .card {
-    display: flex;
-    max-width: 1200px;
-    flex-basis: 100%;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-
-    .details {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 0;
+    &:hover {
+      box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
     }
-    
-    .content {
-      flex: 1 0 auto;
 
-      .title {
-        h1 {
+    .cover-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 56%;
+
+      .cover {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .state {
+          position: absolute;
+          left: 16px;
+          bottom: 8px;
+          color: #fff;
+          z-index: 3;
+        }
+
+        .thumbnail {
+          position: absolute;
+          top: 0;
+          left: 0;
+          background-size: cover;
+          background-position-x: 50%;
+          background-position-y: 50%;
+          background-repeat: no-repeat;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+        }
+
+        &.overlay .thumbnail { opacity: 0.4; }
+
+        .progress {
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          background: #1d7eca;
+          opacity: 0.5;
+          z-index: 2;
+          transition: width 0.3s;
+        }
+
+        .status {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          color: #fff;
+          font-weight: 500;
+          font-size: 2em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 3;
+
+          svg { transform: scale(2); }
+          .checkicon { visibility: collapse; }
+        }
+
+        &.cover.finishing {
+          .thumbnail { animation: $finishTransition 1 forwards finish-thumbnail; }
+          .progress { animation: $finishTransition 1 forwards finish-progress; }
+          .percent { animation: $finishTransition 1 forwards finish-percent;  }
+          .checkicon { animation: $finishTransition 1 forwards finish-check; }
+        }
+      }
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      padding: 16px;
+
+      .text {
+        flex: 1;
+        min-width: 0;
+
+        .title {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          display: inline-block;
-          max-width: 90%;
+          padding-top: 8px;
+          -webkit-font-smoothing: antialiased;
         }
 
-        a {
-          position: relative;
-          color: #888;
-          margin: 5px 0 0 10px;
-          vertical-align: top;
-          display: inline-block;
+        .subtitle {
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+          margin: -.063rem 0;
+          -webkit-font-smoothing: antialiased;
         }
-      }
 
-      .description {
-        margin: 10px 0 0;
-        white-space: pre-wrap;
-        max-height: 95px;
-        overflow: hidden;
-        position: relative;
-
-        &:after {
-          content  : "";
-          position : absolute;
-          z-index  : 1;
-          bottom   : 0;
-          left     : 0;
-          pointer-events   : none;
-          background-image : linear-gradient(to bottom, 
-                            rgba(255,255,255, 0), 
-                            rgba(255,255,255, 1) 90%);
-          width    : 100%;
-          height   : 3em;
+        .audio {
+          color: #333;
         }
       }
-    }
-
-    .cover {
-      width: 333px;
-      height: 250px;
-      background: #000;
-    }
-
-    .thumbnail {
-      background-size: cover;
-      background-position-x: 50%;
-      background-position-y: 50%;
-      width: 100%;
-      height: 100%;
     }
 
     .controls {
-      display: flex;
-      align-items: center;
-      padding-left: 8px;
-      padding-bottom: 8px;
+      padding: 8px 4px;
+      height: auto;
     }
 
-    .widecontrols {
-      flex: 1;
-      padding-right: 8px;
-
-      .progressbar { width: 100%; }
-
-      .buttongrid {
-        display: flex;
-        align-items: center;
-        padding: 0 16px;
-
-        > * {
-          flex: 1;
-          margin: 0 8px;
-          padding: 0;
-        }
-
-        button { padding: 0 8px; }
-
-        &.result {
-          padding: 0;
-
-          button { flex: 0 1 auto; margin: 0; }
-          .finished-url { flex: 1; }
-
-          .copybtn {
-            position: relative;
-
-            .copyfeedback {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              margin-left: -12px;
-              margin-top: -12px;
-              color: #03a9f4;
-              transform: scale(0, 0);
-              opacity: 0;
-              transition: transform 0.3s, opacity 0.3s;
-            }
-
-            &.active .copyfeedback {
-              opacity: 1;
-              transform: scale(1, 1);
-            }
-
-            &.active .copyicon {
-              display: none;
-            }
-          }
-        }
-      }
+    .deleteprogress {
+      display: none;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 
-    .expand {
-      transform: rotate(0deg);
-      transition: transform 0.5s;
-    }
+    &.deleting {
+      .cover-wrapper { opacity: 0.5; }
+      .content { opacity: 0.5; }
+      .controls button { visibility: collapse; }
+      .deleteprogress { display: block; }
 
-    .expandOpen {
-      transform: rotate(180deg);
-    }
-
-    .logs {
-      flex-basis: 100%;
-
-      pre {
-        white-space: pre-wrap;
-        font-size: 0.85em;
-        height: 270px;
-        overflow-y: auto;
-        background: #eee;
-        border-radius: 2px;
-        padding: 3px;
-        margin: 0;
-      }
+      &:hover { box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12); }
     }
 
     &.downloaditem-enter {
-      transform: translateY(-200px) scale(0.1, 0.1);
-      z-index: 2000;
+      visibility: visible;
     }
-
+  
     &.downloaditem-enter.downloaditem-enter-active {
-      transform: translateY(0) scale(1, 1);
-      transition: transform 0.3s;
+      visibility: hidden;
     }
 
-    &.downloaditem-leave {
-      transform: translateX(0);
+    &.downloaditem-exit {
       opacity: 1;
-      z-index: 2000;
     }
+  
+    &.downloaditem-exit.downloaditem-exit-active {
+      .deleteprogress { display: none; }
 
-    &.downloaditem-leave.downloaditem-leave-active {
-      transform: translateX(500px);
       opacity: 0;
-      transition: transform 0.3s, opacity 0.3s;
+      width: 0px;
+      margin-left: 0;
+      margin-right: 0;
+      transition: max-height $transition, width $transition, opacity ($transition / 3), margin ($transition / 2);
     }
   }
 }
 
-@media (max-width: 750px) {
+@keyframes finish-progress {
+  0%, 90% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+@keyframes finish-thumbnail {
+  0%, 90% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+@keyframes finish-percent {
+  0%, 50% { opacity: 1; }
+  60%, 100% { opacity: 0; }
+}
+
+@keyframes finish-check {
+  0% { visibility: collapse; transform: scale(0.2); }
+  50% { visibility: visible; transform: scale(0.2); }
+  65% { transform: scale(3); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: scale(3); }
+}
+
+@media (max-width: 1366px) {
   .downloadlist {
-    margin: 80px 8px 50px;
+    margin: 91px 40px 40px;
+    
+    .download { width: calc((100%/4) - 24px); }
+  }
+}
 
-    .card {
-      flex-direction: column-reverse;
+@media (max-width: 1024px) {
+  .downloadlist {
+    .download { width: calc((100%/3) - 24px); }
+  }
+}
 
-      .content {
-        .title {
-          h1 { max-width: 200px; }
-        }
-      }
+@media (max-width: 768px) {
+  .downloadlist {
+    .download { width: calc((100%/2) - 24px); }
+  }
+}
 
-      .cover {
+@media (max-width: 420px) {
+  .downloadlist {
+    margin: 83px 12px 40px;
+
+    .download {
+      margin: 0 0 24px;
+      width: 100%;
+
+      &.downloaditem-exit.downloaditem-exit-active {
+        opacity: 0;
         width: 100%;
-        height: 200px;
-      }
-
-      .logs, .expand { display: none; }
-
-      .widecontrols {
-        .buttongrid.result {
-          flex-wrap: wrap;
-
-          .finished-url { flex-basis: 100%; }
-        }
+        max-height: 0;
+        margin-bottom: 0;
       }
     }
   }

@@ -46,6 +46,15 @@ en:
           If it was not you, you can safely ignore this email.
           Click the following link to choose a new password:
           %{link}
+    
+    download:
+      complete:
+        subject: "Your download is complete"
+        title: "Download finished"
+        template: |
+          Hi!
+          Your video on Talon finished. Click the following direct link to download:
+          %{link}
 
     hours:
       one: "1 hour"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170704140133) do
+ActiveRecord::Schema.define(version: 20170719180249) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20170704140133) do
     t.string "title", null: false
     t.string "extractor", null: false
     t.string "description"
-    t.string "thumbnail", null: false
+    t.string "thumbnail"
     t.integer "duration"
     t.string "cached_thumbnail_file_name"
     t.string "cached_thumbnail_content_type"
@@ -35,6 +35,8 @@ ActiveRecord::Schema.define(version: 20170704140133) do
     t.string "progress_label"
     t.text "lines"
     t.integer "user_id", null: false
+    t.boolean "audio", default: false
+    t.string "email"
     t.index ["key"], name: "index_downloads_on_key"
     t.index ["url"], name: "index_downloads_on_url"
     t.index ["user_id"], name: "index_downloads_on_user_id"

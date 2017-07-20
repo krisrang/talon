@@ -1,22 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import Card, { CardContent } from 'material-ui/Card'
-import Typography from 'material-ui/Typography'
+import Card, { CardActions, CardContent, CardMedia } from 'material-ui/Card'
 import { LinearProgress } from 'material-ui/Progress'
-import Input from 'material-ui/Input/Input'
-import IconButton from 'material-ui/IconButton'
 import Button from 'material-ui/Button'
-import Collapse from 'material-ui/transitions/Collapse'
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
-import CopyIcon from 'material-ui-icons/ContentCopy'
-import CancelIcon from 'material-ui-icons/Cancel'
-import RetryIcon from 'material-ui-icons/Loop'
-import DownloadIcon from 'material-ui-icons/FileDownload'
-import PlayIcon from 'material-ui-icons/PlayArrow'
-import OpenIcon from 'material-ui-icons/OpenInNew'
-import CheckIcon from 'material-ui-icons/CheckCircle'
-import DeleteIcon from 'material-ui-icons/Delete'
+import Typography from 'material-ui/Typography'
+import CheckIcon from 'material-ui-icons/Check'
+import ErrorIcon from 'material-ui-icons/ErrorOutline'
+import MoreIcon from 'material-ui-icons/MoreVert'
+import AudioIcon from 'material-ui-icons/MusicNote'
 import Utils from '../utils'
 
 class Item extends React.PureComponent {
@@ -28,26 +21,8 @@ class Item extends React.PureComponent {
     this.props.handleUnsubscribe()
   }
 
-  componentDidUpdate() {
-    this.scrollToBottom()
-  }
-
-  durationHuman(duration) {
-    if (!duration) return null
-
-    let sections = []
-    let hours = Math.floor((duration %= 86400) / 3600)
-    let minutes = Math.floor((duration %= 3600) / 60)
-    let seconds = duration % 60
-
-    if (hours) sections.push(Utils.pad(hours, 2))
-    sections.push(Utils.pad(minutes, 2))
-    sections.push(Utils.pad(seconds, 2))
-
-    return sections.join(":")
-  }
-
-  handleDownload() {
+  handleDownload(e) {
+    e && e.preventDefault()
     window.open(this.props.public_url, '_newtab')
   }
 
@@ -78,146 +53,69 @@ class Item extends React.PureComponent {
         if (!ios) {
           this.finishInput.blur()
 
-          this.props.handleToggleCopy()
-          setTimeout(() => {
-            this.props.handleToggleCopy()
-          }, 2000)
+          // this.props.handleToggleCopy()
+          // setTimeout(() => {
+          //   this.props.handleToggleCopy()
+          // }, 2000)
         }
       }
     }
   }
 
-  scrollToBottom() {
-    if (this.preNode) this.preNode.scrollTop = 2000
-  }
-
   render() {
-    let {
+    const {
       title,
-      url,
+      audio,
+      thumbnail_url,
+      error,
       extractor,
-      duration,
-      progress_label,
       percent,
       initial,
       started,
       errored,
-      finished,
-      starting,
-      logsExpanded,
       cancelled,
-      copyActive,      
-      public_url,      
-      log,
-      thumbnail_url,
-      handleStart,
-      handleToggleLogs,
+      finished,
+      finishing,
+      deleting,
       handleDelete,
       handleCancel,
       handleRetry,
     } = this.props
 
-    duration = this.durationHuman(duration)
-
-    let expandClass = classNames("expand", {"expandOpen": logsExpanded})
-    let copybtnClass = classNames("copybtn", {"active": copyActive})
+    const duration = Utils.durationHuman(this.props.duration)
     
     return (
-      <Card className="card">
-        <div className="details">
-          <CardContent className="content">
-            <div className="title">
-              <Typography type="headline">
-                {title}
-              </Typography>
-              <a href={url}><OpenIcon /></a>
-              <a onClick={handleDelete}><DeleteIcon /></a>
-            </div>
-            <Typography type="subheading" color="secondary">
+      <Card className={classNames("download", {deleting})}>
+        <CardMedia className="cover-wrapper">
+          <div className={classNames("cover", {"overlay": !finished, finishing})}>
+            <div className="thumbnail" style={{backgroundImage: "url("+thumbnail_url+")"}} />
+            {(initial || started || finishing) && <div className="status percent">{(percent || 0)+"%"}</div>}
+            {finishing && <div className="status"><CheckIcon className="checkicon" /></div>}
+            {(errored || cancelled) && <div className="status"><ErrorIcon /></div>}
+            {(initial || started || finishing) && <div className="progress" style={{width: percent+"%"}}></div>}
+            <Typography type="body2" className="state">
+              {errored && "Error"}
+              {cancelled && "Cancelled"}
+            </Typography>
+          </div>
+        </CardMedia>
+        <CardContent className="content">
+          <div className="text">
+            <Typography type="headline" className="title" title={title}>{title}</Typography>
+            <Typography type="subheading" color="secondary" className="subtitle">
               {extractor}
               {duration && (" - " + duration)}
+              {audio && <span className="audio"> - audio only</span>}
             </Typography>
-          </CardContent>
-          <div className="controls">
-            {(started || errored) && (
-              <IconButton className={expandClass} onClick={handleToggleLogs}>
-                <ExpandMoreIcon />
-              </IconButton>
-            )}
-            {started && (
-              <IconButton onClick={handleCancel}>
-                <CancelIcon />
-              </IconButton>
-            )}
-            <div className="widecontrols">
-              {initial && (
-                <div className="buttongrid">
-                  <Button raised color="primary" onClick={handleStart}>
-                    <PlayIcon />
-                    {"Start"}
-                  </Button>
-                </div>
-              )}
-              {started && (
-                <div>
-                  <Typography type="body1" color="secondary" align="center">
-                    {progress_label}
-                  </Typography>
-                  <LinearProgress mode={starting ? "indeterminate" : "determinate"} value={percent} className="progressbar" />
-                </div>
-              )}
-              {finished && (
-                <div className="buttongrid result">
-                  <Button color="primary" onClick={() => this.handleDownload()}>
-                    <DownloadIcon />
-                    {"Download"}
-                  </Button>
-                  <Button dense onClick={() => this.handleCopy()} className={copybtnClass}>
-                    <CopyIcon className="copyicon" />
-                    <CheckIcon className="copyfeedback" />
-                  </Button>
-                  <Input defaultValue={public_url} className="finished-url" inputProps={{readOnly: true}} inputRef={node => this.finishInput = node} />
-                </div>
-              )}
-              {cancelled && (
-                <div className="buttongrid">
-                  <Typography type="body2" color="secondary" align="right">
-                    {"Download cancelled!"}
-                  </Typography>
-                  <div className="buttoncontainer">
-                    <Button color="accent" onClick={handleRetry}>
-                      <RetryIcon />
-                      {"Retry"}
-                    </Button>
-                  </div>
-                </div>
-              )}
-              {errored && (
-                <div className="buttongrid">
-                  <Typography type="body2" color="secondary" align="right">
-                    {"Error downloading!"}
-                  </Typography>
-                  <div className="buttoncontainer">
-                    <Button color="accent" onClick={handleRetry}>
-                      <RetryIcon />
-                      {"Retry"}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
-        </div>
-        <div className="cover">
-          <div className="thumbnail" style={{backgroundImage: "url("+thumbnail_url+")"}} />
-        </div>
-        <Collapse className="logs" in={logsExpanded} transitionDuration="auto" unmountOnExit>
-          <CardContent>
-            <pre ref={node => this.preNode = node}>
-              {log}
-            </pre>
-          </CardContent>
-        </Collapse>
+        </CardContent>
+        <CardActions className="controls">
+          {finished && <Button dense onClick={e => this.handleDownload(e)}>Download</Button>}
+          {(initial || started) && <Button dense onClick={handleCancel}>Cancel</Button>}
+          {(errored || cancelled) && <Button dense onClick={handleRetry}>Restart</Button>}
+          {(finished || errored || cancelled) && <Button dense onClick={handleDelete}>Delete</Button>}
+        </CardActions>
+        <LinearProgress mode="query" className="deleteprogress" />
       </Card>
     )
   }
@@ -231,21 +129,19 @@ Item.propTypes = {
   thumbnail_url: PropTypes.string,
   progress_label: PropTypes.string,
   percent: PropTypes.number,
-  logsExpanded: PropTypes.bool,
-  copyActive: PropTypes.bool,
-  starting: PropTypes.bool,  
+  audio: PropTypes.bool,
   public_url: PropTypes.string,  
-  log: PropTypes.string,  
+  error: PropTypes.string,  
   initial: PropTypes.bool.isRequired,
   started: PropTypes.bool.isRequired,
   errored: PropTypes.bool.isRequired,
   finished: PropTypes.bool.isRequired,
   cancelled: PropTypes.bool.isRequired,
+  deleting: PropTypes.bool,
+  finishing: PropTypes.bool,
   handleStart: PropTypes.func.isRequired,
   handleSubscribe: PropTypes.func.isRequired,
   handleUnsubscribe: PropTypes.func.isRequired,
-  handleToggleLogs: PropTypes.func.isRequired,
-  handleToggleCopy: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,
   handleRetry: PropTypes.func.isRequired,
