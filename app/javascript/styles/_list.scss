@@ -7,8 +7,7 @@ $finishTransition: 3s;
   flex-wrap: wrap;
 
   .download {
-    width: calc((100%/5) - 24px);
-    max-height: 360px;
+    width: calc((100%/6) - 24px);
     margin: 0 12px 24px;
     transition: box-shadow 0.2s;
     cursor: pointer;
@@ -192,6 +191,12 @@ $finishTransition: 3s;
   65% { transform: scale(3); }
   90% { opacity: 1; }
   100% { opacity: 0; transform: scale(3); }
+}
+
+@media (max-width: 1920px) {
+  .downloadlist {
+    .download { width: calc((100%/5) - 24px); max-height: 360px; }
+  }
 }
 
 @media (max-width: 1366px) {
