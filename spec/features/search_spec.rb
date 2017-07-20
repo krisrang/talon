@@ -32,8 +32,10 @@ RSpec.feature "Search", type: :feature, js: true do
     visit "/"
     fill_in "url", with: url
     find('#search form input').native.send_key(:enter)
-    YoutubeDL.expects(:info).with(url).returns(info)
-    expect(page).to have_selector('.downloadlist .card', count: 1)
-    expect(page).to have_selector('.downloadlist .card h1', text: info["title"])
+    YoutubeDL.expects(:info).twice.with(url).returns(info)
+    expect(page).to have_selector('#preview .dialog')
+    find("#preview .dialog .startbtn").click
+    expect(page).to have_selector('.downloadlist .download', count: 1)
+    expect(page).to have_selector('.downloadlist .download h1', text: info["title"])
   end
 end

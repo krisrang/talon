@@ -86,7 +86,7 @@ class PreviewItem extends React.PureComponent {
             </div>
             <div className="controls">
               <Button onClick={previewReset}>Cancel</Button>
-              <Button onClick={this.addDownload} color="primary" raised>Start</Button>
+              <Button onClick={this.addDownload} color="primary" raised className="startbtn">Start</Button>
             </div>
           </div>
           <LinearProgress mode="query" className="addingprogress" />
