@@ -13,7 +13,6 @@ $finishTransition: 3s;
     transition: box-shadow 0.2s;
     cursor: pointer;
     position: relative;
-    display: flex;
     flex-direction: column;
     overflow: hidden;
 
@@ -98,7 +97,6 @@ $finishTransition: 3s;
     }
 
     .content {
-      flex: 1;
       display: flex;
       padding: 16px;
 
