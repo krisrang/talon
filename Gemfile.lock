@@ -165,9 +165,6 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (~> 0.3.0)
-    passenger (5.1.6)
-      rack
-      rake (>= 0.8.1)
     pg (0.21.0)
     public_suffix (2.0.5)
     puma (3.9.1)
@@ -326,7 +323,6 @@ DEPENDENCIES
   message_bus
   mocha
   paperclip
-  passenger
   pg
   puma
   rack-mini-profiler
@@ -354,4 +350,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.1
+   1.15.2
