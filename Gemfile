@@ -8,7 +8,6 @@ end
 
 gem 'rails', '~> 5.1.2'
 gem 'pg'
-gem 'puma'
 gem 'hiredis'
 gem 'redis', require:  ["redis", "redis/connection/hiredis"]
 gem 'redis-rails', '~> 5.0.0'
@@ -57,3 +56,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen'
 end
+
+gem 'puma', require: false
+gem 'passenger', require: false

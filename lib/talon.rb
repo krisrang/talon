@@ -27,4 +27,9 @@ module Talon
   def self.clear_caches!
     Rails.cache.delete("youtubedl-extractors")
   end
+
+  def self.after_fork
+    ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+    MessageBus.after_fork
+  end
 end
