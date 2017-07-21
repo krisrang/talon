@@ -4,16 +4,11 @@ class DownloadJob
   include Sidekiq::Worker
 
   def perform(id)
-    shouldcancel = false
-    cancelproc = Proc.new { |msg| shouldcancel = true if msg.data["id"] == id && msg.data["cancel"] == true }
-
     download = Download.find(id)
     download.started!
-
-    MessageBus.subscribe("/cancel", &cancelproc)
     
     target, log = YoutubeDL.download(download.url, download.key, download.audio) do |progress, audio, merging, cancel|
-      cancel[:shouldcancel] = true if shouldcancel
+      cancel[:shouldcancel] = true if download.cancel?
       download.progress(progress, audio, merging)
     end
 
@@ -23,7 +18,5 @@ class DownloadJob
     # do nothin
   rescue StandardError => e
     download.error(e)
-  ensure
-    MessageBus.unsubscribe("/cancel", &cancelproc)
   end 
 end

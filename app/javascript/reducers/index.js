@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import { reducer as formReducer } from 'redux-form'
 import * as ActionTypes from '../actions'
+import { MessengerActionTypes } from '../store/messenger'
 
 const error = (state = {}, action) => {
   switch(action.type) {
@@ -68,6 +69,19 @@ const preview = (state = {}, action) => {
   }
 }
 
+function switchDownloadStatus(status) {
+  let state = {
+    initial: false,
+    started: false,
+    errored: false,
+    cancelled: false,
+    finished: false,
+    deleting: false,
+  }
+  state[status] = true
+  return state
+}
+
 function addDownload(state, download) {
   return [
     download,
@@ -92,58 +106,61 @@ function updateDownload(state, id, changes) {
   })
 }
 
+function messengerUpdateDownload(state, payload) {
+  const id = payload.id
+  
+  if (payload.progress) {
+    return updateDownload(state, id, {
+      percent: payload.progress,
+      ...switchDownloadStatus('started')
+    })
+  }
+
+  // Download stop states
+  if (payload.public_url) {
+    return updateDownload(state, id, {
+      public_url: payload.public_url,
+      finishing: true,
+      ...switchDownloadStatus('finished')
+    })
+  } else if (payload.cancel) {
+    return updateDownload(state, id, {
+      percent: 0,
+      ...switchDownloadStatus('cancelled')
+    })
+  } else if (payload.error) {
+    return updateDownload(state, id, {
+      public_url: "",
+      error: payload.error,
+      ...switchDownloadStatus('errored')
+    })
+  }
+
+  return state
+}
+
 const downloads = (state = [], action) => {
   switch(action.type) {
     case ActionTypes.DOWNLOAD_ADDED:
       return addDownload(state, action.download)
     case ActionTypes.DOWNLOAD_STARTING:
       return updateDownload(state, action.id, {
-        cancelled: false,
-        initial: true,
-        started: false,
-        errored: false,
-        finishing: false,
-        deleting: false,
         progress_label: null,
         percent: 0,
-      })
-    case ActionTypes.DOWNLOAD_PROGRESS:
-       return updateDownload(state, action.id, {
-         percent: action.percent,
-         progress_label: action.progress_label,
-         initial: false,
-         started: true,
-       })
-    case ActionTypes.DOWNLOAD_CANCELLED:
-      return updateDownload(state, action.id, {
-        initial: false,
-        started: false,
-        cancelled: true,
-        percent: 0,
-      })
-    case ActionTypes.DOWNLOAD_FINISHED:
-      return updateDownload(state, action.id, {
-        public_url: action.url,
-        finishing: true,
-        finished: true,
-        started: false
+        ...switchDownloadStatus('initial')
       })
     case ActionTypes.DOWNLOAD_ERRORED:
       return updateDownload(state, action.id, {
-        initial: false,
-        starting: false,
-        started: false,
-        deleting: false,
-        errored: true,
         public_url: "",
-        error: action.error
+        error: action.error,
+        ...switchDownloadStatus('errored')
       })
     case ActionTypes.DOWNLOAD_DELETING:
-      return updateDownload(state, action.id, {
-        deleting: true
-      })
+      return updateDownload(state, action.id, {deleting: true})
     case ActionTypes.DOWNLOAD_DELETED:
       return removeDownload(state, action.id)
+      case MessengerActionTypes.RECEIVED:
+      return messengerUpdateDownload(state, action.payload)
     case ActionTypes.LOGIN_FINISHED:
       return action.downloads
     case ActionTypes.USER_LOGGEDOUT:

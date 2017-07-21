@@ -13,14 +13,6 @@ import AudioIcon from 'material-ui-icons/MusicNote'
 import Utils from '../utils'
 
 class Item extends React.PureComponent {
-  componentWillMount() {
-    this.props.handleSubscribe()
-  }
-
-  componentWillUnmount() {
-    this.props.handleUnsubscribe()
-  }
-
   handleDownload(e) {
     e && e.preventDefault()
     window.open(this.props.public_url, '_newtab')
@@ -67,7 +59,6 @@ class Item extends React.PureComponent {
       title,
       audio,
       thumbnail_url,
-      error,
       extractor,
       percent,
       initial,
@@ -121,17 +112,17 @@ class Item extends React.PureComponent {
   }
 }
 Item.propTypes = {
-  id: PropTypes.number.isRequired,
-  url: PropTypes.string.isRequired,
+  // id: PropTypes.number.isRequired,
+  // url: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   extractor: PropTypes.string.isRequired,
   duration: PropTypes.number,
   thumbnail_url: PropTypes.string,
-  progress_label: PropTypes.string,
+  // progress_label: PropTypes.string,
   percent: PropTypes.number,
   audio: PropTypes.bool,
-  public_url: PropTypes.string,  
-  error: PropTypes.string,  
+  public_url: PropTypes.string,
+  // error: PropTypes.string,  
   initial: PropTypes.bool.isRequired,
   started: PropTypes.bool.isRequired,
   errored: PropTypes.bool.isRequired,
@@ -139,9 +130,6 @@ Item.propTypes = {
   cancelled: PropTypes.bool.isRequired,
   deleting: PropTypes.bool,
   finishing: PropTypes.bool,
-  handleStart: PropTypes.func.isRequired,
-  handleSubscribe: PropTypes.func.isRequired,
-  handleUnsubscribe: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,
   handleRetry: PropTypes.func.isRequired,

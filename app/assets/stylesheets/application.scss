@@ -136,3 +136,10 @@ input:-webkit-autofill {
     padding: 5px 0;
   }
 }
+
+
+@media (max-width: 768px) {
+  .extractors {
+    .extractor { flex-basis: 50%; }
+  }
+}

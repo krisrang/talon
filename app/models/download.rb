@@ -109,6 +109,7 @@ class Download < ApplicationRecord
 
     self.update_column(:filename, filename)
     self.finished!
+    self.cancel? # reset cancel
 
     if self.email
       DownloadMailer.complete(self.id, email).deliver_later
@@ -129,18 +130,28 @@ class Download < ApplicationRecord
   end
 
   def broadcast(data={})
-    DownloadChannel.broadcast_to(self, data)
+    data = data.merge(id: self.id)
+    Rails.logger.info("Publishing /downloads to #{self.user_id}: #{data}")
+    MessageBus.publish("/downloads", data, user_ids: [self.user_id])
+  end
+
+  def cancel?
+    $redis.del(cancel_key) > 0
   end
 
   def cancel!
+    $redis.set(cancel_key, 1)
     self.update_column(:percent, 0)
     self.update_column(:lines, [])
     self.cancelled!
     broadcast(cancel: true)
-    MessageBus.publish("/cancel", {id: self.id, cancel: true})
   end
 
   private
+
+  def cancel_key
+    "download-cancel-#{id}"
+  end
 
   def set_key
     self.key ||= SecureRandom.hex

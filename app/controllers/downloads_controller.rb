@@ -59,6 +59,12 @@ class DownloadsController < ApplicationController
     render json: download
   end
 
+  def cancel
+    download = current_user.downloads.find_by_id_or_key(params[:id])
+    download.cancel!
+    render json: {success: true}
+  end
+
   def destroy
     @download = current_user.downloads.find_by_id_or_key(params[:id])
     @download.destroy

@@ -12,6 +12,7 @@ import App from '../containers/app'
 import LoginForm from '../containers/login_form'
 import RegisterForm from '../containers/register_form'
 import PasswordResetForm from '../containers/password_reset_form'
+import messengerSubscribe from '../store/messenger'
 import '../styles'
 
 if (process.env.NODE_ENV === "production") {
@@ -27,6 +28,8 @@ const store = configureStore({
   passwordResetResult: data.password_reset_result,
   user: data.current_user,
 })
+
+messengerSubscribe("/downloads", store)
 
 const Root = (
   <Provider store={store}>

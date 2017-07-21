@@ -27,6 +27,6 @@
         "react"
     ],
     "globals": {
-      "ActionCable": true
+      "MessageBus": true
     }
 }

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     end
     member do
       post :start
+      post :cancel
     end
   end
   get "/extractors" => "downloads#extractors"

@@ -85,12 +85,9 @@ export const listenScroll = () => (
 export const DOWNLOAD_ADDED = 'DOWNLOAD_ADDED'
 export const DOWNLOAD_STARTING = 'DOWNLOAD_STARTING'
 export const DOWNLOAD_STARTED = 'DOWNLOAD_STARTED'
-export const DOWNLOAD_CANCELLED = 'DOWNLOAD_CANCELLED'
-export const DOWNLOAD_PROGRESS = 'DOWNLOAD_PROGRESS'
 export const DOWNLOAD_ERRORED = 'DOWNLOAD_ERRORED'
 export const DOWNLOAD_DELETING = 'DOWNLOAD_DELETING'
 export const DOWNLOAD_DELETED = 'DOWNLOAD_DELETED'
-export const DOWNLOAD_FINISHED = 'DOWNLOAD_FINISHED'
 
 export const downloadAdded = (download) => ({
   type: DOWNLOAD_ADDED,
@@ -104,18 +101,6 @@ export const downloadStarting = (id) => ({
 
 export const downloadStarted = (id) => ({
   type: DOWNLOAD_STARTED,
-  id
-})
-
-export const downloadProgress = (id, percent, progress_label) => ({
-  type: DOWNLOAD_PROGRESS,
-  id,
-  percent,
-  progress_label,
-})
-
-export const downloadCancelled = (id) => ({
-  type: DOWNLOAD_CANCELLED,
   id
 })
 
@@ -133,12 +118,6 @@ export const downloadDeleting = (id) => ({
 export const downloadDeleted = (id) => ({
   type: DOWNLOAD_DELETED,
   id
-})
-
-export const downloadFinished = (id, url) => ({
-  type: DOWNLOAD_FINISHED,
-  id,
-  url
 })
 
 export const downloadAdd = (url, audio, email) => (
@@ -162,6 +141,13 @@ export const downloadStart = (id) => (
       () => dispatch(downloadStarting(id)),
       error => dispatch(downloadErrored(id, error))
     )
+  }
+)
+
+export const downloadCancel = (id) => (
+  function (dispatch, getState) {
+    const { endpoints } = getState()
+    return api.post(endpoints.downloads + "/" + id + "/cancel")
   }
 )
 

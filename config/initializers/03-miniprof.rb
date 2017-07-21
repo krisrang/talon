@@ -23,6 +23,7 @@ Rack::MiniProfiler.config.pre_authorize_cb = lambda do |env|
   (env['PATH_INFO'] !~ /image\/get/) &&
   (env['PATH_INFO'] !~ /talon-.*-thumbs/) &&
   (env['PATH_INFO'] !~ /cable/) &&
+  (env['PATH_INFO'] !~ /message-bus/) &&
   (env['PATH_INFO'] !~ /favicon.ico/)
 end
 

@@ -11,4 +11,5 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require ./cable
+//= require message-bus
+//= require message-bus-ajax
