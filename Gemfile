@@ -58,4 +58,3 @@ group :development do
 end
 
 gem 'puma', require: false
-gem 'passenger', require: false

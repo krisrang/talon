@@ -1,3 +1,4 @@
+require 'rufus-scheduler'
 require_dependency 'auth'
 require_dependency 'settings'
 
@@ -30,6 +31,8 @@ module Talon
 
   def self.after_fork
     ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+    $redis.client.reconnect
     MessageBus.after_fork
+    _ = Rufus::Scheduler.singleton
   end
 end
