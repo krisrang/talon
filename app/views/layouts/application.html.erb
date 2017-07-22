@@ -16,6 +16,10 @@
     <%= csrf_meta_tags %>
     <%= action_cable_meta_tag %>
 
+    <script src="https://apis.google.com/js/platform.js" async defer>
+      {parsetags: 'explicit'}
+    </script>
+    <script src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="<%= ENV["DROPBOX_KEY"] %>" async defer></script>
     <%= javascript_include_tag 'application' %>
     <%= stylesheet_link_tag 'application' %>
   </head>
@@ -26,6 +30,6 @@
       <div class="background"></div>
       <div class="noise"></div>
     </div>
-    <%= yield %>
+    <%= client_include(@preload || {}) %>
   </body>
 </html>

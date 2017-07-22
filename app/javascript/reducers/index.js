@@ -120,6 +120,7 @@ function messengerUpdateDownload(state, payload) {
   if (payload.public_url) {
     return updateDownload(state, id, {
       public_url: payload.public_url,
+      filename: payload.filename,
       finishing: true,
       ...switchDownloadStatus('finished')
     })
@@ -223,6 +224,7 @@ const user = (state = {}, action) => {
       return state
   }
 }
+
 const endpoints = (state = {}) => (state)
 
 const rootReducer = combineReducers({

@@ -2,7 +2,7 @@ class DownloadSerializer < ActiveModel::Serializer
   has_many :formats
 
   attributes :id, :url, :urlkey, :uuid, :title, :duration, :extractor, :thumbnail_url, :formats,
-    :public_url, :percent, :progress_label, :lines, :audio,
+    :public_url, :filename, :percent, :progress_label, :lines, :audio,
     :initial, :started, :cancelled, :errored, :finished
   
   def uuid
@@ -22,6 +22,10 @@ class DownloadSerializer < ActiveModel::Serializer
     end
     
     []
+  end
+
+  def filename
+    object.public_filename
   end
 
   def initial; object.initial?; end

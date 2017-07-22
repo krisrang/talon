@@ -2,7 +2,7 @@ require_dependency 'rate_limiter'
 
 class SessionsController < ApplicationController
   def new
-    render 'shared/client'
+    render 'nothing'
   end
   
   def create

@@ -14,7 +14,7 @@ class DownloadsController < ApplicationController
     respond_to do |format|
       format.html do
         @preload = { downloads: serialize(@downloads) }
-        render 'shared/client'
+        render 'nothing'
       end
       
       format.json { render json: @downloads }

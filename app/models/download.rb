@@ -90,12 +90,14 @@ class Download < ApplicationRecord
 
   def upload(path, log=nil)
     broadcast(progress_label: "Saving to storage...")
+    
+    ext = File.extname(path)    
+    filename = "#{self.key[0..7]}#{ext}"
 
     self.update_column(:lines, log) if log
+    self.update_column(:filename, filename)
 
-    ext = File.extname(path)
-    disposition = "attachment; filename=\"#{self.title}#{ext}\""
-    filename = "#{self.key[0..7]}#{ext}"
+    disposition = "attachment; filename=\"#{self.public_filename}\""
     file = fog_directory.files.new({
       key: filename,
       body: File.open(path),
@@ -107,7 +109,6 @@ class Download < ApplicationRecord
     file.save
     FileUtils.rm(path)
 
-    self.update_column(:filename, filename)
     self.finished!
     self.cancel? # reset cancel
 
@@ -115,7 +116,12 @@ class Download < ApplicationRecord
       DownloadMailer.complete(self.id, email).deliver_later
     end
 
-    broadcast(public_url: public_url)
+    broadcast(public_url: public_url, filename: public_filename)
+  end
+
+  def public_filename
+    return nil if !self.filename
+    "#{self.title}#{File.extname(self.filename)}"
   end
 
   def public_url

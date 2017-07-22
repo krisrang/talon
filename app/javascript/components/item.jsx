@@ -3,19 +3,45 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import Card, { CardActions, CardContent, CardMedia } from 'material-ui/Card'
+import Menu, { MenuItem } from 'material-ui/Menu'
 import { LinearProgress } from 'material-ui/Progress'
 import Button from 'material-ui/Button'
+import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import CheckIcon from 'material-ui-icons/Check'
 import ErrorIcon from 'material-ui-icons/ErrorOutline'
 import MoreIcon from 'material-ui-icons/MoreVert'
-import AudioIcon from 'material-ui-icons/MusicNote'
+import DropboxSaver from './dropbox_saver'
+import GDrive from './gdrive'
 import Utils from '../utils'
 
 class Item extends React.PureComponent {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      menuAnchor: null,
+      menuOpen: false,
+      dropbox: false,
+    }
+
+    this.showDropbox = this.showDropbox.bind(this)
+    this.hideDropbox = this.hideDropbox.bind(this)
+    this.handleMenuOpen = this.handleMenuOpen.bind(this)
+    this.handleMenuClose = this.handleMenuClose.bind(this)
+    this.showDrive = this.showDrive.bind(this)
+    this.hideDrive = this.hideDrive.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
+  }
+
   handleDownload(e) {
     e && e.preventDefault()
     window.open(this.props.public_url, '_newtab')
+  }
+
+  handleDelete() {
+    this.handleMenuClose()
+    this.props.handleDelete()
   }
 
   handleCopy() {
@@ -53,12 +79,46 @@ class Item extends React.PureComponent {
       }
     }
   }
+  
+  handleMenuOpen(e) {
+    this.setState({menuOpen: true, menuAnchor: e.currentTarget})
+  }
+
+  handleMenuClose() {
+    this.setState({menuOpen: false})
+  }
+
+  showDropbox() {
+    if (!this.props.finished) {
+      return
+    }
+
+    this.setState({menuOpen: false, dropbox: true})
+  }
+
+  hideDropbox() {
+    this.setState({dropbox: false})
+  }
+
+  showDrive() {
+    if (!this.props.finished) {
+      return
+    }
+
+    this.setState({menuOpen: false, gdrive: true})
+  }
+
+  hideDrive() {
+    this.setState({gdrive: false})
+  }
 
   render() {
     const {
       title,
       audio,
       thumbnail_url,
+      public_url,
+      filename,
       extractor,
       percent,
       initial,
@@ -74,6 +134,7 @@ class Item extends React.PureComponent {
     } = this.props
 
     const duration = Utils.durationHuman(this.props.duration)
+    const deleteEnabled = (finished || errored || cancelled)
     
     return (
       <Card className={classNames("download", {deleting})}>
@@ -88,6 +149,11 @@ class Item extends React.PureComponent {
               {errored && "Error"}
               {cancelled && "Cancelled"}
             </Typography>
+            {deleteEnabled && (
+              <IconButton onClick={this.handleMenuOpen} className="menubtn">
+                <MoreIcon />
+              </IconButton>
+            )}
           </div>
         </CardMedia>
         <CardContent className="content">
@@ -104,9 +170,19 @@ class Item extends React.PureComponent {
           {finished && <Button dense onClick={e => this.handleDownload(e)}>Download</Button>}
           {(initial || started) && <Button dense onClick={handleCancel}>Cancel</Button>}
           {(errored || cancelled) && <Button dense onClick={handleRetry}>Restart</Button>}
-          {(finished || errored || cancelled) && <Button dense onClick={handleDelete}>Delete</Button>}
         </CardActions>
         <LinearProgress mode="query" className="deleteprogress" />
+        <Menu
+          anchorEl={this.state.menuAnchor}
+          open={this.state.menuOpen}
+          onRequestClose={this.handleMenuClose}
+        >
+          <MenuItem onClick={this.showDropbox} disabled={!finished}>Save to Dropbox</MenuItem>
+          <MenuItem onClick={this.showDrive} disabled={!finished}>Save to Google Drive</MenuItem>
+          <MenuItem onClick={this.handleDelete}>Delete download</MenuItem>
+        </Menu>
+        {this.state.dropbox && <DropboxSaver url={public_url} filename={filename} hide={this.hideDropbox} />}
+        {this.state.gdrive && <GDrive url={public_url} filename={filename} hide={this.hideDrive} />}
       </Card>
     )
   }
@@ -122,6 +198,7 @@ Item.propTypes = {
   percent: PropTypes.number,
   audio: PropTypes.bool,
   public_url: PropTypes.string,
+  filename: PropTypes.string,
   // error: PropTypes.string,  
   initial: PropTypes.bool.isRequired,
   started: PropTypes.bool.isRequired,

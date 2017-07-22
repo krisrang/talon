@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   def new
-    render 'shared/client'
+    render 'nothing'
   end
   
   def create
@@ -53,7 +53,7 @@ class UsersController < ApplicationController
       @preload = { register_result: I18n.t('activation.already_done') }
     end
 
-    render 'shared/client'
+    render 'nothing'
   end
 
   def password_reset

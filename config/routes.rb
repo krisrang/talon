@@ -33,8 +33,5 @@ Rails.application.routes.draw do
   get "/login" => "sessions#new", as: :login
   get "/register" => "users#new", as: :register
 
-  get "/admin" => "admin#index"
-  post "/admin/youtubedl_update" => "admin#youtubedl_update"
-
   root to: "downloads#index"
 end

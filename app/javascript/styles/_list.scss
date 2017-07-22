@@ -34,6 +34,14 @@ $finishTransition: 3s;
         align-items: center;
         justify-content: center;
 
+        .menubtn {
+          position: absolute;
+          top: 0px;
+          right: -8px;
+          color: #fff;
+          z-index: 3;
+        }
+
         .state {
           position: absolute;
           left: 16px;
@@ -117,10 +125,10 @@ $finishTransition: 3s;
           margin: -.063rem 0;
           -webkit-font-smoothing: antialiased;
         }
+      }
 
-        .audio {
-          color: #333;
-        }
+      button {
+        margin-right: -16px;
       }
     }
 
