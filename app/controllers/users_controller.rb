@@ -91,7 +91,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html do
         @preload = { password_reset_result: @error } if @error
-        render 'shared/client'
+        render 'nothing'
       end
 
       format.json do
